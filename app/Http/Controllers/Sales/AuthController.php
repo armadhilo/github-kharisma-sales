@@ -9,20 +9,12 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
 use App\Helpers\ApiFormatter;
+use App\Http\Requests\LoginRequest;
 
 class AuthController extends Controller
 {
 
-    public function login(request $request){
-
-        $validator = Validator::make($request->all(),[
-            'email' => 'required|string|email|max:255',
-            'password' => 'required'
-        ]);
-
-        if($validator->fails()){
-            return ApiFormatter::validate($validator->errors());
-        }
+    public function login(LoginRequest $request){
 
         $data = [
             'email'     => $request->email,

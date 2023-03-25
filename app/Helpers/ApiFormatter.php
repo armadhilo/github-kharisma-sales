@@ -66,28 +66,6 @@ class ApiFormatter
         ], 400);
     }
 
-    public static function validate($errors)
-    {
-        $errors = json_decode($errors);
-        $array = [];
-
-        //format error validation message laravel to Wowrack RESTAPI format
-        foreach($errors as $key => $item){
-            foreach($item as $error){
-                $array[] = [
-                    'message' => $error,
-                    'field' => $key,
-                ];
-            }
-        }
-
-        return response()->json([
-            'code' => 400,
-            'errors' => $array,
-            'message' => 'Input validation error'
-        ], 400);
-    }
-
     public static function createApi($code = null, $message = null, $data = null)
     {
         self::$response['code'] = $code;
