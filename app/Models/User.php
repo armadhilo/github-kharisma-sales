@@ -43,6 +43,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function getTypeAttribute(){
+        if($this->attributes['type'] == '1'){
+            return 'sales';
+        }elseif($this->attributes['type'] == '2'){
+            return 'pelanggan';
+        }else{
+            return 'superadmin';
+        }
+    }
+
     public function AauthAcessToken(){
         return $this->hasMany(OauthAccessToken::class);
     }

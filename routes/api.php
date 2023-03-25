@@ -14,10 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/try', 'DataMasterController@try_code');
-Route::post('/login', 'AuthController@login');
-
-Route::group(['middleware' => 'validate_login'], function(){
-    Route::post('/logout', 'AuthController@logout');
-});
-
+Route::get('/provinsi', 'DataMasterController@getProvinsi');
+Route::get('/kabkota/{provinsi_id}', 'DataMasterController@getKabKota');
+Route::get('/kecamatan/{kota_id}', 'DataMasterController@getKecamatan');
+Route::get('/kelurahan/{kecamatan_id}', 'DataMasterController@getKelurahan');
