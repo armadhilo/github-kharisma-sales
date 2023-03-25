@@ -15,14 +15,26 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->char('type', 1)->comment('1 : sales | 2 : Pelanggan');
-            $table->unsignedBigInteger('pelanggan_id')->nullable();
-            $table->string('name');
+            $table->char('type', 1)->default(1)->comment('1 : sales | 2 : Pelanggan');
             $table->string('email')->unique();
+            $table->string('nama');
+            $table->string('telepon');
+            $table->string('alamat');
+            $table->string('nama_toko')->nullable();
+            $table->string('alamat_toko')->nullable();
+            $table->string('kelurahan')->nullable();
+            $table->string('kecamatan')->nullable();
+            $table->string('kota')->nullable();
+            $table->string('lat')->nullable();
+            $table->string('lng')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
     }
 

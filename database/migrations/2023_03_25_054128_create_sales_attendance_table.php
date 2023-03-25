@@ -16,16 +16,16 @@ class CreateSalesAttendanceTable extends Migration
         Schema::create('sales_attendance', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sales_id');
-            $table->foreign('sales_id')->references('id')->on('sales')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('sales_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->date('date_start');
             $table->time('time_start');
             $table->date('date_end');
             $table->time('time_end');
             $table->timestamps();
             $table->softDeletes();
-            $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('updated_by');
-            $table->unsignedBigInteger('deleted_by');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
     }
 

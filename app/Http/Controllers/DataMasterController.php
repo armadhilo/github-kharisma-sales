@@ -11,12 +11,21 @@ use Kavist\RajaOngkir\Facades\RajaOngkir;
 use DataTables;
 use Carbon\Carbon;
 
-use App\Models\MasterPackage;
+use App\Models\User;
 
 use App\Helpers\ApiFormatter;
 
 class DataMasterCOntroller extends Controller
 {
+
+    #============== TRY CODE ====================#
+
+    public function try_code(){
+        return User::with('user_detail')->get();
+    }
+
+    #============================================#
+
     public function get_data_all($model){
 
         $model = 'App\\Models\\' . $model;

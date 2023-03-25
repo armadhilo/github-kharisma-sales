@@ -3,12 +3,10 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Support\Facades\Auth;
-use App\Models\MasterMenu;
-use Illuminate\Http\Request;
-
+use App\Helpers\ApiFormatter;
 use Closure;
 
-class CekLogin
+class ValidateLogin
 {
     /**
      * Handle an incoming request.
@@ -19,9 +17,10 @@ class CekLogin
      */
     public function handle($request, Closure $next)
     {
-        if (!Auth::check()) {
-            return redirect()->route('login'); //jangan lupa berikan name pada route loginnya
+        if (!Auth::guard('api')->check()) {
+            return ApiFormatter::error(401, 'Unauthorized');
         }
+
         return $next($request);
     }
 }

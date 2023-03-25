@@ -14,6 +14,6 @@ class SalesLog extends Model
     protected $appends = [];
 
     public function sales(){
-        return $this->belongsTo(Sales::class);
+        return $this->belongsTo(User::class, 'sales_id');
     }
 }
