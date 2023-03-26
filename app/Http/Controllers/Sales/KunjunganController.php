@@ -17,13 +17,16 @@ class KunjunganController extends Controller
 
         $kunjungan = Kunjungan::where(['sales_id' => auth('api')->user()->id, 'pelanggan_id' => $request->pelanggan_id])->whereDate('date', Carbon::now())->first();
         $status = 'Start Kunjungan';
+
         if(empty($kunjungan)){
+
             Kunjungan::create([
                 'sales_id' => auth('api')->user()->id,
                 'pelanggan_id' => $request->pelanggan_id,
                 'date' => Carbon::now(),
                 'time_start' => Carbon::now()->format('H:i'),
             ]);
+
         }else{
 
             $status = 'End Kunjungan';
