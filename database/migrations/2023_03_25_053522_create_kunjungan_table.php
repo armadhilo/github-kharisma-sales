@@ -22,6 +22,7 @@ class CreateKunjunganTable extends Migration
             $table->date('date');
             $table->time('time_start');
             $table->time('time_end')->nullable();
+            $table->integer('total_time')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->unsignedBigInteger('created_by')->nullable();

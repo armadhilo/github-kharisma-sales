@@ -34,6 +34,10 @@ Route::group(['prefix' => 'sales'], function(){
             Route::post('/', 'Sales\AttendanceController@store');
         });
 
+        Route::group(['prefix' => 'kunjungan'], function(){
+            Route::post('/', 'Sales\KunjunganController@store');
+        });
+
     });
 
 
