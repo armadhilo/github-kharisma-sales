@@ -17,6 +17,8 @@ class CreateSalesLogTable extends Migration
             $table->id();
             $table->unsignedBigInteger('sales_id');
             $table->foreign('sales_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->double('lat')->nullable();
+            $table->double('lng')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

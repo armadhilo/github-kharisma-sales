@@ -25,8 +25,8 @@ class CreateUsersTable extends Migration
             $table->string('kelurahan')->nullable();
             $table->string('kecamatan')->nullable();
             $table->string('kota')->nullable();
-            $table->string('lat')->nullable();
-            $table->string('lng')->nullable();
+            $table->double('lat')->nullable();
+            $table->double('lng')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

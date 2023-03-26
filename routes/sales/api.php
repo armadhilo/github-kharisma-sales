@@ -38,6 +38,10 @@ Route::group(['prefix' => 'sales'], function(){
             Route::post('/', 'Sales\KunjunganController@store');
         });
 
+        Route::group(['prefix' => 'sales-log'], function(){
+            Route::post('/', 'Sales\SalesLogController@store');
+        });
+
     });
 
 
