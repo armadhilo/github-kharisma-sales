@@ -3,22 +3,17 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
+
+use Carbon\Carbon;
 
 use App\Helpers\ApiFormatter;
-use App\Http\Requests\AttendanceRequest;
-use App\Http\Requests\PelangganRequest;
 use App\Models\SalesAttendance;
-use App\Models\User;
 
 class AttendanceController extends Controller
 {
-    public function store(AttendanceRequest $request){
+    public function store(){
 
-        $sales_attendance = SalesAttendance::where(['sales_id' => auth('api')->user()->id])->whereDate('date_start', $request->date)->whereNotNull('date_end')->first();
+        $sales_attendance = SalesAttendance::where(['sales_id' => auth('api')->user()->id])->whereDate('date_start', Carbon::now())->whereNotNull('date_end')->first();
         if(!empty($sales_attendance)){
             $message = 'sales have finish attendance today';
             return ApiFormatter::error(400, $message);
@@ -30,16 +25,16 @@ class AttendanceController extends Controller
             $status = 'check In';
             SalesAttendance::create([
                 'sales_id' => auth('api')->user()->id,
-                'date_start' => $request->date,
-                'time_start' => $request->time
+                'date_start' => Carbon::now(),
+                'time_start' => Carbon::now()->format('H:i')
             ]);
         }else{
-            $attendance_today->date_end = $request->date;
-            $attendance_today->time_end = $request->time;
+            $attendance_today->date_end = Carbon::now();
+            $attendance_today->time_end = Carbon::now()->format('H:i');
             $attendance_today->save();
         }
 
-        $message = "You has been $status on $request->time successfully";
+        $message = "You has been $status on ".Carbon::now()->format('H:i')." successfully";
         return ApiFormatter::success(200, $message);
     }
 
