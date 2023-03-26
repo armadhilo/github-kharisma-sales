@@ -15,8 +15,50 @@ use App\Models\User;
 
 class PelangganController extends Controller
 {
-    public function index(){
-        dd('aa');
+    public function index(request $request){
+
+        #=========PARAMETER=========#
+        #pagination -> 1 : active | 0 : inactive
+
+        $pelanggan = User::where(['type' => 2])
+        ->when($request->nama, function ($query) use ($request) {
+            return $query->where('nama', 'like', '%'.$request->nama.'%');
+        })
+        ->when($request->nama_toko, function ($query) use ($request) {
+            return $query->where('nama_toko', 'like', '%'.$request->nama_toko.'%');
+        })
+        ->when($request->alamat_toko, function ($query) use ($request) {
+            return $query->where('alamat_toko', 'like', '%'.$request->alamat_toko.'%');
+        })
+        ->when($request->kota, function ($query) use ($request) {
+            return $query->where('kota', 'like', '%'.$request->kota.'%');
+        })
+        ->when($request->kecamatan, function ($query) use ($request) {
+            return $query->where('kecamatan', 'like', '%'.$request->kecamatan.'%');
+        })
+        ->when($request->kelurahan, function ($query) use ($request) {
+            return $query->where('kelurahan', 'like', '%'.$request->kelurahan.'%');
+        })
+        ->get();
+
+        if(!count($pelanggan)){
+            $message = 'User not found';
+            return ApiFormatter::error(404, $message);
+        }
+
+        //pagination formatting
+        $page_limit = 10;
+        if(!$request->has('pagination') || $request->pagination == 1){
+
+            //setting pagination
+            $array = $this->paginate($pelanggan, $page_limit)->withPath(url()->current());
+
+            $message = 'Data User fetch successfully';
+            return ApiFormatter::pagination($message, $array);
+        }
+
+        $message = 'User listed successfully';
+        return ApiFormatter::success(200, $message, $pelanggan);
     }
 
     public function store(PelangganRequest $request){

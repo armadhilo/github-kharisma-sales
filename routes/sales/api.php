@@ -21,15 +21,16 @@ Route::group(['prefix' => 'sales'], function(){
 
     Route::group(['middleware' => 'validate_login'], function(){
         Route::post('/logout', 'Sales\AuthController@logout');
+
+        Route::group(['prefix' => 'pelanggan'], function(){
+            Route::get('/', 'Sales\PelangganController@index');
+            Route::get('/{id}', 'Sales\PelangganController@detail');
+            Route::post('/', 'Sales\PelangganController@store');
+            Route::put('/{id}', 'Sales\PelangganController@update');
+            Route::delete('/{id}', 'Sales\PelangganController@delete');
+        });
     });
 
-    Route::group(['prefix' => 'pelanggan', 'middleware' => 'validate_login'], function(){
-        Route::get('/', 'Sales\PelangganController@index');
-        Route::get('/{id}', 'Sales\PelangganController@detail');
-        Route::post('/', 'Sales\PelangganController@store');
-        Route::put('/{id}', 'Sales\PelangganController@update');
-        Route::delete('/{id}', 'Sales\PelangganController@delete');
-    });
 
 });
 
