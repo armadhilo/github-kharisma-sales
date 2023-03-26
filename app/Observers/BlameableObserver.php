@@ -11,12 +11,12 @@ class BlameableObserver
 {
     public function creating(Model $model)
     {
-        $model->created_by = Auth::user()->id;
+        $model->created_by = auth('api')->user()->id;
     }
 
     public function updating(Model $model)
     {
-        $model->updated_by = Auth::user()->id;
+        $model->updated_by = auth('api')->user()->id;
         // if($model->isDirty('url_image')){
         //     dd(public_path());
         //      File::delete( public_path() .'/'. $model->getOriginal('url_image'));
@@ -25,7 +25,7 @@ class BlameableObserver
 
     public function deleted(Model $model)
     {
-        $model->deleted_by = Auth::user()->id;
+        $model->deleted_by = auth('api')->user()->id;
         $model->save();
         // File::delete( public_path() .'/'. $model->url_image);
     }

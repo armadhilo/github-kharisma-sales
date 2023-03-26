@@ -29,6 +29,11 @@ Route::group(['prefix' => 'sales'], function(){
             Route::put('/{id}', 'Sales\PelangganController@update');
             Route::delete('/{id}', 'Sales\PelangganController@delete');
         });
+
+        Route::group(['prefix' => 'attendance'], function(){
+            Route::post('/', 'Sales\AttendanceController@store');
+        });
+
     });
 
 

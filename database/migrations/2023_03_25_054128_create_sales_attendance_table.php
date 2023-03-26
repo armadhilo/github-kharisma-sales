@@ -19,8 +19,8 @@ class CreateSalesAttendanceTable extends Migration
             $table->foreign('sales_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->date('date_start');
             $table->time('time_start');
-            $table->date('date_end');
-            $table->time('time_end');
+            $table->date('date_end')->nullable();
+            $table->time('time_end')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->unsignedBigInteger('created_by')->nullable();
