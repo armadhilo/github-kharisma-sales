@@ -21,7 +21,7 @@ class AttendanceController extends Controller
         $sales_attendance = SalesAttendance::where(['sales_id' => auth('api')->user()->id])->whereDate('date_start', $request->date)->whereNotNull('date_end')->first();
         if(!empty($sales_attendance)){
             $message = 'sales have finish attendance today';
-            return ApiFormatter::error(404, $message);
+            return ApiFormatter::error(400, $message);
         }
 
         $attendance_today = SalesAttendance::where(['sales_id' => auth('api')->user()->id])->whereNull('date_end')->first();
