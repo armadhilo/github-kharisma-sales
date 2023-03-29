@@ -30,6 +30,10 @@ Route::group(['prefix' => 'sales'], function(){
             Route::delete('/{id}', 'Sales\PelangganController@delete');
         });
 
+        Route::group(['prefix' => 'sales'], function(){
+            Route::get('/{id}', 'Sales\SalesController@detail');
+        });
+
         Route::group(['prefix' => 'attendance'], function(){
             Route::post('/', 'Sales\AttendanceController@store');
         });
@@ -41,9 +45,6 @@ Route::group(['prefix' => 'sales'], function(){
         Route::group(['prefix' => 'sales-log'], function(){
             Route::post('/', 'Sales\SalesLogController@store');
         });
-
     });
-
-
 });
 

@@ -21,25 +21,15 @@ class PelangganController extends Controller
         #pagination -> 1 : active | 0 : inactive
 
         $pelanggan = User::where(['type' => 2])
-        ->when($request->nama, function ($query) use ($request) {
-            return $query->where('nama', 'like', '%'.$request->nama.'%');
-        })
-        ->when($request->nama_toko, function ($query) use ($request) {
-            return $query->where('nama_toko', 'like', '%'.$request->nama_toko.'%');
-        })
-        ->when($request->alamat_toko, function ($query) use ($request) {
-            return $query->where('alamat_toko', 'like', '%'.$request->alamat_toko.'%');
-        })
-        ->when($request->kota, function ($query) use ($request) {
-            return $query->where('kota', 'like', '%'.$request->kota.'%');
-        })
-        ->when($request->kecamatan, function ($query) use ($request) {
-            return $query->where('kecamatan', 'like', '%'.$request->kecamatan.'%');
-        })
-        ->when($request->kelurahan, function ($query) use ($request) {
-            return $query->where('kelurahan', 'like', '%'.$request->kelurahan.'%');
-        })
-        ->get();
+            ->where(function($query) use ($request){
+                $query->orWhere('nama', 'LIKE', "%$request->search%")
+                ->orWhere('nama_toko', 'LIKE', "%$request->search%")
+                ->orWhere('alamat_toko', 'LIKE', "%$request->search%")
+                ->orWhere('kota', 'LIKE', "%$request->search%")
+                ->orWhere('kecamatan', 'LIKE', "%$request->search%")
+                ->orWhere('kelurahan', 'LIKE', "%$request->search%");
+            })
+            ->get();
 
         if(!count($pelanggan)){
             $message = 'User not found';
