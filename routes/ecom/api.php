@@ -18,6 +18,7 @@ Route::get('/try', 'DataMasterController@try_code');
 
 Route::group(['prefix' => 'ecom'], function(){
     Route::post('/login', 'Ecom\AuthController@login');
+    Route::post('/forgot-password', 'Ecom\AuthController@forgot_password');
 
     Route::group(['middleware' => 'validate_login'], function(){
         Route::post('/logout', 'Ecom\AuthController@logout');

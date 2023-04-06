@@ -35,7 +35,7 @@ class AlamatPengirimanController extends Controller
 
         $alamat_pengiriman = AlamatPengiriman::where(['id' => $id])->first();
         if(empty($alamat_pengiriman)){
-            $message = 'alamat_pengiriman tidak ditemukan';
+            $message = 'Alamat Pengiriman tidak ditemukan';
             return ApiFormatter::error(404, $message);
         }
 
@@ -56,7 +56,7 @@ class AlamatPengirimanController extends Controller
 
         $action = $alamat_pengiriman->wasRecentlyCreated ? 'ditambahkan' : 'diupdate';
 
-        $message = 'Alamat pengiriman berhasil ' . $action;
+        $message = 'Alamat Pengiriman berhasil ' . $action;
         return ApiFormatter::success(200, $message);
     }
 
@@ -70,7 +70,7 @@ class AlamatPengirimanController extends Controller
         $alamat_pengiriman->alamat_utama = 1;
         $alamat_pengiriman->save();
 
-        $message = 'Alamat pengiriman utama berhasil disetting';
+        $message = 'Alamat Pengiriman utama berhasil disetting';
         return ApiFormatter::success(200, $message);
     }
 
@@ -90,7 +90,7 @@ class AlamatPengirimanController extends Controller
 
         $alamat_pengiriman->delete();
 
-        $message = 'Alamat pengiriman berhasil dihapus';
+        $message = 'Alamat Pengiriman berhasil dihapus';
         return ApiFormatter::success(200, $message);
     }
 }

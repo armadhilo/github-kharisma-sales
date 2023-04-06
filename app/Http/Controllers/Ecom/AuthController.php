@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
 use App\Helpers\ApiFormatter;
+use App\Http\Requests\Ecom\ForgotPasswordRequest;
 use App\Http\Requests\Ecom\LoginRequest;
 
 use App\Models\User;
@@ -63,6 +64,18 @@ class AuthController extends Controller
             $message = 'These credentials do not match our records.';
             return ApiFormatter::error(400, $message);
         }
+    }
+
+    public function forgot_password(ForgotPasswordRequest $request){
+
+        $user = User::where(['email' => $request->email, 'type' => '2'])->first();
+        if(empty($user)){
+            $message = 'Forgot password gagal, Pelanggan tidak ditemukan';
+            return ApiFormatter::error(404, $message);
+        }
+
+        $message = 'Email Forgot Password telah dikirim ke email anda, harap segera cek email anda';
+        return ApiFormatter::success(200, $message);
     }
 
     public function logout(){
