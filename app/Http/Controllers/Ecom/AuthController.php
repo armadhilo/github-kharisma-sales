@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Http\Controllers\Ecom;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+
+use App\Helpers\ApiFormatter;
+use App\Http\Requests\Ecom\LoginRequest;
+
+use App\Models\User;
+
+class AuthController extends Controller
+{
+
+    public function login(LoginRequest $request){
+
+        if($request->has('keylog')){
+            $sales = User::where(['email' => $request->sales_email, 'type' => '1'])->first();
+            $pelanggan = User::where(['keylog' => $request->keylog, 'type' => '2'])->first();
+
+            if(empty($sales) || empty($pelanggan)){
+                $message = 'These credentials do not match our records.';
+                return ApiFormatter::error(400, $message);
+            }
+
+            session(['sales_id' => $sales->id]);
+            Auth::login($pelanggan);
+
+        }else{
+
+            $data = [
+                'email'     => $request->email,
+                'password'  => $request->password,
+            ];
+
+            Auth::attempt($data);
+
+        }
+
+        if (Auth::check()) {
+
+            $user = Auth::user();
+            $token = $user->createToken($user->name)->accessToken;
+
+            $message = 'Successfully login.';
+            $data = [
+                'user' => $user,
+                'sales' => [
+                    'id' => $sales->id,
+                    'nama' => $sales->nama,
+                    'email' => $sales->email,
+                ],
+                'token' => $token,
+            ];
+
+            return ApiFormatter::success(200, $message, $data);
+        }else{
+
+            $message = 'These credentials do not match our records.';
+            return ApiFormatter::error(400, $message);
+        }
+    }
+
+    public function logout(){
+        auth('api')->user()->AauthAcessToken()->delete();
+
+        $message = 'Successfully logout.';
+        return ApiFormatter::success(200, $message);
+    }
+}
