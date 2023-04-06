@@ -13,4 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/', 'LoginController@index')->name('login');
+Route::post('/login', 'LoginController@login');
+Route::get('/logout','LoginController@logout');
+
+
+
 

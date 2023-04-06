@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-include(base_path() . '\public\ripcord-master\ripcord.php');
+include(base_path() . '/public/ripcord-master/ripcord.php');
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -34,7 +34,15 @@ class DataMasterCOntroller extends Controller
         $common = ripcord::client("$url/xmlrpc/2/common");
         $uid = $common->authenticate($db, $username, $password, []);
 
-        dd($uid);
+        $models = ripcord::client("$url/xmlrpc/2/object");
+        $models->execute_kw($db, $uid, $password,
+            'res.partner', 'check_access_rights',
+            array('read'), array('raise_exception' => false));
+
+        return $models->execute_kw($db, $uid, $password,
+        'res.partner', 'search', array(
+            array(array('is_company', '=', true),
+                  array('customer', '=', true))));
     }
 
     #============== PROV KOTA ===================#

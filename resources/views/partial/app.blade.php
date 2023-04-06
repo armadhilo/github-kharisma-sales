@@ -60,7 +60,7 @@
         @include('partial.header')
         <!-- Main Content -->
         <div class="main-content">
-            
+
             <section class="section">
                 <div class="section-header">
                     <h1>@yield('title')</h1>
@@ -125,7 +125,7 @@
                 format: "yyyy-mm-dd",
                 todayHighlight: true,
                 orientation: "top auto",
-                todayBtn: true 
+                todayBtn: true
             });
 
             $(".datepicker-years").datepicker({
@@ -145,6 +145,6 @@
     </script>
 
     @yield('js')
-    
+
 </body>
 </html>

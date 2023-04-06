@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 use App\Helpers\ApiFormatter;
 use App\Http\Requests\PelangganRequest;
@@ -54,6 +55,7 @@ class PelangganController extends Controller
     public function store(PelangganRequest $request){
 
         $request->merge(['password' => Hash::make($request->password) ]);
+        $request->merge(['hash_pelanggan' => Str::random(40) ]);
 
         User::create($request->all());
 
