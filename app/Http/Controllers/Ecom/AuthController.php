@@ -19,6 +19,8 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request){
 
+        $sales = [];
+
         if($request->has('keylog')){
             $sales = User::where(['email' => $request->sales_email, 'type' => '1'])->first();
             $pelanggan = User::where(['keylog' => $request->keylog, 'type' => '2'])->first();
@@ -29,6 +31,12 @@ class AuthController extends Controller
             }
 
             session(['sales_id' => $sales->id]);
+            $sales = [
+                'id' => $sales->id,
+                'nama' => $sales->nama,
+                'email' => $sales->email,
+            ];
+
             Auth::login($pelanggan);
 
         }else{
@@ -50,11 +58,7 @@ class AuthController extends Controller
             $message = 'Successfully login.';
             $data = [
                 'user' => $user,
-                'sales' => [
-                    'id' => $sales->id,
-                    'nama' => $sales->nama,
-                    'email' => $sales->email,
-                ],
+                'sales' => $sales,
                 'token' => $token,
             ];
 
