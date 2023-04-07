@@ -72,6 +72,30 @@ class DataMasterCOntroller extends Controller
         return $json;
     }
 
+    public function getProvinsiKota(Request $request){
+        $path = file_get_contents(public_path('json/prov_kota.json'));
+        $json = json_decode($path, true);
+        
+        $data = [];
+        if($request->has('p') && $request->p != 'null'){
+            for($i = 0; $i < count($json); $i++){
+                if(str_contains($json[$i]['provinsi'], $request->p)){
+
+                    $kota = $json[$i]['kota'];
+
+                    return $kota;
+                    break;
+                }
+            }
+        }else{
+            for($i = 0; $i < count($json); $i++){
+                array_push($data, $json[$i]['provinsi']);
+            }
+
+            return $data;
+        }
+    }
+
     #==============================================#
 
     public function get_data_all($model){
@@ -90,7 +114,15 @@ class DataMasterCOntroller extends Controller
         return ApiFormatter::getResponse($data);
     }
 
-    public function get_data_where_field_id($model, $where_field, $id){
+    public function get_data_where_field_id_get($model, $where_field, $id){
+
+        $model = 'App\\Models\\' . $model;
+        $data = $model::where($where_field, $id)->get();
+
+        return ApiFormatter::getResponse($data);
+    }
+
+    public function get_data_where_field_id_first($model, $where_field, $id){
 
         $model = 'App\\Models\\' . $model;
         $data = $model::where($where_field, $id)->first();
