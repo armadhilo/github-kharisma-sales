@@ -44,7 +44,7 @@
              <span aria-hidden="true">&times;</span>
              </button>
           </div>
-          <form id="form_upload" action="/admin/sales/store-update" method="POST" autocomplete="off">
+          <form id="form_submit_request" action="/admin/sales/store-update" method="POST" autocomplete="off">
              <div class="modal-body">
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
@@ -52,31 +52,36 @@
                             <label>Nama</label>
                               <input type="text" hidden class="form-control" name="type" id="type">
                               <input type="text" hidden class="form-control" name="id" id="id">
-                              <input class="form-control" type="text" id="nama" name="nama" required>
+                              <input class="form-control" type="text" id="nama" name="nama" >
+                              <span class="d-flex text-danger invalid-feedback" id="invalid-nama-feedback"></span>
                         </div>
                     </div>
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="form-group">
                             <label>Email</label>
-                              <input class="form-control" type="text" id="email" name="email" required>
+                            <input class="form-control" type="text" id="email" name="email" >
+                            <span class="d-flex text-danger invalid-feedback" id="invalid-email-feedback"></span>
                         </div>
                     </div>
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="form-group">
                             <label>Password</label>
-                              <input class="form-control" type="password" id="password" name="password" required>
+                            <input class="form-control" type="password" id="password" name="password" >
+                            <span class="d-flex text-danger invalid-feedback" id="invalid-password-feedback"></span>
                         </div>
                     </div>
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="form-group">
                             <label>Telepon</label>
-                              <input class="form-control" type="text" id="telepon" name="telepon" required>
+                            <input class="form-control" type="text" id="telepon" name="telepon" >
+                            <span class="d-flex text-danger invalid-feedback" id="invalid-telepon-feedback"></span>
                         </div>
                     </div>
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="form-group">
                             <label>Alamat</label>
-                              <textarea class="form-control" type="text" style="height:100px" id="alamat" name="alamat" required></textarea>
+                            <textarea class="form-control" type="text" style="height:100px" id="alamat" name="alamat" ></textarea>
+                            <span class="d-flex text-danger invalid-feedback" id="invalid-alamat-feedback"></span>
                         </div>
                     </div>
                 </div>
@@ -125,7 +130,7 @@
     function add(){
         $("#modal").modal('show');
         $(".modal-title").text('Tambah Sales');
-        $("#form_upload")[0].reset();
+        $("#form_submit_request")[0].reset();
         reset_all_select();
     }
 

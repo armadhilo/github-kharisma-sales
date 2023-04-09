@@ -162,6 +162,70 @@
        });
    })
 
+   $('#form_submit_request').on('submit', function(e){
+       e.preventDefault();
+
+       var form_id = $(this).attr("id");
+       if(check_required(form_id) === false){
+          swal("Oops! Mohon isi field yang kosong", { icon: 'warning', });
+          return;
+       }
+
+       swal({
+             title: 'Yakin?',
+             text: 'Apakah anda yakin akan menyimpan data ini?',
+             icon: 'warning',
+             buttons: true,
+             dangerMode: true,
+       })
+       .then((willDelete) => {
+             if (willDelete) {
+                $("#modal_loading").modal('show');
+                $('input,textarea.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').text('');
+                $.ajax({
+                   url:  $('#form_submit_request').attr('action'),
+                   type: $('#form_submit_request').attr('method'),
+                   data: $('#form_submit_request').serialize(),
+                   success: function(response){
+                      setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                      if(response.status == 200){
+                         swal(response.message, { icon: 'success', });
+                         $("#modal").modal('hide');
+                         $("#form_submit_request")[0].reset();
+                         reset_all_select();
+                         tb.ajax.reload(null, false);
+                      }
+                      else if(response.status == 201){
+                         swal(response.message, { icon: 'success', });
+                         $("#modal").modal('hide');
+                         window.location.href = response.link;
+                      }
+                      else if(response.status == 203){
+                         swal(response.message, { icon: 'success', });
+                         $("#modal").modal('hide');
+                         tb.ajax.reload(null, false);
+                      }
+                      else if(response.status == 300){
+                         swal(response.message, { icon: 'error', });
+                      }
+                   },error: function (jqXHR, textStatus, errorThrown){
+                      setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                      console.log((jqXHR.responseJSON.errors));
+                      Object.keys(jqXHR.responseJSON.errors).forEach(function (key) {
+                           // console.log(jqXHR.responseJSON.errors[key]);
+                           var responseError = jqXHR.responseJSON.errors[key];
+                           var elem_name = $('[name=' + responseError['field'] + ']');
+                           var elem_feedback = $('[id=invalid-' + responseError['field'] + '-feedback'+']');
+                           elem_name.addClass('is-invalid');
+                           elem_feedback.text(responseError['message']);
+                     });
+                   }
+                });
+             }
+       });
+    });
+
     function hanyaAngka(e, decimal) {
        var key;
        var keychar;

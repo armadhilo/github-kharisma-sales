@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\BackOffice;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\SalesRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Session;
@@ -32,24 +32,7 @@ class SalesController extends Controller
                     ->make(true);
     }
 
-    public function store_update(request $request){
-        $array_validation = [
-            'nama' => 'required',
-            'email' => 'required|email:rfc,dns',
-            'telepon' => 'required|min:10|max:12',
-            'alamat' => 'required',
-            'password' => 'required|min:6'
-        ];
-
-        $validator = Validator::make($request->all(), $array_validation);
-
-		if($validator->fails()) {
-			return [
-				'status' => 300,
-				'message' => $validator->errors()->first()
-			];
-		}
-
+    public function store_update(SalesRequest $request){
 
         if(substr($request->telepon, 0, 2) != '08'){
             return [

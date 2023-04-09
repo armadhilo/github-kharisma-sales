@@ -41,6 +41,8 @@
           <li class="nav-item dropdown @if($url_menu == "dashboard") active @endif"><a href="/dashboard" class="nav-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
           <li class="menu-header">Sales</li>
           <li class="nav-item dropdown @if($url_menu == "sales") active @endif"><a href="/admin/sales" class="nav-link"><i class="fas fa-home"></i><span>Sales</span></a></li>
+          <li class="menu-header">Pelanggan</li>
+          <li class="nav-item dropdown @if($url_menu == "pelanggan") active @endif"><a href="/admin/pelanggan" class="nav-link"><i class="fas fa-home"></i><span>Pelanggan</span></a></li>
         </ul>
 
     </aside>
