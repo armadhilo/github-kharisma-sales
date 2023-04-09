@@ -13,6 +13,7 @@ use App\Models\Kunjungan;
 
 class KunjunganController extends Controller
 {
+
     public function store(KunjunganRequest $request){
 
         $kunjungan = Kunjungan::where(['sales_id' => auth('api')->user()->id, 'pelanggan_id' => $request->pelanggan_id])->whereDate('date', Carbon::now())->first();
@@ -42,7 +43,19 @@ class KunjunganController extends Controller
         }
 
         $message = "You has been $status on ".Carbon::now()->format('H:i')." successfully";
-        return ApiFormatter::success(200, $message);
+        return ApiFormatter::success(200, $message, $kunjungan);
+    }
+
+    public function check_today(){
+
+        $kunjungan = Kunjungan::with('pelanggan')->where(['sales_id' => auth('api')->user()->id])->whereNull('time_end')->whereDate('date', Carbon::now())->first();
+        if(empty($kunjungan)){
+            $message = 'You dont have active kunjungan today';
+            return ApiFormatter::error(400, $message);
+        }
+
+        $message = "Data kunjungan retrieved successfully";
+        return ApiFormatter::success(200, $message, $kunjungan);
     }
 
 }

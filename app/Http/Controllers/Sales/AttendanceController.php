@@ -11,6 +11,7 @@ use App\Models\SalesAttendance;
 
 class AttendanceController extends Controller
 {
+
     public function store(){
 
         $sales_attendance = SalesAttendance::where(['sales_id' => auth('api')->user()->id])->whereDate('date_start', Carbon::now())->whereNotNull('date_end')->first();
@@ -35,7 +36,19 @@ class AttendanceController extends Controller
         }
 
         $message = "You has been $status on ".Carbon::now()->format('H:i')." successfully";
-        return ApiFormatter::success(200, $message);
+        return ApiFormatter::success(200, $message, $sales_attendance);
+    }
+
+    public function check_today(){
+
+        $sales_attendance = SalesAttendance::where(['sales_id' => auth('api')->user()->id])->whereDate('date_start', Carbon::now())->first();
+        if(empty($sales_attendance)){
+            $message = 'You dont have active attendance today';
+            return ApiFormatter::error(400, $message);
+        }
+
+        $message = "Data attendance retrieved successfully";
+        return ApiFormatter::success(200, $message, $sales_attendance);
     }
 
 }

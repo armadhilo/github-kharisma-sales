@@ -36,10 +36,14 @@ Route::group(['prefix' => 'sales'], function(){
 
         Route::group(['prefix' => 'attendance'], function(){
             Route::post('/', 'Sales\AttendanceController@store');
+
+            Route::get('/check-today', 'Sales\AttendanceController@check_today');
         });
 
         Route::group(['prefix' => 'kunjungan'], function(){
             Route::post('/', 'Sales\KunjunganController@store');
+
+            Route::get('/check-today', 'Sales\KunjunganController@check_today');
         });
 
         Route::group(['prefix' => 'sales-log'], function(){
