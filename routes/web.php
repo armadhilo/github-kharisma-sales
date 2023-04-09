@@ -35,16 +35,6 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::get('/get-data-by-id/{model}/{id}','DataMasterController@get_data_by_id');
             Route::get('/get-data-where-field-id_get/{model}/{where_field}/{id}','DataMasterController@get_data_where_field_id_get');
             Route::get('/get-data-where-field-id_first/{model}/{where_field}/{id}','DataMasterController@get_data_where_field_id_first');
-
-
-            Route::get('get-provinsi-kota','DataMasterController@getProvinsiKota');
-            Route::get('get-provinsi','DataMasterController@getProvinsi');
-            Route::get('get-kota','DataMasterController@getKabKota');
-            Route::get('get-kecamatan','DataMasterController@getKecamatan');
-            Route::get('get-kelurahan','DataMasterController@getKelurahan');
-
-            Route::get('api-provinsi','DataMasterController@api_get_province');
-            Route::get('api-city-by-provinsi/{provinsi_id}','DataMasterController@api_get_city_by_province');
         });
 
         Route::prefix('error')->group(function () {

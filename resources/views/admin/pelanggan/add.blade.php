@@ -1,5 +1,5 @@
 @extends('partial.app')
-@section('title','Data Perusahaan')
+@section('title','Data Pelanggan')
 
 @section('css')
    <link rel="stylesheet" href="{{ asset('assets/vendors/leaflet/leaflet.css') }}" />
@@ -27,6 +27,10 @@
          background: rgba(0, 0, 0, 0.3);
          z-index: 998;
       }
+
+      .select2.is-invalid .select2-selection .select2-selection__rendered{
+         border: 1px solid #dc3545!important;
+      }
    </style>
 @endsection
 
@@ -37,7 +41,7 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
             <div class="card-header">
-               <h4>Tambah Data Perusahaan</h4>
+               <h4>Tambah Data Pelanggan</h4>
             </div>
             <form autocomplete="off" id="form_submit_request" action="/admin/pelanggan/store-update" method="POST">
                 @if(isset($data))
@@ -50,66 +54,101 @@
                            <label>Nama</label>
                            <input type="text" hidden class="form-control" value="@if(isset($data)){{$data->id}}@endif" name="id" id="id">
                            <input type="text" name="nama" id="nama" value="@if(isset($data)) {{$data->nama}} @endif" class="form-control">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-nama-feedback"></span>
                         </div>
                      </div>
                      <div class="col-12 col-md-4 col-lg-4">
                         <div class="form-group">
                            <label>Email</label>
                            <input type="text" name="email" id="email" value="@if(isset($data)) {{$data->email}} @endif" class="form-control">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-email-feedback"></span>
                         </div>
                      </div>
                      <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
                            <label>Telepon</label>
                            <input type="text" name="telepon" id="telepon" value="@if(isset($data)) {{$data->telepon}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-telepon-feedback"></span>
+                        </div>
+                     </div>
+                     @if(isset($data))
+                     <div class="col-12 col-md-6 col-lg-6">
+                        <div class="form-group">
+                           <div class="d-flex justify-content-between">
+                                 <label style="white-space: nowrap">Change Password</label>
+                                 <span class="invalid-feedback float-right d-block" style="text-align: end">*Tidak Perlu Diisi Bila Password Tidak Diubah</span>
+                           </div>
+                           <input type="text" name="password" id="password" class="form-control">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-password-feedback"></span>
+                        </div>
+                     </div>
+                     @else
+                     <div class="col-12 col-md-3 col-lg-3">
+                        <div class="form-group">
+                           <label style="white-space: nowrap">Password</label>
+                           <input type="text" name="password" id="password" class="form-control">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-password-feedback"></span>
                         </div>
                      </div>
                      <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
-                            <label>Provinsi</label>
-                            <input hidden type="text" id="data_provinsi" class="form-control" value="@if(isset($data)){{$data->provinsi}}@endif">
-                            <select class="form-control select2 required-field" name="provinsi" id="provinsi" onchange="get_kota();">
-                                <option selected disabled>- Pilih -</option>
-                            </select>
+                           <label style="white-space: nowrap">Retype Password</label>
+                           <input type="text" name="retype_password" id="retype_password" class="form-control">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-retype_password-feedback"></span>
                         </div>
-                    </div>
-                    <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label>Kota</label>
-                            <input hidden type="text" id="data_kota" class="form-control" value="@if(isset($data)){{$data->kota}}@endif">
-                            <select class="form-control select2 required-field" name="kota" id="kota">
-                                <option selected disabled>- Pilih -</option>
-                            </select>
-                        </div>
-                    </div>
+                     </div>
+                     @endif
                     <div class="col-12 col-md-6 col-lg-6">
                         <div class="form-group">
                            <label>Nama Toko</label>
                            <input type="text" name="nama_toko" id="nama_toko" value="@if(isset($data)) {{$data->nama_toko}} @endif" class="form-control">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-nama_toko-feedback"></span>
                         </div>
                      </div>
                     <div class="col-12 col-md-6 col-lg-6">
                         <div class="form-group">
                            <label>Alamat</label>
                            <textarea class="form-control" style="height: 90px" name="alamat">@isset($data->alamat) {{$data->alamat}} @endisset</textarea>
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-alamat-feedback"></span>
                         </div>
                      </div>
                      <div class="col-12 col-md-6 col-lg-6">
                         <div class="form-group">
                            <label>Alamat Toko</label>
                            <textarea class="form-control" style="height: 90px" name="alamat_toko">@isset($data->alamat_toko) {{$data->alamat_toko}} @endisset</textarea>
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-alamat_toko-feedback"></span>
                         </div>
                      </div>
-                     <div class="col-12 col-md-6 col-lg-6">
+                     <div class="col-12 col-md-4 col-lg-4">
                         <div class="form-group">
-                            <div class="d-flex justify-content-between">
-                                <label style="white-space: nowrap">Change Password</label>
-                                <span class="invalid-feedback float-right d-block" style="text-align: end">*Tidak Perlu Diisi Bila Password Tidak Diubah</span>
-                            </div>
-                           <input type="text" name="password" id="password" class="form-control">
+                            <label>Kota</label>
+                            <input hidden type="text" id="data_kota" class="form-control" value="@if(isset($data)){{$data->kota}}@endif">
+                            <select class="form-control select2" name="kota" onchange="change_kota()" id="kota">
+                                <option selected disabled>- Pilih -</option>
+                            </select>
+                            <span class="d-flex text-danger invalid-feedback" id="invalid-kota-feedback"></span>
                         </div>
-                     </div>
-                    <div class="col-md-6 col-lg-6"></div>
+                    </div>
+                    <div class="col-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label>Kecamatan</label>
+                            <input hidden type="text" id="data_kecamatan" class="form-control" value="@if(isset($data)){{$data->kecamatan}}@endif">
+                            <select class="form-control select2" name="kecamatan" onchange="change_kecamatan()" id="kecamatan" @if(!isset($data->kecamatan)){{ 'disabled' }}@endif>
+                                <option selected disabled>- Pilih -</option>
+                            </select>
+                            <span class="d-flex text-danger invalid-feedback" id="invalid-kecamatan-feedback"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label>Kelurahan</label>
+                            <input hidden type="text" id="data_kelurahan" class="form-control" value="@if(isset($data)){{$data->kelurahan}}@endif">
+                            <select class="form-control select2" name="kelurahan" id="kelurahan" @if(!isset($data->kelurahan)){{ 'disabled' }}@endif>
+                                <option selected disabled>- Pilih -</option>
+                            </select>
+                            <span class="d-flex text-danger invalid-feedback" id="invalid-kelurahan-feedback"></span>
+                        </div>
+                    </div>
                     <div class="col-12 col-md-5 col-lg-5">
                         <div class="form-group">
                            <label>Latitude</label>
@@ -136,12 +175,14 @@
                         <div class="form-group">
                            <label>Latitude</label>
                            <input type="text" name="lat" id="lat" value="@if(isset($data)) {{$data->lat}} @endif" class="form-control" readonly>
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-lat-feedback"></span>
                         </div>
                      </div>
                      <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
                            <label>Longitude</label>
                            <input type="text" name="lng" id="lng" value="@if(isset($data)) {{$data->lng}} @endif" class="form-control" readonly>
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-lng-feedback"></span>
                         </div>
                      </div>
                   </div>
@@ -310,7 +351,7 @@
          }
       })
 
-      get_region();
+      get_kota();
       var latitude         = $('#lat').val();
       var longitude        = $('#lng').val();
       var nama_perusahaan  = $('#nama').val();
@@ -350,21 +391,23 @@
      map.flyTo(new L.LatLng(latitude, longitude), 13);
    });
 
-   function get_region(){
+    function get_kota(){
+       $("#modal_loading").modal('show');
         $.ajax({
-            url : "/admin/master/get-provinsi-kota",
+            url : "/api/kabkota/53",
             type: "GET",
             dataType: "JSON",
             success: function(response){
-                var data_provinsi = $("#data_provinsi").val();
-                $("#provinsi").empty();
-                $("#provinsi").append(`<option selected disabled>- Pilih -</option>`);
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                var data_kota = $("#data_kota").val();
+                $("#kota").empty();
+                $("#kota").append(`<option selected disabled>- Pilih -</option>`);
                 for (var i = 0; i < response.length; i++) {
-                    if(data_provinsi == response[i]){
-                        $("#provinsi").append(`<option value="${response[i]}" selected>${response[i]}</option>`);
-                        $("#provinsi").trigger("change");
+                    if(data_kota == response[i]['id']){
+                        $("#kota").append(`<option value="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
+                        change_kota();
                     }else{
-                        $("#provinsi").append(`<option value="${response[i]}">${response[i]}</option>`);
+                        $("#kota").append(`<option value="${response[i]['id']}">${response[i]['nama']}</option>`);
                     }
                 }
             },error: function (jqXHR, textStatus, errorThrown){
@@ -373,24 +416,55 @@
         });
     }
 
-    function get_kota(){
+    function change_kota(){
+       $("#modal_loading").modal('show');
         $.ajax({
-            url : "/admin/master/get-provinsi-kota?p=" + $("#provinsi").val(),
+            url : "/api/kecamatan/" + $('#kota').val(),
             type: "GET",
             dataType: "JSON",
             success: function(response){
-                var data_kota = $("#data_kota").val();
-                $("#kota").empty();
-                $("#kota").append(`<option selected disabled>- Pilih -</option>`);
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                var data_kecamatan = $("#data_kecamatan").val();
+                $("#kecamatan").empty();
+                $('#kecamatan').append('<option selected disabled>- Pilih -</option>');
+                $('#kecamatan').prop('disabled', false);
                 for (var i = 0; i < response.length; i++) {
-                    if(data_kota == response[i]){
-                        $("#kota").append(`<option value="${response[i]}" selected>${response[i]}</option>`);
-                    }else{
-                        $("#kota").append(`<option value="${response[i]}">${response[i]}</option>`);
-                    }
+                  if(data_kecamatan == response[i]['id']){
+                     $("#kecamatan").append(`<option value="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
+                     change_kecamatan();
+                  } else {
+                     $("#kecamatan").append(`<option value="${response[i]['id']}">${response[i]['nama']}</option>`);
+                  }
                 }
             },error: function (jqXHR, textStatus, errorThrown){
-                swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                 Swal.fire('Oops!','Terjadi kesalahan segera hubungi tim IT (' + errorThrown + ')','error');
+            }
+        });
+    }
+
+    function change_kecamatan(){
+       $("#modal_loading").modal('show');
+        $.ajax({
+            url : "/api/kelurahan/" + $('#kecamatan').val(),
+            type: "GET",
+            dataType: "JSON",
+            success: function(response){
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                var data_kelurahan = $("#data_kelurahan").val();
+                $("#kelurahan").empty();
+                $('#kelurahan').append('<option selected disabled>- Pilih -</option>');
+                $('#kelurahan').prop('disabled', false);
+                for (var i = 0; i < response.length; i++) {
+                if(data_kelurahan == response[i]['id']){
+                  $("#kelurahan").append(`<option value="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
+                } else {
+                  $("#kelurahan").append(`<option value="${response[i]['id']}">${response[i]['nama']}</option>`);
+                }
+                }
+            },error: function (jqXHR, textStatus, errorThrown){
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                 Swal.fire('Oops!','Terjadi kesalahan segera hubungi tim IT (' + errorThrown + ')','error');
             }
         });
     }

@@ -25,9 +25,11 @@ Route::middleware(['cors','cek_login'])->group(function () {
 
         Route::prefix('pelanggan')->group(function () {
             Route::get('/','BackOffice\PelangganController@index');
+            Route::get('/add','BackOffice\PelangganController@add');
             Route::get('/detail/{id}','BackOffice\PelangganController@detail');
             Route::get('/datatables','BackOffice\PelangganController@datatables');
             Route::post('/store-update','BackOffice\PelangganController@store_update');
+            Route::put('/store-update','BackOffice\PelangganController@store_update');
             Route::delete('/delete/{id}','BackOffice\PelangganController@delete');
         });
     });

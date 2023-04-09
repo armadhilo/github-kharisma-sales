@@ -43,18 +43,19 @@ class PelangganController extends Controller
             ];
         }
 
-        return $request;
-
         if($request->type != 'update'){
-            // $request->request->add(['password' =>Hash::make($request->password)]);
             $request->request->add(['type' => 2]);
         }
+
+        $request->request->add(['password' =>Hash::make($request->password)]);
+
 
         User::updateOrCreate(['id' => $request->id],$request->all() );
 
         return [
-            'status' => 200, // SUCCESS
-            'message' => 'Data berhasil disimpan'
+            'status' => 201, // SUCCESS
+            'message' => 'Data berhasil disimpan',
+            'link' => '/admin/pelanggan',
         ];
     }
 
