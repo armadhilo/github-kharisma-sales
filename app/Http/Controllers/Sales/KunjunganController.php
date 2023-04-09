@@ -43,7 +43,7 @@ class KunjunganController extends Controller
         }
 
         $message = "You has been $status on ".Carbon::now()->format('H:i')." successfully";
-        return ApiFormatter::success(200, $message);
+        return ApiFormatter::success(200, $message, $kunjungan);
     }
 
     public function check_today(){
