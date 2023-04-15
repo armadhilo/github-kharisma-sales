@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 
 use App\Helpers\ApiFormatter;
+use App\Models\User;
 use App\Models\SalesAttendance;
 
 class AttendanceController extends Controller
@@ -48,6 +49,7 @@ class AttendanceController extends Controller
         }
 
         $message = "Data attendance retrieved successfully";
+        $sales_attendance['user_login'] = auth('api')->user();
         return ApiFormatter::success(200, $message, $sales_attendance);
     }
 

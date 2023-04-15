@@ -9,6 +9,7 @@ use App\Http\Requests\KunjunganRequest;
 
 use Carbon\Carbon;
 
+use App\Models\User;
 use App\Models\Kunjungan;
 
 class KunjunganController extends Controller
@@ -55,6 +56,7 @@ class KunjunganController extends Controller
         }
 
         $message = "Data kunjungan retrieved successfully";
+        $sales_attendance['user_login'] = auth('api')->user();
         return ApiFormatter::success(200, $message, $kunjungan);
     }
 
