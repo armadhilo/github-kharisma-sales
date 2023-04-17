@@ -38,11 +38,13 @@
         ?>
         <ul class="sidebar-menu">
           <li class="menu-header">Dashboard</li>
-          <li class="nav-item dropdown @if($url_menu == "dashboard") active @endif"><a href="/dashboard" class="nav-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
-          <li class="menu-header">Sales</li>
-          <li class="nav-item dropdown @if($url_menu == "sales") active @endif"><a href="/admin/sales" class="nav-link"><i class="fas fa-home"></i><span>Sales</span></a></li>
-          <li class="menu-header">Pelanggan</li>
-          <li class="nav-item dropdown @if($url_menu == "pelanggan") active @endif"><a href="/admin/pelanggan" class="nav-link"><i class="fas fa-home"></i><span>Pelanggan</span></a></li>
+          <li class="nav-item dropdown @if($url_menu == "dashboard") active @endif"><a href="admin/dashboard" class="nav-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+          <li class="menu-header">Data Master</li>
+          <li class="nav-item dropdown @if($url_menu == "sales") active @endif"><a href="/admin/sales" class="nav-link"><i class="fas fa-user-cog"></i><span>Master Sales</span></a></li>
+          <li class="nav-item dropdown @if($url_menu == "pelanggan") active @endif"><a href="/admin/pelanggan" class="nav-link"><i class="fas fa-user"></i><span>Master Pelanggan</span></a></li>
+          <li class="menu-header">Apps</li>
+          <li class="nav-item dropdown @if($url_menu == "kode-voucher") active @endif"><a href="/admin/kode-voucher" class="nav-link"><i class="fas fa-tag"></i><span>Kode Voucher</span></a></li>
+          <li class="nav-item dropdown @if($url_menu == "jasa-pengiriman") active @endif"><a href="/admin/jasa-pengiriman" class="nav-link"><i class="fas fa-truck"></i><span>Jasa Pengiriman</span></a></li>
         </ul>
 
     </aside>

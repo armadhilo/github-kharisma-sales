@@ -32,6 +32,25 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::put('/store-update','BackOffice\PelangganController@store_update');
             Route::delete('/delete/{id}','BackOffice\PelangganController@delete');
         });
+
+        Route::prefix('kode-voucher')->group(function () {
+            Route::get('/','BackOffice\KodeVoucherController@index');
+            Route::get('/detail/{id}','BackOffice\KodeVoucherController@detail');
+            Route::get('/datatables','BackOffice\KodeVoucherController@datatables');
+            Route::post('/store-update','BackOffice\KodeVoucherController@store_update');
+            Route::delete('/delete/{id}','BackOffice\KodeVoucherController@delete');
+
+            Route::get('/datatables-history','BackOffice\KodeVoucherController@datatables_history');
+        });
+
+        Route::prefix('jasa-pengiriman')->group(function () {
+            Route::get('/','BackOffice\JasaPengirimanController@index');
+            Route::get('/datatables','BackOffice\JasaPengirimanController@datatables');
+
+            Route::get('/action/{id}/{status}','BackOffice\JasaPengirimanController@action');
+
+            Route::post('/store-update', 'BackOffice\JasaPengirimanController@store_update');
+        });
     });
 });
 
