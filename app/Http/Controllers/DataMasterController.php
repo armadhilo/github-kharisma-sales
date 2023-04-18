@@ -35,14 +35,24 @@ class DataMasterCOntroller extends Controller
         $uid = $common->authenticate($db, $username, $password, []);
 
         $models = ripcord::client("$url/xmlrpc/2/object");
-        $models->execute_kw($db, $uid, $password,
-            'res.partner', 'check_access_rights',
-            array('read'), array('raise_exception' => false));
+        // $models->execute_kw($db, $uid, $password,
+        //     'res.partner', 'check_access_rights',
+        //     array('read'), array('raise_exception' => false));
+
+        # search -> akan return ID
+        // $models->execute_kw($db, $uid, $password,
+        // 'product.product', 'search', [[['write_uid', '=', 1]]]);
+
+        #read -> akan return DETAIL
+        // return $models->execute_kw($db, $uid, $password,
+        // 'product.product', 'read', [[36228]]);
+
+        // #read -> akan return DETAIL
+        // return $models->execute_kw($db, $uid, $password,
+        // 'product.product', 'search_read', [[['write_uid', '=', 1]]], ['fields' => ['default_code','active','product_tmpl_id'], 'limit'=> 5]);
 
         return $models->execute_kw($db, $uid, $password,
-        'res.partner', 'search', array(
-            array(array('is_company', '=', true),
-                  array('customer', '=', true))));
+        'product.product', 'search_read', [[['pricelist_id', '=', '7']]], ['limit'=> 1]);
     }
 
     #============== PROV KOTA ===================#
@@ -72,29 +82,69 @@ class DataMasterCOntroller extends Controller
         return $json;
     }
 
-    // public function getProvinsiKota(Request $request){
-    //     $path = file_get_contents(public_path('json/prov_kota.json'));
-    //     $json = json_decode($path, true);
-        
-    //     $data = [];
-    //     if($request->has('p') && $request->p != 'null'){
-    //         for($i = 0; $i < count($json); $i++){
-    //             if(str_contains($json[$i]['provinsi'], $request->p)){
+    #============= RAJA ONGKIR ====================#
 
-    //                 $kota = $json[$i]['kota'];
+    public function api_get_province_raja_ongkir(){
+        $curl = curl_init();
 
-    //                 return $kota;
-    //                 break;
-    //             }
-    //         }
-    //     }else{
-    //         for($i = 0; $i < count($json); $i++){
-    //             array_push($data, $json[$i]['provinsi']);
-    //         }
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://pro.rajaongkir.com/api/province",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => array(
+            "key:7021b582cede2d3c37dbe64f18d6c29b"
+        ),
+        ));
 
-    //         return $data;
-    //     }
-    // }
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            return ApiFormatter::error(400, $err);
+        }
+
+        $response = json_decode($response, true);
+        $response = collect($response['rajaongkir']['results']);
+
+        return ApiFormatter::success(200, 'Province loaded successfully', $response);
+    }
+
+    public function api_get_city_by_province_raja_ongkir($province_id){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://pro.rajaongkir.com/api/city?province=" . $province_id,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => array(
+            "key:7021b582cede2d3c37dbe64f18d6c29b"
+        ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+        if ($err) {
+            return ApiFormatter::error(400, $err);
+        }
+
+        $response = json_decode($response, true);
+        $response = collect($response['rajaongkir']['results']);
+
+        return ApiFormatter::success(200, 'City loaded successfully', $response);
+    }
+
 
     #==============================================#
 
