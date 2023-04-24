@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/try', 'DataMasterController@try_code');
-
 Route::group(['prefix' => 'sales'], function(){
     Route::post('/login', 'Sales\AuthController@login');
 

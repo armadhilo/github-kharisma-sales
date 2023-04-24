@@ -22,3 +22,9 @@ Route::get('/kelurahan/{kecamatan_id}', 'DataMasterController@getKelurahan');
 Route::get('/provinsi-raja-ongkir', 'DataMasterController@api_get_province_raja_ongkir');
 Route::get('/city-raja-ongkir/{provinsi_id}', 'DataMasterController@api_get_city_raja_ongkir');
 Route::get('/kecamatan-raja-ongkir/{city_id}', 'DataMasterController@api_get_kecamatan_raja_ongkir');
+
+Route::group(['prefix' => 'odoo'], function(){
+    Route::get('/try', 'OdooController@try_code');
+    Route::get('/sync-product', 'OdooController@sync_product');
+    Route::get('/sync-pelanggan', 'OdooController@sync_pelanggan');
+});
