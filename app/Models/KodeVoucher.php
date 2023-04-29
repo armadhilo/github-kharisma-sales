@@ -13,7 +13,8 @@ class KodeVoucher extends Model
 
     protected $table = 'kode_voucher';
     protected $guarded = ['id'];
-    protected $appends = ['deskripsi_bonus', 'user_desc'];
+    protected $hidden = ['user_id', 'status', 'is_claim'];
+    protected $appends = ['deskripsi_bonus', 'user_desc', 'masa_aktif'];
 
     public function scopeActive($query){
         return $query->where(function($q){
@@ -33,6 +34,10 @@ class KodeVoucher extends Model
 
     public function getUserDescAttribute(){
         return $this->user->nama ?? '';
+    }
+
+    public function getMasaAktifAttribute(){
+        return $this->attributes['tanggal_selesai'] != null ? 'Berakhir dalam : ' . \Carbon\Carbon::createFromTimeStamp(strtotime($this->attributes['tanggal_selesai']))->diffInDays(false, now()) . ' hari' : 'Tidak ada expired';
     }
 
     public function user(){
