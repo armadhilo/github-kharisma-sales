@@ -17,13 +17,13 @@ class KodeVoucher extends Model
 
     public function scopeActive($query){
         return $query->where(function($q){
-            $q->where('user_id', auth()->user()->id)->orWhereNull('user_id');
+            $q->where('user_id', auth('api')->user()->id)->orWhereNull('user_id');
         })->where('tanggal_mulai','<=', date('Y-m-d'))->where('tanggal_selesai','>=', date('Y-m-d'))->where(['status' => '1', 'is_claim' => '0']);
     }
 
     public function scopeMustClaim($query){
         return $query->where(function($q){
-            $q->where('user_id', auth()->user()->id)->orWhereNull('user_id');
+            $q->where('user_id', auth('api')->user()->id)->orWhereNull('user_id');
         })->where('tanggal_mulai','<=', date('Y-m-d'))->where('tanggal_selesai','>=', date('Y-m-d'))->where(['status' => '1', 'is_claim' => '1']);
     }
 
@@ -33,10 +33,6 @@ class KodeVoucher extends Model
 
     public function getUserDescAttribute(){
         return $this->user->nama ?? '';
-    }
-
-    public function master_package(){
-        return $this->belongsTo(MasterPackage::class);
     }
 
     public function user(){
