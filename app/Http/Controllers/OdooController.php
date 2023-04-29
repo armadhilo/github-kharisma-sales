@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Kavist\RajaOngkir\Facades\RajaOngkir;
 
+use DB;
 use Storage;
 use DataTables;
 use Carbon\Carbon;
@@ -21,6 +22,7 @@ use App\Models\OdooPricelist;
 use App\Models\User;
 
 use App\Helpers\ApiFormatter;
+use App\Models\OdooProductTag;
 use ripcord;
 
 class OdooController extends Controller
@@ -35,7 +37,7 @@ class OdooController extends Controller
     public function __construct()
     {
         $url = 'http://103.215.177.203:8096';
-        $this->db = 'odoo_kharisma_stationery_test4';
+        $this->db = 'odoo_kharisma_stationery_test5';
         $this->username = "kevin_kevin";
         $this->password = "kevin123";
 
@@ -63,82 +65,129 @@ class OdooController extends Controller
         // return $models->execute_kw($db, $uid, $password,
         // 'product.product', 'search_read', [[['write_uid', '=', 1]]], ['fields' => ['default_code','active','product_tmpl_id'], 'limit'=> 5]);
 
-        // get product pricelist for b2c
-        $pricelist_b2c = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 1]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity'], 'limit'=> 5]);
+        DB::beginTransaction();
 
-        $array_product_tmpl_b2c = [];
-        foreach($pricelist_b2c as $item){
+        try{
 
-            $array_product_tmpl_b2c[] = $item['product_tmpl_id'][0];
+            #======PRODUCT TAG==========#
+            $array_product_tag_id = [];
+            $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
+            'product.tag', 'search_read', [[['active', '=', True]]], ['fields' => ['id','name']]);
 
-            OdooPricelist::updateOrCreate([
-                'product_tmpl_id' => $item['product_tmpl_id'][0],
-            ], [
-                'product_tmpl_id' => $item['product_tmpl_id'][0],
-                'price' => $item['fixed_price'],
-                'min_quantity' => $item['min_quantity'],
-                'type' => 'b2c',
-            ]);
+            foreach($product_tag as $item){
+                $array_product_tag_id[] = $item['id'];
+
+                OdooProductTag::updateOrCreate([
+                    'product_tag_id' => $item['id']
+                ],[
+                    'product_tag_id' => $item['id'],
+                    'name' => $item['name']
+                ]);
+            }
+
+            #=========PRODUCT===========#
+
+            $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
+            'product.product', 'search_read', [[]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available'], 'limit'=> 50]);
+
+            $array_product_tmpl_product = [];
+            foreach($product as $item){
+
+                $array_product_tmpl_product[] = $item['product_tmpl_id'][0];
+
+                OdooProduct::updateOrCreate([
+                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                ],[
+                    'product_id' => $item['id'],
+                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                    'sku' => $item['barcode'],
+                    'product_name' => $item['name'],
+                    'image' => $item['image_medium'] == false ? null : $item['image_medium'],
+                    'image_small' => $item['image_small'] == false ? null : $item['image_small'],
+                    'unit' => $item['uom_id'][1],
+                    'weight' => $item['weight'],
+                    'stock' => $item['qty_available'],
+                ]);
+            }
+
+            // get product pricelist for b2c
+            $pricelist_b2c = $this->models->execute_kw($this->db, $this->uid, $this->password,
+            'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 1], ['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity'], 'limit'=> 50]);
+
+            $array_product_tmpl_b2c = [];
+            foreach($pricelist_b2c as $item){
+
+                $array_product_tmpl_b2c[] = $item['product_tmpl_id'][0];
+
+                OdooPricelist::updateOrCreate([
+                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                ], [
+                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                    'price' => $item['fixed_price'],
+                    'min_quantity' => $item['min_quantity'],
+                    'type' => 'b2c',
+                ]);
+            }
+
+            // get product pricelist for b2b
+            $pricelist_b2c = $this->models->execute_kw($this->db, $this->uid, $this->password,
+            'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 7], ['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity'], 'limit'=> 50]);
+
+            $array_product_tmpl_b2b = [];
+            foreach($pricelist_b2c as $item){
+                $array_product_tmpl_b2b[] = $item['product_tmpl_id'][0];
+
+                OdooPricelist::updateOrCreate([
+                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                ], [
+                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                    'price' => $item['fixed_price'],
+                    'min_quantity' => $item['min_quantity'],
+                    'type' => 'b2b',
+                ]);
+            }
+
+            //relational product and product_tag
+            $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
+            'product.template', 'search_read', [[['id', '=', $array_product_tmpl_product]]], ['fields' => ['id','tag_ids'], 'limit'=> 50]);
+            foreach($product_tag as $item){
+                OdooProduct::where('product_tmpl_id', $item['id'])->update(['product_tag_id' => $item['tag_ids'][0]]);
+            }
+
+            // delete product_tag
+            OdooProductTag::whereNotIn('product_tag_id', $array_product_tag_id)->delete();
+
+            // delete price product for b2b dan b2c
+            OdooPricelist::where(['type' => 'b2c'])->whereNotIn('product_tmpl_id', $array_product_tmpl_b2c)->delete();
+            OdooPricelist::where(['type' => 'b2b'])->whereNotIn('product_tmpl_id', $array_product_tmpl_b2b)->delete();
+
+            // delete product
+            OdooProduct::whereNotIn('product_tmpl_id', $array_product_tmpl_product)->delete();
+
+            DB::commit();
+
+            return [
+                'status' => 200, // SUCCESS
+                'message' => 'Export Product Odoo Successfully'
+            ];
         }
 
-        // get product pricelist for b2b
-        $pricelist_b2c = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 7]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity'], 'limit'=> 5]);
+        catch(\Exception $e){
 
-        $array_product_tmpl_b2b = [];
-        foreach($pricelist_b2c as $item){
+            DB::rollback();
 
-        $array_product_tmpl_b2b[] = $item['product_tmpl_id'][0];
+            return [
+                'status' 	=> 300, // GAGAL
+                'message'       => (env('APP_DEBUG', 'true') == 'true')? $e->getMessage() : 'Operation error'
+            ];
 
-        OdooPricelist::updateOrCreate([
-            'product_tmpl_id' => $item['product_tmpl_id'][0],
-        ], [
-            'product_tmpl_id' => $item['product_tmpl_id'][0],
-            'price' => $item['fixed_price'],
-            'min_quantity' => $item['min_quantity'],
-            'type' => 'b2b',
-        ]);
         }
 
-        $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'product.product', 'search_read', [[]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available'], 'limit'=> 5]);
-
-        $array_product_tmpl_product = [];
-        foreach($product as $item){
-
-            // if(!empty($item['image_medium'])){
-            //     return '<img src="data:image/jpeg;base64,'.base64_encode($item['image_medium']) .'" />';
-            // }
-
-            $array_product_tmpl_product = $item['product_tmpl_id'][0];
-
-            OdooProduct::updateOrCreate([
-                'product_tmpl_id' => $item['product_tmpl_id'][0],
-            ],[
-                'product_id' => $item['id'],
-                'product_tmpl_id' => $item['product_tmpl_id'][0],
-                'sku' => $item['barcode'],
-                'product_name' => $item['name'],
-                'image' => $item['image_medium'] == false ? null : $item['image_medium'],
-                'image_small' => $item['image_small'] == false ? null : $item['image_small'],
-                'unit' => $item['uom_id'][1],
-                'weight' => $item['weight'],
-                'stock' => $item['qty_available'],
-            ]);
-        }
-
-        // delete price product for b2b dan b2c
-        OdooPricelist::where(['type' => 'b2c'])->whereNotIn('product_tmpl_id', $array_product_tmpl_b2c)->delete();
-        OdooPricelist::where(['type' => 'b2b'])->whereNotIn('product_tmpl_id', $array_product_tmpl_b2b)->delete();
-
-        // delete product
-        OdooProduct::whereNotIn('product_tmpl_id', $array_product_tmpl_product)->delete();
     }
 
     public function sync_pelanggan(){
         $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 5]);
+        'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 50]);
 
         foreach($pelanggan as $item){
             $user = User::updateOrCreate([
