@@ -37,7 +37,11 @@ class KodeVoucher extends Model
     }
 
     public function getMasaAktifAttribute(){
-        return $this->attributes['tanggal_selesai'] != null ? 'Berakhir dalam : ' . \Carbon\Carbon::createFromTimeStamp(strtotime($this->attributes['tanggal_selesai']))->diffInDays(false, now()) . ' hari' : 'Tidak ada expired';
+        if(\Carbon\Carbon::parse($this->attributes['tanggal_selesai']) > \Carbon\Carbon::now()){
+            return $this->attributes['tanggal_selesai'] != null ? 'Berakhir dalam : ' . \Carbon\Carbon::createFromTimeStamp(strtotime($this->attributes['tanggal_selesai']))->diffInDays(false, now()) . ' hari' : 'Tidak ada expired';
+        }else{
+            return 'Masa aktif sudah berakhir';
+        }
     }
 
     public function user(){
