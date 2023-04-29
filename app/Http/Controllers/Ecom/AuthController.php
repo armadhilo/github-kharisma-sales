@@ -26,7 +26,7 @@ class AuthController extends Controller
             $pelanggan = User::where(['keylog' => $request->keylog, 'type' => '2'])->first();
 
             if(empty($sales) || empty($pelanggan)){
-                $message = 'These credentials do not match our records.';
+                $message = 'Data anda tidak ditemukan pada sistem kami.';
                 return ApiFormatter::error(400, $message);
             }
 
@@ -52,6 +52,11 @@ class AuthController extends Controller
 
         if (Auth::check()) {
 
+            if(empty(auth()->user()->keylog)){
+                $message = 'Account anda tidak aktif silahkan hubungi sales kami.';
+                return ApiFormatter::error(400, $message);
+            }
+
             $user = Auth::user();
             $token = $user->createToken($user->name)->accessToken;
 
@@ -65,7 +70,7 @@ class AuthController extends Controller
             return ApiFormatter::success(200, $message, $data);
         }else{
 
-            $message = 'These credentials do not match our records.';
+            $message = 'Data anda tidak ditemukan pada sistem kami.';
             return ApiFormatter::error(400, $message);
         }
     }

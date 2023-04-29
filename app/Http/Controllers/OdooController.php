@@ -205,10 +205,9 @@ class OdooController extends Controller
 
             if($user->wasRecentlyCreated){
                 User::where('id', $user->id)->update([
-                    'password' => Hash::make('pelanggan'),
-                    'keylog' => Str::random(40)
+                    'password' => Hash::make('pelanggan')
                 ]);
-             }
+            }
         }
     }
 }
