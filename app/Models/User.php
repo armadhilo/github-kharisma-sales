@@ -28,7 +28,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'keylog'
+        'keylog',
     ];
 
     /**
@@ -47,6 +47,16 @@ class User extends Authenticatable
             return 'pelanggan';
         }else{
             return 'superadmin';
+        }
+    }
+
+    public function setTypeAttribute(){
+        if($this->attributes['type'] == 'sales'){
+            return '1';
+        }elseif($this->attributes['type'] == 'pelanggan'){
+            return '2';
+        }else{
+            return '0';
         }
     }
 

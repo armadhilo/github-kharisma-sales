@@ -32,6 +32,11 @@ Route::group(['prefix' => 'ecom'], function(){
             Route::get('/setting-alamat-utama/{id}', 'Ecom\AlamatPengirimanController@setting_alamat_utama');
         });
 
+        Route::group(['prefix' => 'profile'], function(){
+            Route::get('/', 'Ecom\UserController@detail');
+            Route::put('/', 'Ecom\UserController@update');
+        });
+
         Route::group(['prefix' => 'kode-voucher'], function(){
             Route::get('/', 'Ecom\KodeVoucherController@index');
             Route::get('/{id}', 'Ecom\KodeVoucherController@detail');
