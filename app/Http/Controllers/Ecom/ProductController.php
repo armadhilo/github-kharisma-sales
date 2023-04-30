@@ -16,7 +16,9 @@ use App\Models\User;
 class ProductController extends Controller
 {
     public function index(){
-        $product = OdooProduct::with('product_tag', 'pricelist')->has('pricelist')->where('stock', '>', '0')->get();
+        $product = OdooProduct::with('product_tag', 'pricelist')->whereHas('pricelist', function($query){
+            $query->where('type', 'b2b');
+        })->where('stock', '>', '0')->get();
 
         $message = ' Data product berhasil ditampilkan';
         return ApiFormatter::success(200, $message, $product);
@@ -24,7 +26,9 @@ class ProductController extends Controller
 
     public function detail($slug){
 
-        $product = OdooProduct::with('product_tag', 'pricelist')->has('pricelist')->where('product_name_slug', $slug)->where('stock', '>', '0')->first();
+        $product = OdooProduct::with('product_tag', 'pricelist')->whereHas('pricelist', function($query){
+            $query->where('type', 'b2b');
+        })->where('product_name_slug', $slug)->where('stock', '>', '0')->first();
         if(empty($product)){
             $message = 'Data product tidak ditemukan';
             return ApiFormatter::error(404, $message);
