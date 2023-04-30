@@ -102,6 +102,7 @@ class OdooController extends Controller
                     'product_tmpl_id' => $item['product_tmpl_id'][0],
                     'sku' => $item['barcode'],
                     'product_name' => $item['name'],
+                    'product_name_slug' => Str::slug($item['name']),
                     'image' => $item['image_medium'] == false ? null : $item['image_medium'],
                     'image_small' => $item['image_small'] == false ? null : $item['image_small'],
                     'unit' => $item['uom_id'][1],

@@ -12,4 +12,13 @@ class OdooProduct extends Model
     protected $table = 'odoo_product';
     protected $guarded = ['id'];
     protected $appends = [];
+    protected $hidden = ['created_at', 'updated_at'];
+
+    public function pricelist(){
+        return $this->hasMany(OdooPricelist::class, 'product_tmpl_id', 'product_tmpl_id');
+    }
+
+    public function product_tag(){
+        return $this->belongsTo(OdooProductTag::class, 'product_tag_id', 'product_tag_id');
+    }
 }
