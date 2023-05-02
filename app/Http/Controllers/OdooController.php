@@ -88,7 +88,7 @@ class OdooController extends Controller
             #=========PRODUCT===========#
 
             $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'product.product', 'search_read', [[]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available'], 'limit'=> 50]);
+            'product.product', 'search_read', [[]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available'], 'limit'=> 50]);
 
             $array_product_tmpl_product = [];
             foreach($product as $item){
@@ -103,7 +103,7 @@ class OdooController extends Controller
                     'sku' => $item['barcode'],
                     'product_name' => $item['name'],
                     'product_name_slug' => Str::slug($item['name']),
-                    'image' => $item['image_medium'] == false ? null : $item['image_medium'],
+                    'image' => $item['image'] == false ? null : $item['image'],
                     'image_small' => $item['image_small'] == false ? null : $item['image_small'],
                     'unit' => $item['uom_id'][1],
                     'weight' => $item['weight'],
