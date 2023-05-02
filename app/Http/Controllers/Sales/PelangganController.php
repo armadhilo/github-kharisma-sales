@@ -20,17 +20,24 @@ class PelangganController extends Controller
 
         #=========PARAMETER=========#
         #pagination -> 1 : active | 0 : inactive
+        #filter
+            # status_pelanggan -> active | all [default all]
 
         $pelanggan = User::where(['type' => 2])
             ->where(function($query) use ($request){
                 $query->orWhere('nama', 'LIKE', "%$request->search%")
                 ->orWhere('nama_toko', 'LIKE', "%$request->search%")
+                ->orWhere('email', 'LIKE', "%$request->search%")
                 ->orWhere('alamat_toko', 'LIKE', "%$request->search%")
                 ->orWhere('kota', 'LIKE', "%$request->search%")
                 ->orWhere('kecamatan', 'LIKE', "%$request->search%")
                 ->orWhere('kelurahan', 'LIKE', "%$request->search%");
             })
             ->get();
+
+        if($request->has('status_pelanggan') && $request->status_pelanggan == 'active'){
+            $pelanggan = $pelanggan->whereNotNull('keylog')->all();
+        }
 
         if(!count($pelanggan)){
             $message = 'User not found';
@@ -55,7 +62,7 @@ class PelangganController extends Controller
     public function store(PelangganRequest $request){
 
         $request->merge(['password' => Hash::make($request->password) ]);
-        $request->merge(['hash_pelanggan' => Str::random(40) ]);
+        $request->merge(['keylog' => Str::random(40) ]);
 
         User::create($request->all());
 
