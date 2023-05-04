@@ -17,12 +17,22 @@ class KunjunganController extends Controller
 
     public function store(KunjunganRequest $request){
 
-        $kunjungan = Kunjungan::where(['sales_id' => auth('api')->user()->id, 'pelanggan_id' => $request->pelanggan_id])->whereDate('date', Carbon::now())->first();
-        $status = 'Start Kunjungan';
+        //check apakah ada kunjungan yang masih aktif
+        $kunjungan = Kunjungan::where(['sales_id' => auth('api')->user()->id])->whereNull('total_time')->first();
+        if(!empty($kunjungan)){
 
+            if($kunjungan->pelanggan_id != $request->pelanggan_id){
+
+                $message = 'Masih terdapat toko yang sedang anda visit silahkan selesaikan dahulu sebelum memulai kunjungan berikutnya';
+                return ApiFormatter::error(400, $message);
+            }
+        }
+
+        $kunjungan = Kunjungan::with('pelanggan')->where(['sales_id' => auth('api')->user()->id, 'pelanggan_id' => $request->pelanggan_id])->whereDate('date', Carbon::now())->first();
+        $status = 'Start Kunjungan';
         if(empty($kunjungan)){
 
-            Kunjungan::create([
+            $kunjungan = Kunjungan::create([
                 'sales_id' => auth('api')->user()->id,
                 'pelanggan_id' => $request->pelanggan_id,
                 'date' => Carbon::now(),
@@ -42,6 +52,8 @@ class KunjunganController extends Controller
             $kunjungan->total_time = $diff;
             $kunjungan->save();
         }
+
+        $kunjungan['key_login'] = $kunjungan->pelanggan->keylog;
 
         $message = "You has been $status on ".Carbon::now()->format('H:i')." successfully";
         return ApiFormatter::success(200, $message, $kunjungan);
