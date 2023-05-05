@@ -88,7 +88,7 @@ class OdooController extends Controller
             #=========PRODUCT===========#
 
             $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'product.product', 'search_read', [[]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available'], 'limit'=> 50]);
+            'product.product', 'search_read', [[]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available'], 'limit'=> 50]);
 
             $array_product_tmpl_product = [];
             foreach($product as $item){

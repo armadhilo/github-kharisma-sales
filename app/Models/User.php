@@ -67,4 +67,8 @@ class User extends Authenticatable
     public function getSalesAttribute(){
         return User::where('sales_id', session('sales_id'))->first();
     }
+
+    public function scopePelangganActive($query){
+        return $query->where(['type' => 2])->whereNotNull('keylog');
+    }
 }
