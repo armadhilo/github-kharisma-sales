@@ -50,13 +50,13 @@ class User extends Authenticatable
         }
     }
 
-    public function setTypeAttribute(){
-        if($this->attributes['type'] == 'sales'){
-            return '1';
-        }elseif($this->attributes['type'] == 'pelanggan'){
-            return '2';
+    public function setTypeAttribute($value){
+        if($value == 'sales'){
+            $this->attributes['type'] = 1;
+        }elseif($value == 'pelanggan'){
+            $this->attributes['type'] = 2;
         }else{
-            return '0';
+            $this->attributes['type'] = 0;
         }
     }
 

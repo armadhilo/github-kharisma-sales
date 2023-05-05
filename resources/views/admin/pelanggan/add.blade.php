@@ -41,11 +41,16 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
             <div class="card-header">
+               @if(!isset($data))
                <h4>Tambah Data Pelanggan</h4>
+               @else
+               <h4>Edit Data Pelanggan</h4>
+               @endif
             </div>
             <form autocomplete="off" id="form_submit_request" action="/admin/pelanggan/store-update" method="POST">
                 @if(isset($data))
                 @method('PUT')
+                <input type="hidden" value="update" name="method">
                 @endif
                <div class="card-body pt-0">
                   <div class="row">
@@ -78,7 +83,7 @@
                                  <label style="white-space: nowrap">Change Password</label>
                                  <span class="invalid-feedback float-right d-block" style="text-align: end">*Tidak Perlu Diisi Bila Password Tidak Diubah</span>
                            </div>
-                           <input type="text" name="password" id="password" class="form-control">
+                           <input type="password" name="password" id="password" class="form-control">
                            <span class="d-flex text-danger invalid-feedback" id="invalid-password-feedback"></span>
                         </div>
                      </div>
@@ -86,14 +91,14 @@
                      <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
                            <label style="white-space: nowrap">Password</label>
-                           <input type="text" name="password" id="password" class="form-control">
+                           <input type="password" name="password" id="password" class="form-control">
                            <span class="d-flex text-danger invalid-feedback" id="invalid-password-feedback"></span>
                         </div>
                      </div>
                      <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
                            <label style="white-space: nowrap">Retype Password</label>
-                           <input type="text" name="retype_password" id="retype_password" class="form-control">
+                           <input type="password" name="retype_password" id="retype_password" class="form-control">
                            <span class="d-flex text-danger invalid-feedback" id="invalid-retype_password-feedback"></span>
                         </div>
                      </div>
@@ -174,14 +179,14 @@
                      <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
                            <label>Latitude</label>
-                           <input type="text" name="lat" id="lat" value="@if(isset($data)) {{$data->lat}} @endif" class="form-control" readonly>
+                           <input type="text" name="lat" id="lat" value="@if(isset($data)){{$data->lat}}@endif" class="form-control" readonly>
                            <span class="d-flex text-danger invalid-feedback" id="invalid-lat-feedback"></span>
                         </div>
                      </div>
                      <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
                            <label>Longitude</label>
-                           <input type="text" name="lng" id="lng" value="@if(isset($data)) {{$data->lng}} @endif" class="form-control" readonly>
+                           <input type="text" name="lng" id="lng" value="@if(isset($data)){{$data->lng}}@endif" class="form-control" readonly>
                            <span class="d-flex text-danger invalid-feedback" id="invalid-lng-feedback"></span>
                         </div>
                      </div>
@@ -189,6 +194,9 @@
                </div>
                @if(Auth::user()->role != 4)
                <div class="card-footer text-right">
+                  @if(!isset($data))
+                  <button type="button" onClick="history.go(-1); return false;" class="btn btn-secondary mr-2">Back</button>
+                  @endif
                   <button type="submit" class="btn btn-success"><i class="fa fa-save m-1"></i> Save</button>
                </div>
                @endif
@@ -214,45 +222,45 @@
    }
   
    var basemaps= {
-            "Google Satelite":L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
-            subdomains:['mt0','mt1','mt2','mt3'],
-            attribution:'Map data &copy; Google | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>'
-            }),
-            "Esri World Dark":L.tileLayer('https://server.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>',
-            }),
-            "OSM":L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            }),
-            "Esri World Gray":L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>',
-            maxZoom: 16
-            }),
-            "Google Street":L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
-            maxZoom: 20,
-            subdomains:['mt0','mt1','mt2','mt3'],
-            attribution:'Map data &copy; Google | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>'
-            }),
-            "Google Hybrid":L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
-            maxZoom: 20,
-            subdomains:['mt0','mt1','mt2','mt3'],
-            attribution:'Map data &copy; Google | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>'
-            }),
-            "Google Traffic":L.tileLayer('https://{s}.google.com/vt/lyrs=m@221097413,traffic&x={x}&y={y}&z={z}', {
-            maxZoom: 20,
-            min5oom: 2,
-            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-            attribution:'Map data &copy; Google | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>'
-            }),
-            "Google Terrain":L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',{
-            maxZoom: 20,
-            subdomains:['mt0','mt1','mt2','mt3'],
-            attribution:'Map data &copy; Google | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>'
-            }),
-            "CYL" : L.tileLayer('https://dev.{s}.tile.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
-            maxZoom: 20,
-            attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            })
+      "Google Satelite":L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+      subdomains:['mt0','mt1','mt2','mt3'],
+      attribution:'Map data &copy; Google | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>'
+      }),
+      "Esri World Dark":L.tileLayer('https://server.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>',
+      }),
+      "OSM":L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      }),
+      "Esri World Gray":L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>',
+      maxZoom: 16
+      }),
+      "Google Street":L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+      maxZoom: 20,
+      subdomains:['mt0','mt1','mt2','mt3'],
+      attribution:'Map data &copy; Google | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>'
+      }),
+      "Google Hybrid":L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
+      maxZoom: 20,
+      subdomains:['mt0','mt1','mt2','mt3'],
+      attribution:'Map data &copy; Google | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>'
+      }),
+      "Google Traffic":L.tileLayer('https://{s}.google.com/vt/lyrs=m@221097413,traffic&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      min5oom: 2,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+      attribution:'Map data &copy; Google | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>'
+      }),
+      "Google Terrain":L.tileLayer('https://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',{
+      maxZoom: 20,
+      subdomains:['mt0','mt1','mt2','mt3'],
+      attribution:'Map data &copy; Google | Map By <a href="https://idraxy.web.app" target="_blank">Draxgist & Team</a>'
+      }),
+      "CYL" : L.tileLayer('https://dev.{s}.tile.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+      maxZoom: 20,
+      attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      })
     }
     
     
@@ -352,13 +360,22 @@
       })
 
       get_kota();
-      var latitude         = $('#lat').val();
-      var longitude        = $('#lng').val();
-      var nama_perusahaan  = $('#nama').val();
-      var alamat           = $('#alamat').val();
-      marker = new L.marker([latitude, longitude]).addTo(map).bindPopup("<b>" + nama_perusahaan + "<b><br>" + alamat);
+
+      if($('#lat').val() !== "" && $('#lng').val() !== ""){
+         var latitude         = $('#lat').val();
+         var longitude        = $('#lng').val();
+         var dest             = 13;
+         var nama_perusahaan  = $('#nama').val();
+         var alamat           = $('#alamat').val();
+         marker = new L.marker([latitude, longitude]).addTo(map).bindPopup("<b>" + nama_perusahaan + "<b><br>" + alamat);
+      } else {
+         var latitude         = "-5.1114857";
+         var longitude        = "119.3325868";
+         var dest             = 5;
+      }
+
       if(latitude != ""){
-         map.flyTo(new L.LatLng(latitude, longitude), 13);
+         map.flyTo(new L.LatLng(latitude, longitude), dest);
       }
 
       if($("#role").val() == 4){

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PelangganRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use DataTables;
 
@@ -43,12 +44,13 @@ class PelangganController extends Controller
             ];
         }
 
-        if($request->type != 'update'){
-            $request->request->add(['type' => 2]);
+        if($request->method != 'update'){
+            $request->request->add(['type' => 'pelanggan']);
+        } else{
+            $request->request->add(['keylog' => Str::random(40)]);
         }
 
         $request->request->add(['password' =>Hash::make($request->password)]);
-
 
         User::updateOrCreate(['id' => $request->id],$request->all() );
 

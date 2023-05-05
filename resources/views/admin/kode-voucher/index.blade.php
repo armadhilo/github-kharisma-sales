@@ -374,7 +374,7 @@
             { data: 'kode_voucher' },
             { data: 'tipe' },
             { data: 'user_desc' },
-            { data: 'status' },
+            { data: 'tipe' },
             { data: 'maksimal_penggunaan' },
             { data: 'deskripsi_bonus' },
             { data: 'tipe' },

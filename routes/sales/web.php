@@ -43,6 +43,13 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::get('/datatables-history','BackOffice\KodeVoucherController@datatables_history');
         });
 
+        Route::prefix('produk')->group(function () {
+            Route::get('/','BackOffice\ProdukController@index');
+            Route::get('/datatables','BackOffice\ProdukController@datatables');
+
+            Route::get('/datatables-history','BackOffice\KodeVoucherController@datatables_history');
+        });
+
         Route::prefix('jasa-pengiriman')->group(function () {
             Route::get('/','BackOffice\JasaPengirimanController@index');
             Route::get('/datatables','BackOffice\JasaPengirimanController@datatables');
