@@ -10,7 +10,7 @@
             <div class="card-header">
                <h4>Data Produk</h4>
                <div class="card-header-action">
-                  <button type="button" class="btn btn-success" onclick="window.location.href = '/api/odoo/sync-product';"><i class="fa fa-sync mr-1"></i> Sync Produk</button>
+                  <button type="button" class="btn btn-success" onclick="sync_produk()"><i class="fa fa-sync mr-1"></i> Sync Produk</button>
                </div>
             </div>
             <div class="card-body">
@@ -62,12 +62,6 @@
         ],
         rowCallback : function(row, data){
 
-            // if(data.tipe == 'persen'){
-            //     $('td:eq(2)', row).html(`<span class="badge badge-info">persen</span>`);
-            // }else{
-            //     $('td:eq(2)', row).html(`<span class="badge badge-primary">barang</span>`);
-            // }
-
             for(i=0; i<data.pricelist.length; i++){
                 if(data.pricelist[i].type == "b2b"){
                     $('td:eq(6)', row).html(`Rp. ` + fungsiRupiah(data.pricelist[i].price));
@@ -83,17 +77,27 @@
             } else {
                 $('td:eq(1)', row).html(``);
             }
-
-            // if(data.pricelist.price)
-
-            // var url_edit   = "/admin/kode-voucher/detail/" + data.id;
-            // var url_delete = "/admin/kode-voucher/delete/" + data.id;
-            // $('td:eq(8)', row).html(`
-            //     <button class="btn btn-info btn-sm mr-1" onclick="edit('${url_edit}')"><i class="fa fa-edit"></i></button>
-            //     <button class="btn btn-danger btn-sm" onclick="delete_action('${url_delete}','${data.kode_voucher}')"><i class="fa fa-trash"> </i></button>
-            //     `);
-                // <button class="btn btn-warning btn-sm ml-1" onclick="click_history('${data.kode_voucher}')"><i class="fas fa-history"></i></button>
         }
     });
+
+    function sync_produk(){
+        $("#modal_loading").modal('show');
+        $.ajax({
+            url : "/api/odoo/sync-product",
+            type: "GET",
+            dataType: "JSON",
+            success: function(response){
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                if(response.status === 200){
+                    swal(response.message, {  icon: 'success', });
+                }else{
+                    swal(response.message, {  icon: 'error', });
+                }
+            },error: function (jqXHR, textStatus, errorThrown){
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
+            }
+        });
+    }
 </script>
 @endsection

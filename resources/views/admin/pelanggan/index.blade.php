@@ -48,7 +48,7 @@
                 <div class="card-header">
                     <h4>Data Pelanggan</h4>
                     <div class="card-header-action">
-                        <button type="button" class="btn btn-success mr-2" onclick="window.location.href = '/api/odoo/sync-pelanggan';"><i class="fa fa-sync mr-1"></i>Sync Pelanggan</button>
+                        <button type="button" class="btn btn-success mr-2" onclick="sync_pelanggan()"><i class="fa fa-sync mr-1"></i>Sync Pelanggan</button>
                         <button type="button" class="btn btn-warning" onclick="window.location.href = '/admin/pelanggan/add';"><i class="fa fa-plus mr-1"></i>Tambah Pelanggan</button>
                     </div>
                 </div>
@@ -250,5 +250,26 @@
             }
         });
     }
+
+    function sync_pelanggan(){
+        $("#modal_loading").modal('show');
+        $.ajax({
+            url : "/api/odoo/sync-pelanggan",
+            type: "GET",
+            dataType: "JSON",
+            success: function(response){
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                if(response.status === 200){
+                    swal(response.message, {  icon: 'success', });
+                }else{
+                    swal(response.message, {  icon: 'error', });
+                }
+            },error: function (jqXHR, textStatus, errorThrown){
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
+            }
+        });
+    }
+    
 </script>
 @endsection

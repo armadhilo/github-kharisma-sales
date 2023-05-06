@@ -190,25 +190,43 @@ class OdooController extends Controller
         $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
         'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 50]);
 
-        foreach($pelanggan as $item){
-            $user = User::updateOrCreate([
-                'pelanggan_id' => $item['id'],
-                'email' => $item['email'],
-            ],[
-                'type' => '2',
-                'pelanggan_id' => $item['id'],
-                'email' => $item['email'] == false ? null : $item['email'],
-                'nama' => trim($item['name']),
-                'telepon' => $item['mobile'],
-                'nama_toko' => trim($item['display_name']),
-                'alamat_toko' => $item['street'] . ($item['street2'] != false ? ' - ' . $item['street2'] : '') . ($item['city'] != false ? ' - ' . $item['city'] : '') . ($item['zip'] != false ? ' - ' . $item['zip'] : ''),
-            ]);
-
-            if($user->wasRecentlyCreated){
-                User::where('id', $user->id)->update([
-                    'password' => Hash::make('pelanggan')
+        try {
+            foreach($pelanggan as $item){
+                $user = User::updateOrCreate([
+                    'pelanggan_id' => $item['id'],
+                    'email' => $item['email'],
+                ],[
+                    'type' => '2',
+                    'pelanggan_id' => $item['id'],
+                    'email' => $item['email'] == false ? null : $item['email'],
+                    'nama' => trim($item['name']),
+                    'telepon' => $item['mobile'],
+                    'nama_toko' => trim($item['display_name']),
+                    'alamat_toko' => $item['street'] . ($item['street2'] != false ? ' - ' . $item['street2'] : '') . ($item['city'] != false ? ' - ' . $item['city'] : '') . ($item['zip'] != false ? ' - ' . $item['zip'] : ''),
                 ]);
+    
+                if($user->wasRecentlyCreated){
+                    User::where('id', $user->id)->update([
+                        'password' => Hash::make('pelanggan')
+                    ]);
+                }
             }
+
+            return [
+                'status' => 200, // SUCCESS
+                'message' => 'Export Pelanggan Odoo Successfully'
+            ];
+        }
+        
+        catch(\Exception $e){
+
+            DB::rollback();
+
+            return [
+                'status' 	=> 300, // GAGAL
+                'message'       => (env('APP_DEBUG', 'true') == 'true')? $e->getMessage() : 'Operation error'
+            ];
+
         }
     }
 }
