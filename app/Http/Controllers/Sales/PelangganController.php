@@ -36,7 +36,7 @@ class PelangganController extends Controller
             ->get();
 
         if($request->has('status_pelanggan') && $request->status_pelanggan == 'active'){
-            $pelanggan = $pelanggan->whereNotNull('keylog')->toArray();
+            $pelanggan = array_values($pelanggan->whereNotNull('keylog')->toArray());
         }
 
         if(!count($pelanggan)){
@@ -56,7 +56,7 @@ class PelangganController extends Controller
         }
 
         $message = 'User listed successfully';
-        return ApiFormatter::success(200, $message, array_values($pelanggan));
+        return ApiFormatter::success(200, $message, $pelanggan);
     }
 
     public function store(PelangganRequest $request){
