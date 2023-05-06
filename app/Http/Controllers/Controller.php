@@ -11,6 +11,8 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use App\Pagination\CustomPagination;
 
+use App\Models\OdooProduct;
+
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
@@ -20,5 +22,14 @@ class Controller extends BaseController
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
         $items = $items instanceof Collection ? $items : Collection::make($items);
         return new CustomPagination(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, $options);
+    }
+
+    public function check_stock($product_id, $quantity){
+        $stock = OdooProduct::where(['product_id' => $product_id])->first()->stock;
+        if($stock < $quantity){
+            return false;
+        }
+
+        return true;
     }
 }
