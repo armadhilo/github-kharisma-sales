@@ -26,6 +26,7 @@ Route::group(['prefix' => 'ecom'], function(){
     });
 
     Route::group(['middleware' => 'validate_login'], function(){
+
         Route::post('/logout', 'Ecom\AuthController@logout');
 
         Route::group(['prefix' => 'alamat-pengiriman'], function(){
@@ -46,6 +47,20 @@ Route::group(['prefix' => 'ecom'], function(){
             Route::get('/', 'Ecom\KodeVoucherController@index');
             Route::get('/{id}', 'Ecom\KodeVoucherController@detail');
             Route::post('/claim', 'Ecom\KodeVoucherController@claim');
+        });
+
+        Route::group(['prefix' => 'cart'], function(){
+            Route::get('/', 'Ecom\CartController@index');
+            Route::get('/{uuid}', 'Ecom\CartController@detail');
+            Route::post('/', 'Ecom\CartController@store');
+            Route::put('/{uuid}', 'Ecom\CartController@update');
+            Route::delete('/{uuid}', 'Ecom\CartController@delete');
+        });
+
+        Route::group(['prefix' => 'checkout'], function(){
+            Route::get('/', 'Ecom\CheckoutController@index');
+            Route::post('/', 'Ecom\CheckoutController@checkout');
+
         });
     });
 });

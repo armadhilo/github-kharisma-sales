@@ -28,6 +28,10 @@ class UserController extends Controller
             return ApiFormatter::error(404, $message);
         }
 
+        if($request->has('password')){
+            $request->merge(['password' => Hash::make($request->password) ]);
+        }
+
         $user->fill($request->all())->save();
         $message = 'User Updated Successfully';
 

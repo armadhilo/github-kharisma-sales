@@ -36,7 +36,7 @@ class PelangganController extends Controller
             ->get();
 
         if($request->has('status_pelanggan') && $request->status_pelanggan == 'active'){
-            $pelanggan = $pelanggan->whereNotNull('keylog')->all();
+            $pelanggan = array_values($pelanggan->whereNotNull('keylog')->toArray());
         }
 
         if(!count($pelanggan)){
