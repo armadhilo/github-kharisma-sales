@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use DataTables;
+use Illuminate\Support\Facades\Route;
 
 
 class PelangganController extends Controller
@@ -49,6 +50,12 @@ class PelangganController extends Controller
         } else{
             $request->request->add(['keylog' => Str::random(40)]);
         }
+
+        //get kabupaten name
+        $request = Request::create('/api/kabkota/53', 'GET');
+        $response = Route::dispatch($request);
+        $collection = collect(collect($response)['original']);
+        dd($collection->where('nama', 'KAB. KUPANG')->first()['id']);
 
         $request->request->add(['password' =>Hash::make($request->password)]);
 

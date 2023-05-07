@@ -33,7 +33,7 @@ class PelangganRequest extends FormRequest
                 'nama_toko' => 'required',
                 'alamat' => 'required',
                 'alamat_toko' => 'required',
-                'email' => 'required|email',
+                'email' => 'required|email|unique:users,email,' . $this->id,
                 'telepon' => 'required|digits_between:10,12',
                 'password' => [
                     Rule::when(request()->isMethod('POST'), 'required'),
@@ -55,7 +55,7 @@ class PelangganRequest extends FormRequest
             return [
                 'nama' => 'required',
                 'alamat' => 'required',
-                'email' => 'required|email',
+                'email' => 'required|email|unique:users,email',
                 'telepon' => 'required|digits_between:10,12',
                 'password' => [
                     Rule::when(request()->isMethod('POST'), 'required'),

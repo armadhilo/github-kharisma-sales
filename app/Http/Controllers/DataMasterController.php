@@ -60,7 +60,6 @@ class DataMasterCOntroller extends Controller
     public function getProvinsi(){
         $path = file_get_contents(public_path('json/provinsi.json'));
         $json = json_decode($path, true);
-
         return $json;
     }
 

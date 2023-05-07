@@ -127,7 +127,7 @@
                      <div class="col-12 col-md-4 col-lg-4">
                         <div class="form-group">
                             <label>Kota</label>
-                            <input hidden type="text" id="data_kota" class="form-control" value="@if(isset($data)){{$data->kota}}@endif">
+                            <input hidden type="text" id="data_kota" name="kota_id" class="form-control" value="@if(isset($data)){{$data->kota_id}}@endif">
                             <select class="form-control select2" name="kota" onchange="change_kota()" id="kota">
                                 <option selected disabled>- Pilih -</option>
                             </select>
@@ -137,7 +137,7 @@
                     <div class="col-12 col-md-4 col-lg-4">
                         <div class="form-group">
                             <label>Kecamatan</label>
-                            <input hidden type="text" id="data_kecamatan" class="form-control" value="@if(isset($data)){{$data->kecamatan}}@endif">
+                            <input hidden type="text" id="data_kecamatan" name="kecamatan_id" class="form-control" value="@if(isset($data)){{$data->kecamatan_id}}@endif">
                             <select class="form-control select2" name="kecamatan" onchange="change_kecamatan()" id="kecamatan" @if(!isset($data->kecamatan)){{ 'disabled' }}@endif>
                                 <option selected disabled>- Pilih -</option>
                             </select>
@@ -147,8 +147,8 @@
                     <div class="col-12 col-md-4 col-lg-4">
                         <div class="form-group">
                             <label>Kelurahan</label>
-                            <input hidden type="text" id="data_kelurahan" class="form-control" value="@if(isset($data)){{$data->kelurahan}}@endif">
-                            <select class="form-control select2" name="kelurahan" id="kelurahan" @if(!isset($data->kelurahan)){{ 'disabled' }}@endif>
+                            <input hidden type="text" id="data_kelurahan" name="kelurahan_id" class="form-control" value="@if(isset($data)){{$data->kelurahan_id}}@endif">
+                            <select class="form-control select2" name="kelurahan" onchange="change_kelurahan()" id="kelurahan" @if(!isset($data->kelurahan)){{ 'disabled' }}@endif>
                                 <option selected disabled>- Pilih -</option>
                             </select>
                             <span class="d-flex text-danger invalid-feedback" id="invalid-kelurahan-feedback"></span>
@@ -421,10 +421,10 @@
                 $("#kota").append(`<option selected disabled>- Pilih -</option>`);
                 for (var i = 0; i < response.length; i++) {
                     if(data_kota == response[i]['id']){
-                        $("#kota").append(`<option value="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
+                        $("#kota").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
                         change_kota();
                     }else{
-                        $("#kota").append(`<option value="${response[i]['id']}">${response[i]['nama']}</option>`);
+                        $("#kota").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}">${response[i]['nama']}</option>`);
                     }
                 }
             },error: function (jqXHR, textStatus, errorThrown){
@@ -434,9 +434,10 @@
     }
 
     function change_kota(){
+      $('#data_kota').val($('#kota').find(":selected").attr('data-id'))
        $("#modal_loading").modal('show');
         $.ajax({
-            url : "/api/kecamatan/" + $('#kota').val(),
+            url : "/api/kecamatan/" + $('#data_kota').val(),
             type: "GET",
             dataType: "JSON",
             success: function(response){
@@ -447,10 +448,10 @@
                 $('#kecamatan').prop('disabled', false);
                 for (var i = 0; i < response.length; i++) {
                   if(data_kecamatan == response[i]['id']){
-                     $("#kecamatan").append(`<option value="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
+                     $("#kecamatan").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
                      change_kecamatan();
                   } else {
-                     $("#kecamatan").append(`<option value="${response[i]['id']}">${response[i]['nama']}</option>`);
+                     $("#kecamatan").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}">${response[i]['nama']}</option>`);
                   }
                 }
             },error: function (jqXHR, textStatus, errorThrown){
@@ -461,9 +462,10 @@
     }
 
     function change_kecamatan(){
+      $('#data_kecamatan').val($('#kecamatan').find(":selected").attr('data-id'))
        $("#modal_loading").modal('show');
         $.ajax({
-            url : "/api/kelurahan/" + $('#kecamatan').val(),
+            url : "/api/kelurahan/" + $('#data_kecamatan').val(),
             type: "GET",
             dataType: "JSON",
             success: function(response){
@@ -474,9 +476,9 @@
                 $('#kelurahan').prop('disabled', false);
                 for (var i = 0; i < response.length; i++) {
                 if(data_kelurahan == response[i]['id']){
-                  $("#kelurahan").append(`<option value="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
+                  $("#kelurahan").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
                 } else {
-                  $("#kelurahan").append(`<option value="${response[i]['id']}">${response[i]['nama']}</option>`);
+                  $("#kelurahan").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}">${response[i]['nama']}</option>`);
                 }
                 }
             },error: function (jqXHR, textStatus, errorThrown){
@@ -486,5 +488,8 @@
         });
     }
 
+    function change_kelurahan(){
+      $('#data_kelurahan').val($('#kelurahan').find(":selected").attr('data-id'))
+    }
 </script>
 @endsection
