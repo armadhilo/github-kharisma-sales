@@ -107,6 +107,7 @@ class OngkosKirimController extends Controller
             }
         }
 
-        return ApiFormatter::getResponse($array);
+        $message = 'Ongkos kirim berhasil ditampilkan';
+        return ApiFormatter::success(200, $message, $array);
     }
 }
