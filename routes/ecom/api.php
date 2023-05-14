@@ -60,7 +60,12 @@ Route::group(['prefix' => 'ecom'], function(){
         Route::group(['prefix' => 'checkout'], function(){
             Route::get('/', 'Ecom\CheckoutController@index');
             Route::post('/', 'Ecom\CheckoutController@checkout');
+        });
 
+        Route::group(['prefix' => 'wishlist'], function(){
+            Route::get('/', 'Ecom\WishlistController@index');
+            Route::post('/', 'Ecom\WishlistController@store');
+            Route::delete('/', 'Ecom\WishlistController@delete');
         });
     });
 });

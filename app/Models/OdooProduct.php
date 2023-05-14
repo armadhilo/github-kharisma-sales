@@ -21,4 +21,8 @@ class OdooProduct extends Model
     public function product_tag(){
         return $this->belongsTo(OdooProductTag::class, 'product_tag_id', 'product_tag_id');
     }
+
+    public function wishlist(){
+        return $this->hasMany(Wishlist::class, 'product_id', 'product_id');
+    }
 }
