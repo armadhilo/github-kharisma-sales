@@ -67,6 +67,10 @@ Route::group(['prefix' => 'ecom'], function(){
             Route::post('/', 'Ecom\WishlistController@store');
             Route::delete('/', 'Ecom\WishlistController@delete');
         });
+
+        Route::group(['prefix' => 'ongkos-kirim'], function(){
+            Route::get('/', 'Ecom\OngkosKirimController@index');
+        });
     });
 });
 
