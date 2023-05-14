@@ -196,7 +196,7 @@ class OdooController extends Controller
                     'pelanggan_id' => $item['id'],
                     'email' => $item['email'],
                 ],[
-                    'type' => '2',
+                    'type' => 'pelanggan',
                     'pelanggan_id' => $item['id'],
                     'email' => $item['email'] == false ? null : $item['email'],
                     'nama' => trim($item['name']),
@@ -204,7 +204,7 @@ class OdooController extends Controller
                     'nama_toko' => trim($item['display_name']),
                     'alamat_toko' => $item['street'] . ($item['street2'] != false ? ' - ' . $item['street2'] : '') . ($item['city'] != false ? ' - ' . $item['city'] : '') . ($item['zip'] != false ? ' - ' . $item['zip'] : ''),
                 ]);
-    
+
                 if($user->wasRecentlyCreated){
                     User::where('id', $user->id)->update([
                         'password' => Hash::make('pelanggan')
@@ -217,7 +217,7 @@ class OdooController extends Controller
                 'message' => 'Export Pelanggan Odoo Successfully'
             ];
         }
-        
+
         catch(\Exception $e){
 
             DB::rollback();
