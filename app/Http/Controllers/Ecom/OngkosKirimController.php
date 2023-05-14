@@ -17,7 +17,7 @@ use App\Models\JasaPengiriman;
 class OngkosKirimController extends Controller
 {
     public function index(OngkosKirimRequest $request){
-        $asal_id = Config::where('config','ASAL PENGIRIMAN - KOTA ID')->first()->value; //surabaya
+        $asal_id = Config::where('config','ASAL PENGIRIMAN - KECAMATAN ID')->first()->value; //surabaya
         $jasa_pengiriman = JasaPengiriman::active()->where('kode','!=','staff')->where('kode', '!=', 'mandiri')->get();
 
         $array = [];
@@ -32,7 +32,7 @@ class OngkosKirimController extends Controller
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => "origin=$asal_id&originType=city&destination=$request->kecamatan_id&destinationType=subdistrict&weight=$request->berat&courier=$item->kode",
+            CURLOPT_POSTFIELDS => "origin=$asal_id&originType=subdistrict&destination=$request->kecamatan_id&destinationType=subdistrict&weight=$request->berat&courier=$item->kode",
             CURLOPT_HTTPHEADER => array(
                 "content-type: application/x-www-form-urlencoded",
                 "key:7021b582cede2d3c37dbe64f18d6c29b"
