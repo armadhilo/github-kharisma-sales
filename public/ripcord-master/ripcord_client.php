@@ -477,7 +477,9 @@ class  Ripcord_Transport_Stream implements Ripcord_Transport
 					'method' => "POST",
 					'header' => "Content-Type: text/xml",
 					'content' => $request,
-                    'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+                    'user_agent' => isset($_SERVER['HTTP_USER_AGENT'])
+                    ? strtolower($_SERVER['HTTP_USER_AGENT'])
+                    : '',
 				)
 			)
 		);
