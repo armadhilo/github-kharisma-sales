@@ -90,13 +90,13 @@ class OdooController extends Controller
         #=========PRODUCT===========#
 
         $product_id = "37234, 36228, 37235, 37236, 38716, 37232";
-
         $product_id = explode(", ",$product_id);
-
         $chunk = array_chunk($product_id, 10);
+        
         foreach($chunk as $item){
             dispatch(new SyncProductJob($item));
         }
+            
 
         return [
             'status' => 200, // SUCCESS

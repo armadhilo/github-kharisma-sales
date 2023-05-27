@@ -11,10 +11,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use ripcord;
 use Str;
 use DB;
-use Storage;
 use Log;
 
 class SyncProductJob implements ShouldQueue
@@ -70,19 +70,21 @@ class SyncProductJob implements ShouldQueue
 
             if(empty($product)){
                 Log::error('Oops! something wrong with odoo server');
+                $this->fail(new \Exception('Oops! something wrong with odoo server'));
             }
 
-            if(isset($product['faultCode']) && $product['faultCode'] == 1){
+            if(isset($product['faultCode']) && $product['faultCode'] == 1){                
                 Log::error($product['faultString']);
+                $this->fail(new \Exception($product['faultString']));
             }
 
             foreach($product as $item){
 
                 if(is_array($item)){
-                    $filename = '';
-                    $mimeType = '';
-                    $filename_small = '';
-                    $mimeType_small = '';
+                    $filename = null;
+                    $mimeType = null;
+                    $filename_small = null;
+                    $mimeType_small = null;
 
                     //jika data image tidak kosong
                     if(!empty($item['image'])){
@@ -102,7 +104,7 @@ class SyncProductJob implements ShouldQueue
                         $filename = $item['barcode'] .'-'. 'big.' . $mimeType;
                         $array_filename[] = $filename;
 
-                        Storage::disk('google')->put($filename, base64_decode($item['image']));
+                        $a = Storage::disk('google')->put($filename, base64_decode($item['image']));
                     }
 
                     if(!empty($item['image_medium'])){
@@ -137,12 +139,10 @@ class SyncProductJob implements ShouldQueue
                         'sku' => $item['barcode'],
                         'product_name' => $item['name'],
                         'product_name_slug' => Str::slug($item['name']),
-                        // 'image' => $item['image'] == false ? null : $item['image'],
-                        'gd_image_name' => $filename == false ? null : $filename,
-                        'gd_image_mimetype' => $mimeType == false ? null : $mimeType,
-                        // 'image_small' => $item['image_small'] == false ? null : $item['image_small'],
-                        'gd_image_small_name' => $filename_small == false ? null : $filename_small,
-                        'gd_image_small_mimetype' => $mimeType_small == false ? null : $mimeType_small,
+                        'gd_image_name' => $filename,
+                        'gd_image_mimetype' => $mimeType,
+                        'gd_image_small_name' => $filename_small,
+                        'gd_image_small_mimetype' => $mimeType_small,
                         'unit' => $item['uom_id'][1],
                         'weight' => $item['weight'],
                         'stock' => $item['qty_available'],
@@ -216,13 +216,9 @@ class SyncProductJob implements ShouldQueue
 
             DB::rollback();
 
-            $this->failed($e);
+            Log::error($e);
 
+            $this->fail(new \Exception($e));
         }
-    }
-
-    public function failed($exception)
-    {
-        Log::error($exception->getMessage());
     }
 }

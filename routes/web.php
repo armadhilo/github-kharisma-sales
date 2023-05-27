@@ -19,7 +19,7 @@ Route::get('/', 'LoginController@index')->name('login');
 Route::post('/login', 'LoginController@login');
 Route::get('/logout','LoginController@logout');
 
-Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
+Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::middleware(['cors','cek_login'])->group(function () {
     Route::prefix('admin')->group(function () {
