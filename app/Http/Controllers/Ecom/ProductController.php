@@ -15,25 +15,16 @@ use App\Models\User;
 
 class ProductController extends Controller
 {
-    public function index(){
-
-        $type = auth('api')->check() ? 'b2b' : 'b2c';
-
-        $product = OdooProduct::with('product_tag', 'pricelist')->whereHas('pricelist', function($query) use ($type){
-            $query->where('type', $type);
-        })->where('stock', '>', '0')->get();
-
+    public function index()
+    {
+        $product = OdooProduct::with('product_tag', 'pricelist')->get();
         $message = ' Data product berhasil ditampilkan';
         return ApiFormatter::success(200, $message, $product);
     }
 
-    public function detail($slug){
-
-        $type = auth('api')->check() ? 'b2b' : 'b2c';
-
-        $product = OdooProduct::with('product_tag', 'pricelist')->whereHas('pricelist', function($query) use ($type){
-            $query->where('type', $type);
-        })->where('product_name_slug', $slug)->where('stock', '>', '0')->first();
+    public function detail($slug)
+    {
+        $product = OdooProduct::with('product_tag', 'pricelist')->where('product_name_slug', $slug)->first();
         if(empty($product)){
             $message = 'Data product tidak ditemukan';
             return ApiFormatter::error(404, $message);

@@ -20,6 +20,11 @@ class OngkosKirimController extends Controller
         $asal_id = Config::where('config','ASAL PENGIRIMAN - KECAMATAN ID')->first()->value; //surabaya
         $jasa_pengiriman = JasaPengiriman::active()->where('kode','!=','staff')->where('kode', '!=', 'mandiri')->get();
 
+        //jika berat 0 jadikan 1 gram saja
+        if($request->berat == 0){
+            $request->merge(['berat' => 1]);
+        }
+
         $array = [];
         foreach($jasa_pengiriman as $item){
             $curl = curl_init();
