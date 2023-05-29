@@ -17,8 +17,8 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $product = OdooProductTag::all();
+        $category = OdooProductTag::all();
         $message = ' Data kategori berhasil ditampilkan';
-        return ApiFormatter::success(200, $message, $product);
+        return ApiFormatter::success(200, $message, $category);
     }
 }

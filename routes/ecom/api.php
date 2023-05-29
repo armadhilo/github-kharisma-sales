@@ -35,6 +35,12 @@ Route::group(['prefix' => 'ecom'], function(){
 
         Route::post('/logout', 'Ecom\AuthController@logout');
 
+        Route::group(['prefix' => 'notification'], function(){
+            Route::get('/', 'Ecom\NotificationController@index');
+            Route::patch('/mark-all-read', 'Ecom\NotificationController@mark_all_read');
+            Route::patch('/mark-one-read/{id}', 'Ecom\NotificationController@mark_one_read');
+        });
+
         Route::group(['prefix' => 'alamat-pengiriman'], function(){
             Route::get('/', 'Ecom\AlamatPengirimanController@index');
             Route::get('/{id}', 'Ecom\AlamatPengirimanController@detail');
