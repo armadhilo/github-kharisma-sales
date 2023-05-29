@@ -25,6 +25,12 @@ Route::group(['prefix' => 'ecom'], function(){
         Route::get('/{id}', 'Ecom\ProductController@detail');
     });
 
+    Route::group(['prefix' => 'category'], function(){
+        Route::get('/', 'Ecom\CategoryController@index');
+    });
+
+    #==================== HARUS LOGIN =====================#
+
     Route::group(['middleware' => 'validate_login'], function(){
 
         Route::post('/logout', 'Ecom\AuthController@logout');
