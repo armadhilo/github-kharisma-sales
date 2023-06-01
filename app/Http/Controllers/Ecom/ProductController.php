@@ -15,9 +15,36 @@ use App\Models\User;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $product = OdooProduct::with('product_tag', 'pricelist')->get();
+        $product = OdooProduct::with('product_tag', 'pricelist')->orderBy('updated_at','DESC');
+
+        if($request->has('search')){
+            $search = str_replace("+"," ",$request->search);
+            $product->where('product_name','like',"%$search%");
+        }
+
+        if($request->has('kategori')){
+            $product->where('product_tag_id', $request->kategori);
+        }
+
+        $product = $product->get();
+
+        if($request->has('filter')){
+            $filter = $request->filter;
+            if($filter == 'termurah'){
+                $product = $product->sortBy(function($product){
+                    return $product->pricelist->max('price');
+                });
+            }elseif($filter == 'termahal'){
+                $product = $product->sortByDesc(function($product){
+                    return $product->pricelist->max('price');
+                });
+            }else{
+                $product = $product->sortBy('updated_at','DESC');
+            }
+        }
+
         $message = ' Data product berhasil ditampilkan';
         return ApiFormatter::success(200, $message, $product);
     }

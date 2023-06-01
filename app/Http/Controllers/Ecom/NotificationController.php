@@ -3,17 +3,22 @@
 namespace App\Http\Controllers\Ecom;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 use App\Helpers\ApiFormatter;
 use App\Models\Notification;
 class NotificationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $notification = Notification::active()->get();
+        $notification = Notification::active();
+
+        if($request->has('limit')){
+            $notification->limit($request->limit);
+        }
 
         $message = 'Data notification berhasil ditampilkan';
-        return ApiFormatter::success(200, $message, $notification);
+        return ApiFormatter::success(200, $message, $notification->get());
     }
 
     public function mark_one_read($id){
