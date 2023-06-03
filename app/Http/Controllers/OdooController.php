@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 ini_set('max_execution_time', '0');
-include(base_path() . '/public/ripcord-master/ripcord.php');
+require_once(base_path() . '/public/ripcord-master/ripcord.php');
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -22,7 +22,10 @@ use App\Models\OdooPricelist;
 use App\Models\User;
 
 use App\Helpers\ApiFormatter;
+use App\Jobs\SimpleJob;
+use App\Jobs\SyncProductJob;
 use App\Models\OdooProductTag;
+use Log;
 use ripcord;
 
 class OdooController extends Controller
@@ -65,125 +68,40 @@ class OdooController extends Controller
         // return $models->execute_kw($db, $uid, $password,
         // 'product.product', 'search_read', [[['write_uid', '=', 1]]], ['fields' => ['default_code','active','product_tmpl_id'], 'limit'=> 5]);
 
-        DB::beginTransaction();
 
-        try{
+        OdooPricelist::truncate();
+        OdooProductTag::truncate();
+        OdooProduct::truncate();
 
-            #======PRODUCT TAG==========#
-            $array_product_tag_id = [];
-            $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'product.tag', 'search_read', [[['active', '=', True]]], ['fields' => ['id','name']]);
+        // #======PRODUCT TAG==========#
+        $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
+        'product.tag', 'search_read', [[['active', '=', True]]], ['fields' => ['id','name']]);
 
-            foreach($product_tag as $item){
-                $array_product_tag_id[] = $item['id'];
+        foreach($product_tag as $item){
 
-                OdooProductTag::updateOrCreate([
-                    'product_tag_id' => $item['id']
-                ],[
-                    'product_tag_id' => $item['id'],
-                    'name' => $item['name']
-                ]);
-            }
-
-            #=========PRODUCT===========#
-
-            $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'product.product', 'search_read', [[]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available'], 'limit'=> 50]);
-
-            $array_product_tmpl_product = [];
-            foreach($product as $item){
-
-                $array_product_tmpl_product[] = $item['product_tmpl_id'][0];
-
-                OdooProduct::updateOrCreate([
-                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                ],[
-                    'product_id' => $item['id'],
-                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                    'sku' => $item['barcode'],
-                    'product_name' => $item['name'],
-                    'product_name_slug' => Str::slug($item['name']),
-                    'image' => $item['image_medium'] == false ? null : $item['image_medium'],
-                    'image_small' => $item['image_small'] == false ? null : $item['image_small'],
-                    'unit' => $item['uom_id'][1],
-                    'weight' => $item['weight'],
-                    'stock' => $item['qty_available'],
-                ]);
-            }
-
-            // get product pricelist for b2c
-            $pricelist_b2c = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 1], ['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity'], 'limit'=> 50]);
-
-            $array_product_tmpl_b2c = [];
-            foreach($pricelist_b2c as $item){
-
-                $array_product_tmpl_b2c[] = $item['product_tmpl_id'][0];
-
-                OdooPricelist::updateOrCreate([
-                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                ], [
-                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                    'price' => $item['fixed_price'],
-                    'min_quantity' => $item['min_quantity'],
-                    'type' => 'b2c',
-                ]);
-            }
-
-            // get product pricelist for b2b
-            $pricelist_b2c = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 7], ['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity'], 'limit'=> 50]);
-
-            $array_product_tmpl_b2b = [];
-            foreach($pricelist_b2c as $item){
-                $array_product_tmpl_b2b[] = $item['product_tmpl_id'][0];
-
-                OdooPricelist::updateOrCreate([
-                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                ], [
-                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                    'price' => $item['fixed_price'],
-                    'min_quantity' => $item['min_quantity'],
-                    'type' => 'b2b',
-                ]);
-            }
-
-            //relational product and product_tag
-            $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'product.template', 'search_read', [[['id', '=', $array_product_tmpl_product]]], ['fields' => ['id','tag_ids'], 'limit'=> 50]);
-            foreach($product_tag as $item){
-                OdooProduct::where('product_tmpl_id', $item['id'])->update(['product_tag_id' => $item['tag_ids'][0]]);
-            }
-
-            // delete product_tag
-            OdooProductTag::whereNotIn('product_tag_id', $array_product_tag_id)->delete();
-
-            // delete price product for b2b dan b2c
-            OdooPricelist::where(['type' => 'b2c'])->whereNotIn('product_tmpl_id', $array_product_tmpl_b2c)->delete();
-            OdooPricelist::where(['type' => 'b2b'])->whereNotIn('product_tmpl_id', $array_product_tmpl_b2b)->delete();
-
-            // delete product
-            OdooProduct::whereNotIn('product_tmpl_id', $array_product_tmpl_product)->delete();
-
-            DB::commit();
-
-            return [
-                'status' => 200, // SUCCESS
-                'message' => 'Export Product Odoo Successfully'
-            ];
+            OdooProductTag::updateOrCreate([
+                'product_tag_id' => $item['id']
+            ],[
+                'product_tag_id' => $item['id'],
+                'name' => $item['name']
+            ]);
         }
 
-        catch(\Exception $e){
+        #=========PRODUCT===========#
 
-            DB::rollback();
-
-            return [
-                'status' 	=> 300, // GAGAL
-                'message'       => (env('APP_DEBUG', 'true') == 'true')? $e->getMessage() : 'Operation error'
-            ];
-
+        $product_id = "37234, 36228, 37235, 37236, 38716, 37232";
+        $product_id = explode(", ",$product_id);
+        $chunk = array_chunk($product_id, 10);
+        
+        foreach($chunk as $item){
+            dispatch(new SyncProductJob($item));
         }
+            
 
+        return [
+            'status' => 200, // SUCCESS
+            'message' => 'Export Product Odoo Successfully'
+        ];
     }
 
     public function sync_pelanggan(){
@@ -196,7 +114,7 @@ class OdooController extends Controller
                     'pelanggan_id' => $item['id'],
                     'email' => $item['email'],
                 ],[
-                    'type' => '2',
+                    'type' => 'pelanggan',
                     'pelanggan_id' => $item['id'],
                     'email' => $item['email'] == false ? null : $item['email'],
                     'nama' => trim($item['name']),
@@ -204,7 +122,7 @@ class OdooController extends Controller
                     'nama_toko' => trim($item['display_name']),
                     'alamat_toko' => $item['street'] . ($item['street2'] != false ? ' - ' . $item['street2'] : '') . ($item['city'] != false ? ' - ' . $item['city'] : '') . ($item['zip'] != false ? ' - ' . $item['zip'] : ''),
                 ]);
-    
+
                 if($user->wasRecentlyCreated){
                     User::where('id', $user->id)->update([
                         'password' => Hash::make('pelanggan')
@@ -217,7 +135,7 @@ class OdooController extends Controller
                 'message' => 'Export Pelanggan Odoo Successfully'
             ];
         }
-        
+
         catch(\Exception $e){
 
             DB::rollback();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
@@ -30,7 +31,11 @@ class SalesRequest extends FormRequest
             'email' => 'required|email:rfc,dns',
             'telepon' => 'required|min:10|max:12',
             'alamat' => 'required',
-            'password' => 'required|min:6'
+            'password' => [
+                Rule::when(request()->isMethod('POST'), 'required'),
+                Rule::when(request()->isMethod('PUT'), 'nullable'),
+                'min:6',
+            ],
         ];
     }
 

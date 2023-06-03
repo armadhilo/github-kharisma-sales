@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 class PelangganController extends Controller
 {
-    
+
     public function index(){
         return view('admin.pelanggan.index');
     }
@@ -45,19 +45,22 @@ class PelangganController extends Controller
             ];
         }
 
+        $request->request->add(['provinsi_id' => '53']);
+        $request->request->add(['provinsi' => 'NUSA TENGGARA TIMUR']);
+
         if($request->method != 'update'){
             $request->request->add(['type' => 'pelanggan']);
-        } else{
             $request->request->add(['keylog' => Str::random(40)]);
         }
 
         //get kabupaten name
-        $request = Request::create('/api/kabkota/53', 'GET');
-        $response = Route::dispatch($request);
-        $collection = collect(collect($response)['original']);
-        dd($collection->where('nama', 'KAB. KUPANG')->first()['id']);
+        // $request = Request::create('/api/kabkota/53', 'GET');
+        // $response = Route::dispatch($request);
+        // $collection = collect(collect($response)['original']);
+        // dd($collection->where('nama', 'KAB. KUPANG')->first()['id']);
 
         $request->request->add(['password' =>Hash::make($request->password)]);
+
 
         User::updateOrCreate(['id' => $request->id],$request->all() );
 

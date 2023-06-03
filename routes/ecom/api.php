@@ -25,9 +25,21 @@ Route::group(['prefix' => 'ecom'], function(){
         Route::get('/{id}', 'Ecom\ProductController@detail');
     });
 
+    Route::group(['prefix' => 'category'], function(){
+        Route::get('/', 'Ecom\CategoryController@index');
+    });
+
+    #==================== HARUS LOGIN =====================#
+
     Route::group(['middleware' => 'validate_login'], function(){
 
         Route::post('/logout', 'Ecom\AuthController@logout');
+
+        Route::group(['prefix' => 'notification'], function(){
+            Route::get('/', 'Ecom\NotificationController@index');
+            Route::patch('/mark-all-read', 'Ecom\NotificationController@mark_all_read');
+            Route::patch('/mark-one-read/{id}', 'Ecom\NotificationController@mark_one_read');
+        });
 
         Route::group(['prefix' => 'alamat-pengiriman'], function(){
             Route::get('/', 'Ecom\AlamatPengirimanController@index');
@@ -60,7 +72,16 @@ Route::group(['prefix' => 'ecom'], function(){
         Route::group(['prefix' => 'checkout'], function(){
             Route::get('/', 'Ecom\CheckoutController@index');
             Route::post('/', 'Ecom\CheckoutController@checkout');
+        });
 
+        Route::group(['prefix' => 'wishlist'], function(){
+            Route::get('/', 'Ecom\WishlistController@index');
+            Route::post('/', 'Ecom\WishlistController@store');
+            Route::delete('/', 'Ecom\WishlistController@delete');
+        });
+
+        Route::group(['prefix' => 'ongkos-kirim'], function(){
+            Route::get('/', 'Ecom\OngkosKirimController@index');
         });
     });
 });

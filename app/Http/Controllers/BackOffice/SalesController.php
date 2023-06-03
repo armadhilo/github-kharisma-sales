@@ -43,7 +43,7 @@ class SalesController extends Controller
 
         if($request->type != 'update'){
             $request->request->add(['password' =>Hash::make($request->password)]);
-            $request->request->add(['type' => 1]);
+            $request->request->add(['type' => 'sales']);
         }
 
         User::updateOrCreate(['id' => $request->id],$request->all() );

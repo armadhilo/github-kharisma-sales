@@ -15,25 +15,43 @@ use App\Models\User;
 
 class ProductController extends Controller
 {
-    public function index(){
+    public function index(Request $request)
+    {
+        $product = OdooProduct::with('product_tag', 'pricelist')->orderBy('updated_at','DESC');
 
-        $type = auth('api')->check() ? 'b2b' : 'b2c';
+        if($request->has('search')){
+            $search = str_replace("+"," ",$request->search);
+            $product->where('product_name','like',"%$search%");
+        }
 
-        $product = OdooProduct::with('product_tag', 'pricelist')->whereHas('pricelist', function($query) use ($type){
-            $query->where('type', $type);
-        })->where('stock', '>', '0')->get();
+        if($request->has('kategori')){
+            $product->where('product_tag_id', $request->kategori);
+        }
+
+        $product = $product->get();
+
+        if($request->has('filter')){
+            $filter = $request->filter;
+            if($filter == 'termurah'){
+                $product = $product->sortBy(function($product){
+                    return $product->pricelist->max('price');
+                });
+            }elseif($filter == 'termahal'){
+                $product = $product->sortByDesc(function($product){
+                    return $product->pricelist->max('price');
+                });
+            }else{
+                $product = $product->sortBy('updated_at','DESC');
+            }
+        }
 
         $message = ' Data product berhasil ditampilkan';
         return ApiFormatter::success(200, $message, $product);
     }
 
-    public function detail($slug){
-
-        $type = auth('api')->check() ? 'b2b' : 'b2c';
-
-        $product = OdooProduct::with('product_tag', 'pricelist')->whereHas('pricelist', function($query) use ($type){
-            $query->where('type', $type);
-        })->where('product_name_slug', $slug)->where('stock', '>', '0')->first();
+    public function detail($slug)
+    {
+        $product = OdooProduct::with('product_tag', 'pricelist')->where('product_name_slug', $slug)->first();
         if(empty($product)){
             $message = 'Data product tidak ditemukan';
             return ApiFormatter::error(404, $message);

@@ -1,6 +1,8 @@
 <?php
 
+use App\Jobs\SyncProductJob;
 use Illuminate\Support\Facades\Route;
+use League\Flysystem\Filesystem;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'LoginController@index')->name('login');
 Route::post('/login', 'LoginController@login');
 Route::get('/logout','LoginController@logout');
+
+Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::middleware(['cors','cek_login'])->group(function () {
     Route::prefix('admin')->group(function () {
@@ -42,8 +46,48 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::view('/404', 'errors.404');
             Route::view('/under-maintenance', 'errors.under-maintenance');
         });
-        
+
     });
+});
+
+#==================== TEST GOOGLE DRIVE ========================#
+
+Route::get('test', function() {
+    return Storage::disk('google')->put('test2.txt', 'Hello World');
+});
+
+Route::get('list-folder-contents', function() {
+
+    $dir = '/';
+    $recursive = false; // Get subdirectories also?
+    $contents = collect(Storage::cloud()->listContents($dir, $recursive));
+
+    //return $contents->where('type', '=', 'dir'); // directories
+    $filteredCollection = $contents->where('type', '=', 'file')->whereIn('filename', ['180900076-med']); // files
+    return $filteredCollection->all();
+});
+
+Route::get('get', function() {
+    //https://drive.google.com/uc?export=view&id=1G3217hFYoDG551VX1CVIhYQN0kP_zNCC
+    $filename = "coba.jpg";
+
+    $dir = '/';
+    $recursive = true; // Get subdirectories also?
+    $contents = collect(Storage::cloud()->listContents($dir, $recursive));
+
+    $file = $contents
+        ->where('type', '=', 'file')
+        ->where('filename', '=', pathinfo($filename, PATHINFO_FILENAME))
+        ->where('extension', '=', pathinfo($filename, PATHINFO_EXTENSION))
+        ->first(); // there can be duplicate file names!
+
+    //return $file; // array with file info
+
+    $rawData = Storage::cloud()->get($file['path']);
+
+    return response($rawData, 200)
+        ->header('ContentType', $file['mimetype'])
+        ->header('Content-Disposition', "attachment; filename='$filename'");
 });
 
 
