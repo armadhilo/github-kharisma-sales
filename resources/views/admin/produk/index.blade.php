@@ -76,7 +76,7 @@
                 `);
             } else {
                 $('td:eq(1)', row).html(`
-                    <img class="mr-3 rounded" style="width: 80px" src="https://api-kharisma.s3.ap-southeast-1.amazonaws.com/master-produk/949d02d0ee1d7965ef26e56be285dc46.jpg" alt="product">
+                    <img class="mr-3 rounded" style="width: 80px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png" alt="product">
                 `);
             }
         }
