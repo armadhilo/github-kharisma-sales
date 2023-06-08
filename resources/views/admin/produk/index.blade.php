@@ -54,7 +54,7 @@
                         <div class="form-group p-md-5 p-sm-0">
                             <div id="drag-and-drop-zone" class="dm-uploader p-5"
                                 style="border: 5px dashed #414141a1">
-                                <h3 class="mb-5 mt-5 text-muted text-center">Drag &amp; drop files here</h3>
+                                <h3 class="mb-5 mt-5 text-muted text-center" style="font-weight: 600">Drag &amp; drop files here</h3>
                                 <div class="btn btn-primary btn-block mb-5">
                                     <span>Open the file Browser</span>
                                     <input type="file" title='Click to add Files' />
@@ -81,7 +81,7 @@
              </div>
              <div class="modal-footer bg-whitesmoke br">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-warning">Simpan</button>
+                <button type="submit" class="btn btn-warning">Sync Produk</button>
              </div>
           </form>
        </div>

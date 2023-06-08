@@ -33,6 +33,18 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::delete('/delete/{id}','BackOffice\PelangganController@delete');
         });
 
+        Route::prefix('produk')->group(function () {
+            Route::get('/','BackOffice\ProdukController@index');
+            Route::get('/datatables','BackOffice\ProdukController@datatables');
+            Route::post('/sync-produk','BackOffice\ProdukController@sync_produk');
+        });
+
+        Route::prefix('kunjungan-sales')->group(function () {
+            Route::get('/','BackOffice\KunjunganSalesController@index');
+            Route::get('/detail/{id}','BackOffice\KunjunganSalesController@detail');
+            Route::get('/datatables','BackOffice\KunjunganSalesController@datatables');
+        });
+
         Route::prefix('kode-voucher')->group(function () {
             Route::get('/','BackOffice\KodeVoucherController@index');
             Route::get('/detail/{id}','BackOffice\KodeVoucherController@detail');
@@ -43,11 +55,6 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::get('/datatables-history','BackOffice\KodeVoucherController@datatables_history');
         });
 
-        Route::prefix('produk')->group(function () {
-            Route::get('/','BackOffice\ProdukController@index');
-            Route::get('/datatables','BackOffice\ProdukController@datatables');
-            Route::post('/sync-produk','BackOffice\ProdukController@sync_produk');
-        });
 
         Route::prefix('jasa-pengiriman')->group(function () {
             Route::get('/','BackOffice\JasaPengirimanController@index');
