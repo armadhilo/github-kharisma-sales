@@ -1,5 +1,5 @@
 @extends('partial.app')
-@section('title','Pelanggan')
+@section('title','Sales Log')
 @section('css')
    <link rel="stylesheet" href="{{ asset('assets/vendors/leaflet/leaflet.css') }}" />
    <link rel="stylesheet" href="{{ asset('assets/vendors/leaflet/MarkerCluster.css') }}" />
@@ -36,7 +36,7 @@
         <div class="col-12 col-md-12 col-lg-12">
             <div class="card">
                 <div class="card-header">
-                    <h4>Data Pelanggan</h4>
+                    <h4>Sales Log</h4>
                     <div class="card-header-action">
                         <button type="button" class="btn btn-primary" onclick="reset_zoom();">Reset Zoom</button>
                     </div>
