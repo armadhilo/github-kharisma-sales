@@ -160,7 +160,8 @@
             },
             onNewFile: function(id, file){
                 // When a new file is added using the file selector or the DnD area
-                $('.media').removeClass('d-none')
+                $('.media').removeClass('d-none');
+                $('.progress').addClass('d-none');
                 $('p.media-text').text('File: ' + file.name);
                 $('.media-body .d-flex p.media-status span.status').text('waiting');
             },
