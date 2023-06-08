@@ -10,4 +10,9 @@ class ProdukController extends Controller
     public function index(){
         return view('admin.produk.index');
     }
+
+    public function sync_produk(Request $request){
+        $content = request()->file('file');
+        return file_get_contents($content);
+    }
 }
