@@ -17,12 +17,18 @@ class KunjunganController extends Controller
 
     public function store(KunjunganRequest $request){
 
+        //check apakah ada pelanggan tersebut
+        $user = User::find($request->pelanggan_id);
+        if(empty($user)){
+            $message = 'Pelanggan tidak ditemukan atau sudah tidak aktif';
+            return ApiFormatter::error(400, $message);
+        }
+
         //check apakah ada kunjungan yang masih aktif
         $kunjungan = Kunjungan::where(['sales_id' => auth('api')->user()->id])->whereNull('total_time')->first();
         if(!empty($kunjungan)){
 
             if($kunjungan->pelanggan_id != $request->pelanggan_id){
-
                 $message = 'Masih terdapat toko yang sedang anda visit silahkan selesaikan dahulu sebelum memulai kunjungan berikutnya';
                 return ApiFormatter::error(400, $message);
             }

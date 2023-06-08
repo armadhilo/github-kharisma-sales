@@ -66,14 +66,14 @@ class SyncProductJob implements ShouldQueue
             $array_filename = [];
 
             $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                'product.product', 'search_read', [[['id', '=', $this->data]]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
+                'product.product', 'search_read', [[['id', '=', $this->data],['qty_available','>',0]]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
 
             if(empty($product)){
                 Log::error('Oops! something wrong with odoo server');
                 $this->fail(new \Exception('Oops! something wrong with odoo server'));
             }
 
-            if(isset($product['faultCode']) && $product['faultCode'] == 1){                
+            if(isset($product['faultCode']) && $product['faultCode'] == 1){
                 Log::error($product['faultString']);
                 $this->fail(new \Exception($product['faultString']));
             }
@@ -104,7 +104,7 @@ class SyncProductJob implements ShouldQueue
                         $filename = $item['barcode'] .'-'. 'big.' . $mimeType;
                         $array_filename[] = $filename;
 
-                        $a = Storage::disk('google')->put($filename, base64_decode($item['image']));
+                        Storage::disk('google')->put($filename, base64_decode($item['image']));
                     }
 
                     if(!empty($item['image_medium'])){
@@ -129,11 +129,7 @@ class SyncProductJob implements ShouldQueue
 
                     $array_product_tmpl_product[] = is_array($item['product_tmpl_id']) ? $item['product_tmpl_id'][0] : $item['product_tmpl_id'];
 
-                    OdooProduct::updateOrCreate([
-                        'product_tmpl_id' => $item['product_tmpl_id'][0],
-                    ],[
-                        'gd_name' => $filename,
-                        'gd_mimetype' => $mimeType,
+                    DB::table('odoo_product')->insert([
                         'product_id' => $item['id'],
                         'product_tmpl_id' => $item['product_tmpl_id'][0],
                         'sku' => $item['barcode'],
@@ -156,14 +152,14 @@ class SyncProductJob implements ShouldQueue
 
             //return $contents->where('type', '=', 'dir'); // directories
             $data = $contents->where('type', '=', 'file')->whereIn('name', $array_filename); // files
-            $data = $data->all();
+            $data = $data->unique('name')->all();
 
             foreach($data as $item){
-                OdooProduct::where('gd_image_name', $item['name'])->update([
+                DB::table('odoo_product')->where('gd_image_name', $item['name'])->update([
                     'gd_image_path' => 'https://drive.google.com/uc?export=view&id=' . $item['path']
                 ]);
 
-                OdooProduct::where('gd_image_small_name', $item['name'])->update([
+                DB::table('odoo_product')->where('gd_image_small_name', $item['name'])->update([
                     'gd_image_small_path' => 'https://drive.google.com/uc?export=view&id=' . $item['path']
                 ]);
             }
@@ -174,9 +170,7 @@ class SyncProductJob implements ShouldQueue
 
             foreach($pricelist_b2c as $item){
 
-                OdooPricelist::updateOrCreate([
-                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                ], [
+                DB::table('odoo_pricelist')->insert([
                     'product_tmpl_id' => $item['product_tmpl_id'][0],
                     'price' => $item['fixed_price'],
                     'min_quantity' => $item['min_quantity'],
@@ -192,9 +186,7 @@ class SyncProductJob implements ShouldQueue
             foreach($pricelist_b2c as $item){
                 $array_product_tmpl_b2b[] = $item['product_tmpl_id'][0];
 
-                OdooPricelist::updateOrCreate([
-                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                ], [
+                DB::table('odoo_pricelist')->insert([
                     'product_tmpl_id' => $item['product_tmpl_id'][0],
                     'price' => $item['fixed_price'],
                     'min_quantity' => $item['min_quantity'],
@@ -206,7 +198,7 @@ class SyncProductJob implements ShouldQueue
             $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
             'product.template', 'search_read', [[['id', '=', $array_product_tmpl_product]]], ['fields' => ['id','tag_ids']]);
             foreach($product_tag as $item){
-                OdooProduct::where('product_tmpl_id', $item['id'])->update(['product_tag_id' => $item['tag_ids'][0]]);
+                DB::table('odoo_product')->where('product_tmpl_id', $item['id'])->update(['product_tag_id' => $item['tag_ids'][0]]);
             }
 
             DB::commit();

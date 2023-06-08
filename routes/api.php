@@ -25,6 +25,6 @@ Route::get('/kecamatan-raja-ongkir/{city_id}', 'DataMasterController@api_get_kec
 
 Route::group(['prefix' => 'odoo'], function(){
     Route::get('/try', 'OdooController@try_code');
-    Route::get('/sync-product', 'OdooController@sync_product');
+    Route::post('/sync-product', 'OdooController@sync_product');
     Route::get('/sync-pelanggan', 'OdooController@sync_pelanggan');
 });

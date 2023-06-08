@@ -55,6 +55,13 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::get('/datatables-history','BackOffice\KodeVoucherController@datatables_history');
         });
 
+<<<<<<< HEAD
+=======
+        Route::prefix('produk')->group(function () {
+            Route::get('/','BackOffice\ProdukController@index');
+            Route::get('/datatables','BackOffice\ProdukController@datatables');
+        });
+>>>>>>> 45e00f258bfe5ef0cd6d22e33b3d8500962b00fa
 
         Route::prefix('jasa-pengiriman')->group(function () {
             Route::get('/','BackOffice\JasaPengirimanController@index');
