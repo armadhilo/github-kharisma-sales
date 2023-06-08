@@ -45,6 +45,13 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::get('/datatables','BackOffice\KunjunganSalesController@datatables');
         });
 
+        Route::prefix('sales-log')->group(function () {
+            Route::get('/','BackOffice\SalesLogController@index');
+            Route::get('/detail/{id}','BackOffice\SalesLogController@detail');
+            Route::get('/detail-data/{id}','BackOffice\SalesLogController@detail_data');
+            Route::get('/datatables','BackOffice\SalesLogController@datatables');
+        });
+
         Route::prefix('kode-voucher')->group(function () {
             Route::get('/','BackOffice\KodeVoucherController@index');
             Route::get('/detail/{id}','BackOffice\KodeVoucherController@detail');
