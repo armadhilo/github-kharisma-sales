@@ -148,7 +148,7 @@
             },
             onUploadComplete: function () {
                 setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
-                swal(response.message, { icon: 'success', });
+                swal('Sync Product sedang berjalan', { icon: 'success', });
                 $('.media-body .d-flex p.media-status span.status').text('Sync Product sedang berjalan');
                 $('.media-body .d-flex p.media-status span.status').addClass('text-success');
             },
