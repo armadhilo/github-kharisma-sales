@@ -66,7 +66,7 @@ class SyncProductJob implements ShouldQueue
             $array_filename = [];
 
             $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                'product.product', 'search_read', [[['id', '=', $this->data]]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
+                'product.product', 'search_read', [[['id', '=', $this->data],['qty_available','>',0]]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
 
             if(empty($product)){
                 Log::error('Oops! something wrong with odoo server');

@@ -50,7 +50,9 @@ class OdooController extends Controller
         $this->models = ripcord::client("$url/xmlrpc/2/object");
     }
 
-    public function sync_product(){
+    public function sync_product(Request $request){
+
+        $content = request()->file('file');
 
         // $models->execute_kw($db, $uid, $password,
         //     'res.partner', 'check_access_rights',
@@ -67,7 +69,6 @@ class OdooController extends Controller
         // #read -> akan return DETAIL
         // return $models->execute_kw($db, $uid, $password,
         // 'product.product', 'search_read', [[['write_uid', '=', 1]]], ['fields' => ['default_code','active','product_tmpl_id'], 'limit'=> 5]);
-
 
         OdooPricelist::truncate();
         OdooProductTag::truncate();
@@ -87,7 +88,8 @@ class OdooController extends Controller
 
         #=========PRODUCT===========#
 
-        $product_id = "37234, 36228, 37235, 37236, 38716, 37232";
+        // $product_id = "37234, 36228, 37235, 37236, 38716, 37232";
+        $product_id = file_get_contents($content);
         $product_id = explode(", ",$product_id);
         $chunk = array_chunk($product_id, 10);
 

@@ -91,7 +91,7 @@
 
 @section('js')
 <script>
-    
+
     $(document).ready(function(){
         var tb = $('#tb').DataTable({
             processing: true,
@@ -136,7 +136,7 @@
         });
 
         $('#drag-and-drop-zone').dmUploader({
-            url: '/admin/produk/sync-produk',
+            url: '/api/odoo/sync-product',
             multiple: false,
             auto: false,
             extFilter: ["txt"],
@@ -144,12 +144,12 @@
             method: 'POST',
             onUploadProgress: function (id, percent, file) {
                 ui_multi_update_file_progress(percent);
+                $('#modal_loading').modal('show');
             },
             onUploadComplete: function () {
-                swal('File Uploaded Successfully!', {
-                    icon: 'success',
-                });
-                $('.media-body .d-flex p.media-status span.status').text('Success..');
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                swal(response.message, { icon: 'success', });
+                $('.media-body .d-flex p.media-status span.status').text('Sync Product sedang berjalan');
                 $('.media-body .d-flex p.media-status span.status').addClass('text-success');
             },
             onFileExtError: function(file){
@@ -168,7 +168,7 @@
             onBeforeUpload: function (id) {
                 // about tho start uploading a file
                 ui_multi_update_file_progress(0, '', true);
-                
+
                 $('.media-body .d-flex p.media-status span.status').text('Uploading..')
                 $('.progress').removeClass('d-none')
             },
@@ -208,7 +208,7 @@
         }
 
     })
-    
+
     function show_modal_sync(){
         $("#modal").modal('show');
         $(".modal-title").text('Sync Produk');

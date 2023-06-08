@@ -46,7 +46,6 @@ Route::middleware(['cors','cek_login'])->group(function () {
         Route::prefix('produk')->group(function () {
             Route::get('/','BackOffice\ProdukController@index');
             Route::get('/datatables','BackOffice\ProdukController@datatables');
-            Route::post('/sync-produk','BackOffice\ProdukController@sync_produk');
         });
 
         Route::prefix('jasa-pengiriman')->group(function () {
