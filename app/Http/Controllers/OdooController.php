@@ -79,9 +79,7 @@ class OdooController extends Controller
 
         foreach($product_tag as $item){
 
-            OdooProductTag::updateOrCreate([
-                'product_tag_id' => $item['id']
-            ],[
+            DB::table('odoo_product_tag')->insert([
                 'product_tag_id' => $item['id'],
                 'name' => $item['name']
             ]);
@@ -92,11 +90,11 @@ class OdooController extends Controller
         $product_id = "37234, 36228, 37235, 37236, 38716, 37232";
         $product_id = explode(", ",$product_id);
         $chunk = array_chunk($product_id, 10);
-        
+
         foreach($chunk as $item){
             dispatch(new SyncProductJob($item));
         }
-            
+
 
         return [
             'status' => 200, // SUCCESS
