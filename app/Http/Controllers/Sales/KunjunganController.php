@@ -48,18 +48,9 @@ class KunjunganController extends Controller
             }
         }
 
-        $kunjungan = Kunjungan::with('pelanggan')->where(['sales_id' => auth('api')->user()->id, 'pelanggan_id' => $request->pelanggan_id])->whereDate('date', Carbon::now())->first();
+        $kunjungan = Kunjungan::with('pelanggan')->where(['sales_id' => auth('api')->user()->id, 'pelanggan_id' => $request->pelanggan_id])->whereNull('time_end')->first();
         $status = 'Start Kunjungan';
-        if(empty($kunjungan)){
-
-            $kunjungan = Kunjungan::create([
-                'sales_id' => auth('api')->user()->id,
-                'pelanggan_id' => $request->pelanggan_id,
-                'date' => Carbon::now(),
-                'time_start' => Carbon::now()->format('H:i'),
-            ]);
-
-        }else{
+        if(!empty($kunjungan)){
 
             $status = 'End Kunjungan';
             $concat_datetime = $kunjungan->date ." ". $kunjungan->time_start;
@@ -71,6 +62,15 @@ class KunjunganController extends Controller
             $kunjungan->time_end = Carbon::now()->format('H:i');
             $kunjungan->total_time = $diff;
             $kunjungan->save();
+
+        }else{
+
+            $kunjungan = Kunjungan::create([
+                'sales_id' => auth('api')->user()->id,
+                'pelanggan_id' => $request->pelanggan_id,
+                'date' => Carbon::now(),
+                'time_start' => Carbon::now()->format('H:i'),
+            ]);
         }
 
         $kunjungan['key_login'] = $kunjungan->pelanggan->keylog;
