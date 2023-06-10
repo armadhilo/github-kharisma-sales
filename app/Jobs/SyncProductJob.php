@@ -69,11 +69,6 @@ class SyncProductJob implements ShouldQueue
             $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
                 'product.product', 'search_read', [[['id', '=', $this->data],['qty_available','>',0]]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
 
-            if(empty($product)){
-                Log::error('Fetch product odoo empty result');
-                $this->fail(new \Exception('Fetch product odoo empty result'));
-            }
-
             if(isset($product['faultCode']) && $product['faultCode'] == 1){
                 Log::error($product['faultString']);
                 $this->fail(new \Exception($product['faultString']));
