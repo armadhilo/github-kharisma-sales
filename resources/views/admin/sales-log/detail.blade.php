@@ -58,7 +58,7 @@
 <script>
 
     $(document).ready(function(){
-        list_data();
+        // list_data();
     });
     
     var basemaps= {
