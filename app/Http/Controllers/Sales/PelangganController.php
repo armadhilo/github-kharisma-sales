@@ -90,6 +90,11 @@ class PelangganController extends Controller
             return ApiFormatter::error(404, $message);
         }
 
+        //append keylog jika user_keylog masih kosong
+        if(empty($user->keylog)){
+            $request->request->add(['keylog' => Str::random(40)]);
+        }
+
         $user->fill($request->all())->save();
         $message = 'User Updated Successfully';
         return ApiFormatter::success(200, $message);

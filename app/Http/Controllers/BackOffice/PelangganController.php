@@ -48,7 +48,14 @@ class PelangganController extends Controller
         $request->request->add(['provinsi_id' => '53']);
         $request->request->add(['provinsi' => 'NUSA TENGGARA TIMUR']);
 
-        if($request->method != 'update'){
+        if($request->has('id')){
+            $user = User::find($request->id);
+
+            //append keylog jika user_keylog masih kosong
+            if(empty($user->keylog)) $request->request->add(['keylog' => Str::random(40)]);
+        }
+
+        if(!request()->has('id') || request()->has('keylog')){
             $request->request->add(['type' => 'pelanggan']);
             $request->request->add(['keylog' => Str::random(40)]);
         }

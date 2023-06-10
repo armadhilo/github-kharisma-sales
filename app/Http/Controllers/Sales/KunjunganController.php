@@ -11,11 +11,25 @@ use Carbon\Carbon;
 
 use App\Models\User;
 use App\Models\Kunjungan;
+use App\Models\SalesAttendance;
 
 class KunjunganController extends Controller
 {
 
     public function store(KunjunganRequest $request){
+
+        //check apakah absensi masih berjalan
+        $sales_attendance = SalesAttendance::where('sales_id', auth('api')->user()->id)->whereDate('date_start', Carbon::now())->first();
+        if(empty($sales_attendance)){
+            $message = 'Tidak ada absensi yang aktif harap lakukan absensi terlebih dahulu';
+            return ApiFormatter::error(400, $message);
+        }
+
+        $sales_attendance = SalesAttendance::where('sales_id', auth('api')->user()->id)->whereDate('date_start', Carbon::now())->whereNotNull('date_end')->first();
+        if(empty($sales_attendance)){
+            $message = 'Anda sudah checkout absensi hari ini, tidak dapat melakukan kunjungan';
+            return ApiFormatter::error(400, $message);
+        }
 
         //check apakah ada pelanggan tersebut
         $user = User::find($request->pelanggan_id);
