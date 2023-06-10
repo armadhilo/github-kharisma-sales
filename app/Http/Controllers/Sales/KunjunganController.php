@@ -26,7 +26,7 @@ class KunjunganController extends Controller
         }
 
         $sales_attendance = SalesAttendance::where('sales_id', auth('api')->user()->id)->whereDate('date_start', Carbon::now())->whereNotNull('date_end')->first();
-        if(empty($sales_attendance)){
+        if(!empty($sales_attendance)){
             $message = 'Anda sudah checkout absensi hari ini, tidak dapat melakukan kunjungan';
             return ApiFormatter::error(400, $message);
         }
