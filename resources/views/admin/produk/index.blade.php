@@ -4,6 +4,55 @@
 @section('content')
 
 <div class="section-body">
+    <div class="row">
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <div class="card card-statistic-1">
+                <div class="card-icon bg-primary">
+                    <i class="far fa-user"></i>
+                </div>
+                <div class="card-wrap">
+                    <div class="card-header">
+                        <h4>Jobs Berjalan</h4>
+                    </div>
+                    <div class="card-body">
+                        {{ $jobs }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            <a href="/logs" target="_blank">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-danger">
+                        <i class="far fa-newspaper"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Jobs Gagal</h4>
+                        </div>
+                        <div class="card-body">
+                            {{ $failed_jobs }}
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+            <div class="card card-statistic-1">
+                <div class="card-icon bg-success">
+                    <i class="far fa-file"></i>
+                </div>
+                <div class="card-wrap">
+                    <div class="card-header">
+                        <h4>Total Product</h4>
+                    </div>
+                    <div class="card-body">
+                        {{ $total_product }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
    <div class="row">
       <div class="col-12 col-md-12 col-lg-12">
          <div class="card">
@@ -97,7 +146,7 @@
             processing: true,
             serverSide: false,
             ajax: {
-                url: '/api/ecom/product',
+                url: '/admin/produk/datatables',
                 type: 'GET'
             },
             columnDefs: [
@@ -125,7 +174,7 @@
 
                 if(typeof(data.gd_image_small_path) != "undefined" && data.gd_image_small_path !== null) {
                     $('td:eq(1)', row).html(`
-                        <img class="mr-3 rounded" src="data:image/png;base64, ${data.gd_image_small_path}" alt="product">
+                        <img class="mr-3 rounded" src="${data.gd_image_small_path}" alt="product">
                     `);
                 } else {
                     $('td:eq(1)', row).html(`

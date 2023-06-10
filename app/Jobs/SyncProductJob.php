@@ -35,6 +35,9 @@ class SyncProductJob implements ShouldQueue
 
     protected $data;
 
+    public $timeout = 120;
+    public $tries = 3;
+
     public function __construct($data)
     {
         $url = 'http://103.215.177.203:8096';
@@ -69,8 +72,8 @@ class SyncProductJob implements ShouldQueue
                 'product.product', 'search_read', [[['id', '=', $this->data],['qty_available','>',0]]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
 
             if(empty($product)){
-                Log::error('Oops! something wrong with odoo server');
-                $this->fail(new \Exception('Oops! something wrong with odoo server'));
+                Log::error('Fetch product odoo empty result');
+                $this->fail(new \Exception('Fetch product odoo empty result'));
             }
 
             if(isset($product['faultCode']) && $product['faultCode'] == 1){
@@ -154,51 +157,56 @@ class SyncProductJob implements ShouldQueue
             $data = $contents->where('type', '=', 'file')->whereIn('name', $array_filename); // files
             $data = $data->unique('name')->all();
 
-            foreach($data as $item){
-                DB::table('odoo_product')->where('gd_image_name', $item['name'])->update([
-                    'gd_image_path' => 'https://drive.google.com/uc?export=view&id=' . $item['path']
-                ]);
+            if(count($data)){
+                foreach($data as $item){
+                    DB::table('odoo_product')->where('gd_image_name', $item['name'])->update([
+                        'gd_image_path' => 'https://drive.google.com/uc?export=view&id=' . $item['path']
+                    ]);
 
-                DB::table('odoo_product')->where('gd_image_small_name', $item['name'])->update([
-                    'gd_image_small_path' => 'https://drive.google.com/uc?export=view&id=' . $item['path']
-                ]);
+                    DB::table('odoo_product')->where('gd_image_small_name', $item['name'])->update([
+                        'gd_image_small_path' => 'https://drive.google.com/uc?export=view&id=' . $item['path']
+                    ]);
+                }
             }
 
-            // get product pricelist for b2c
-            $pricelist_b2c = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 1], ['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity']]);
+            if(count($array_product_tmpl_product)){
+                // get product pricelist for b2c
+                $pricelist_b2c = $this->models->execute_kw($this->db, $this->uid, $this->password,
+                'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 1], ['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity']]);
+                if(count($pricelist_b2c)){
+                    foreach($pricelist_b2c as $item){
+                        DB::table('odoo_pricelist')->insert([
+                            'product_tmpl_id' => $item['product_tmpl_id'][0],
+                            'price' => $item['fixed_price'],
+                            'min_quantity' => $item['min_quantity'],
+                            'type' => 'b2c',
+                        ]);
+                    }
+                }
 
-            foreach($pricelist_b2c as $item){
 
-                DB::table('odoo_pricelist')->insert([
-                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                    'price' => $item['fixed_price'],
-                    'min_quantity' => $item['min_quantity'],
-                    'type' => 'b2c',
-                ]);
-            }
+                // get product pricelist for b2b
+                $pricelist_b2b = $this->models->execute_kw($this->db, $this->uid, $this->password,
+                'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 7], ['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity']]);
+                if(count($pricelist_b2b)){
+                    foreach($pricelist_b2b as $item){
+                        DB::table('odoo_pricelist')->insert([
+                            'product_tmpl_id' => $item['product_tmpl_id'][0],
+                            'price' => $item['fixed_price'],
+                            'min_quantity' => $item['min_quantity'],
+                            'type' => 'b2b',
+                        ]);
+                    }
+                }
 
-            // get product pricelist for b2b
-            $pricelist_b2c = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 7], ['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity']]);
-
-            $array_product_tmpl_b2b = [];
-            foreach($pricelist_b2c as $item){
-                $array_product_tmpl_b2b[] = $item['product_tmpl_id'][0];
-
-                DB::table('odoo_pricelist')->insert([
-                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                    'price' => $item['fixed_price'],
-                    'min_quantity' => $item['min_quantity'],
-                    'type' => 'b2b',
-                ]);
-            }
-
-            //relational product and product_tag
-            $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'product.template', 'search_read', [[['id', '=', $array_product_tmpl_product]]], ['fields' => ['id','tag_ids']]);
-            foreach($product_tag as $item){
-                DB::table('odoo_product')->where('product_tmpl_id', $item['id'])->update(['product_tag_id' => $item['tag_ids'][0]]);
+                //relational product and product_tag
+                $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
+                'product.template', 'search_read', [[['id', '=', $array_product_tmpl_product]]], ['fields' => ['id','tag_ids']]);
+                if(count($product_tag)){
+                    foreach($product_tag as $item){
+                        DB::table('odoo_product')->where('product_tmpl_id', $item['id'])->update(['product_tag_id' => $item['tag_ids'][0]]);
+                    }
+                }
             }
 
             DB::commit();

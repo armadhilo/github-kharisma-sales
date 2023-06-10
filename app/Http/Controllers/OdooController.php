@@ -73,6 +73,8 @@ class OdooController extends Controller
         OdooPricelist::truncate();
         OdooProductTag::truncate();
         OdooProduct::truncate();
+        DB::table('jobs')->truncate();
+        DB::table('failed_jobs')->truncate();
 
         // #======PRODUCT TAG==========#
         $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
