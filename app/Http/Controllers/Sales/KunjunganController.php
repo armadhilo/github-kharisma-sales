@@ -11,11 +11,25 @@ use Carbon\Carbon;
 
 use App\Models\User;
 use App\Models\Kunjungan;
+use App\Models\SalesAttendance;
 
 class KunjunganController extends Controller
 {
 
     public function store(KunjunganRequest $request){
+
+        //check apakah absensi masih berjalan
+        $sales_attendance = SalesAttendance::where('sales_id', auth('api')->user()->id)->whereDate('date_start', Carbon::now())->first();
+        if(empty($sales_attendance)){
+            $message = 'Tidak ada absensi yang aktif harap lakukan absensi terlebih dahulu';
+            return ApiFormatter::error(400, $message);
+        }
+
+        $sales_attendance = SalesAttendance::where('sales_id', auth('api')->user()->id)->whereDate('date_start', Carbon::now())->whereNotNull('date_end')->first();
+        if(!empty($sales_attendance)){
+            $message = 'Anda sudah checkout absensi hari ini, tidak dapat melakukan kunjungan';
+            return ApiFormatter::error(400, $message);
+        }
 
         //check apakah ada pelanggan tersebut
         $user = User::find($request->pelanggan_id);
@@ -34,18 +48,9 @@ class KunjunganController extends Controller
             }
         }
 
-        $kunjungan = Kunjungan::with('pelanggan')->where(['sales_id' => auth('api')->user()->id, 'pelanggan_id' => $request->pelanggan_id])->whereDate('date', Carbon::now())->first();
+        $kunjungan = Kunjungan::with('pelanggan')->where(['sales_id' => auth('api')->user()->id, 'pelanggan_id' => $request->pelanggan_id])->whereNull('time_end')->first();
         $status = 'Start Kunjungan';
-        if(empty($kunjungan)){
-
-            $kunjungan = Kunjungan::create([
-                'sales_id' => auth('api')->user()->id,
-                'pelanggan_id' => $request->pelanggan_id,
-                'date' => Carbon::now(),
-                'time_start' => Carbon::now()->format('H:i'),
-            ]);
-
-        }else{
+        if(!empty($kunjungan)){
 
             $status = 'End Kunjungan';
             $concat_datetime = $kunjungan->date ." ". $kunjungan->time_start;
@@ -57,6 +62,15 @@ class KunjunganController extends Controller
             $kunjungan->time_end = Carbon::now()->format('H:i');
             $kunjungan->total_time = $diff;
             $kunjungan->save();
+
+        }else{
+
+            $kunjungan = Kunjungan::create([
+                'sales_id' => auth('api')->user()->id,
+                'pelanggan_id' => $request->pelanggan_id,
+                'date' => Carbon::now(),
+                'time_start' => Carbon::now()->format('H:i'),
+            ]);
         }
 
         $kunjungan['key_login'] = $kunjungan->pelanggan->keylog;

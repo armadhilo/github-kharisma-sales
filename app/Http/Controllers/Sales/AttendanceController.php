@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 
 use App\Helpers\ApiFormatter;
+use App\Models\Kunjungan;
 use App\Models\User;
 use App\Models\SalesAttendance;
 
@@ -31,6 +32,14 @@ class AttendanceController extends Controller
                 'time_start' => Carbon::now()->format('H:i')
             ]);
         }else{
+
+            //check kunjungan yang masih aktif jika ingin checkout
+            $kunjungan = Kunjungan::where('sales_id', auth('api')->user()->id)->whereNull('time_end')->first();
+            if(!empty($kunjungan)){
+                $message = 'Masih ada kunjungan yang aktif, harap selesaikan kunjungan terlebih dahulu sebelum checkout absensi';
+                return ApiFormatter::error(400, $message);
+            }
+
             $attendance_today->date_end = Carbon::now();
             $attendance_today->time_end = Carbon::now()->format('H:i');
             $attendance_today->save();
