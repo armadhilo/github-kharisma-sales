@@ -27,6 +27,14 @@ class SalesAttendanceController extends Controller
 
         return DataTables::of($data)
                     ->addIndexColumn()
+                    ->addColumn('badge_custom',function($item) {
+                        if($item->date_end == null){
+                            return '<span class="badge badge-pill badge-warning">still working</span>';
+                        }else{
+                            return '<span class="badge badge-pill badge-success">finish working</span>';
+                        }
+                    })
+                    ->rawColumns(['badge_custom'])
                     ->make(true);
     }
 }

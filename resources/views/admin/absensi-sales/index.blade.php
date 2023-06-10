@@ -104,8 +104,8 @@
                 { data: 'sales.nama' },
                 { data: 'date_start' },
                 { data: 'time_start' },
-                { data: 'date_end' },
                 { data: 'time_end' },
+                { data: 'badge_custom' },
             ]
             // rowCallback: function (row, data) {
             //     var url_edit   = "/admin/kunjungan-sales/detail/" + data.id;
