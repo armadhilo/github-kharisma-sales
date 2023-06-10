@@ -61,8 +61,6 @@ class SyncProductJob implements ShouldQueue
     public function handle()
     {
 
-        DB::beginTransaction();
-
         try{
 
             $array_product_tmpl_product = [];
@@ -208,13 +206,9 @@ class SyncProductJob implements ShouldQueue
                     }
                 }
             }
-
-            DB::commit();
         }
 
         catch(\Exception $e){
-
-            DB::rollback();
 
             Log::error($e);
 

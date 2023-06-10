@@ -97,6 +97,7 @@ class OdooController extends Controller
 
         foreach($chunk as $item){
             dispatch(new SyncProductJob($item));
+            // dispatch(new SyncProductJob($item))->delay(now()->addSeconds(30));
         }
 
 
