@@ -13,12 +13,8 @@ class KunjunganSalesController extends Controller
         return view('admin.kunjungan-sales.index');
     }
 
-    public function detail($id){
-        return Kunjungan::with('sales', 'pelanggan')->find($id);
-    }
-
     public function datatables(Request $request){
-        $data = Kunjungan::with('sales', 'pelanggan');
+        $data = Kunjungan::with('sales', 'pelanggan')->where('sales_id', $request->id);
         if(isset($request->tanggal_mulai)){
             $data->whereBetween('date',[$request->tanggal_mulai, $request->tanggal_selesai]);
         }

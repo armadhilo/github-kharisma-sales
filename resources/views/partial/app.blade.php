@@ -130,6 +130,14 @@
                 todayBtn: true
             });
 
+            $(".datepicker-bottom").datepicker({
+                autoclose: true,
+                format: "yyyy-mm-dd",
+                todayHighlight: true,
+                orientation: "bottom auto",
+                todayBtn: true
+            });
+
             $(".datepicker-years").datepicker({
                 autoclose: true,
                 format: "yyyy",

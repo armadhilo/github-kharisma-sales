@@ -39,6 +39,11 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::post('/sync-produk','BackOffice\ProdukController@sync_produk');
         });
 
+        Route::prefix('absensi-sales')->group(function () {
+            Route::get('/','BackOffice\SalesAttendanceController@index');
+            Route::get('/datatables','BackOffice\SalesAttendanceController@datatables');
+        });
+
         Route::prefix('kunjungan-sales')->group(function () {
             Route::get('/','BackOffice\KunjunganSalesController@index');
             Route::get('/detail/{id}','BackOffice\KunjunganSalesController@detail');
