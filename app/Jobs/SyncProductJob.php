@@ -74,7 +74,9 @@ class SyncProductJob implements ShouldQueue
                 $this->fail(new \Exception($product['faultString']));
             }
 
-            if(count($product)){
+            $is_array = is_array($product) && is_object($product);
+
+            if($is_array || count($product)){
                 foreach($product as $item){
 
                     if(is_array($item)){

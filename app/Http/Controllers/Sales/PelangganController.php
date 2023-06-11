@@ -61,6 +61,7 @@ class PelangganController extends Controller
 
     public function store(PelangganRequest $request){
 
+        $request->merge(['type' => 2 ]);
         $request->merge(['password' => Hash::make($request->password) ]);
         $request->merge(['keylog' => Str::random(40) ]);
 
