@@ -147,6 +147,8 @@ class PelangganController extends Controller
             $request->merge(['kelurahan_id' => $kelurahan_id ]);
         }
 
+        $request->merge(['type' => 'pelanggan' ]);
+
         $user->fill($request->all())->save();
         $message = 'User Updated Successfully';
         return ApiFormatter::success(200, $message);
