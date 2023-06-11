@@ -121,6 +121,10 @@ class PelangganController extends Controller
             $request->request->add(['keylog' => Str::random(40)]);
         }
 
+        if($request->has('password')){
+            $request->merge(['password' => Hash::make($request->password) ]);
+        }
+
         if($request->has('provinsi')){
             //get provinsi_id
             $path = file_get_contents(public_path('json/provinsi.json'));
