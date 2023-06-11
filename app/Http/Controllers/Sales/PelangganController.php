@@ -13,6 +13,7 @@ use App\Helpers\ApiFormatter;
 use App\Http\Requests\PelangganRequest;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Route;
 
 class PelangganController extends Controller
 {
@@ -61,9 +62,33 @@ class PelangganController extends Controller
 
     public function store(PelangganRequest $request){
 
-        $request->merge(['type' => 2 ]);
+        $request->merge(['type' => 'pelanggan' ]);
         $request->merge(['password' => Hash::make($request->password) ]);
         $request->merge(['keylog' => Str::random(40) ]);
+
+        //get provinsi_id
+        $path = file_get_contents(public_path('json/provinsi.json'));
+        $json = collect(json_decode($path, true));
+        $provinsi_id = $json->where('nama', $request->provinsi)->first()['id'];
+        $request->merge(['provinsi_id' => $provinsi_id ]);
+
+        //get kota_id
+        $path = file_get_contents(public_path("json/kabupaten/$provinsi_id.json"));
+        $json = collect(json_decode($path, true));
+        $kota_id = $json->where('nama', $request->kota)->first()['id'];
+        $request->merge(['kota_id' => $kota_id ]);
+
+        //get kecamatan_id
+        $path = file_get_contents(public_path("json/kecamatan/$kota_id.json"));
+        $json = collect(json_decode($path, true));
+        $kecamatan_id = $json->where('nama', $request->kecamatan)->first()['id'];
+        $request->merge(['kecamatan_id' => $kecamatan_id ]);
+
+        //get kelurahan_id
+        $path = file_get_contents(public_path("json/kelurahan/$kecamatan_id.json"));
+        $json = collect(json_decode($path, true));
+        $kelurahan_id = $json->where('nama', $request->kelurahan)->first()['id'];
+        $request->merge(['kelurahan_id' => $kelurahan_id ]);
 
         User::create($request->all());
 
@@ -94,6 +119,32 @@ class PelangganController extends Controller
         //append keylog jika user_keylog masih kosong
         if(empty($user->keylog)){
             $request->request->add(['keylog' => Str::random(40)]);
+        }
+
+        if($request->has('provinsi')){
+            //get provinsi_id
+            $path = file_get_contents(public_path('json/provinsi.json'));
+            $json = collect(json_decode($path, true));
+            $provinsi_id = $json->where('nama', $request->provinsi)->first()['id'];
+            $request->merge(['provinsi_id' => $provinsi_id ]);
+
+            //get kota_id
+            $path = file_get_contents(public_path("json/kabupaten/$provinsi_id.json"));
+            $json = collect(json_decode($path, true));
+            $kota_id = $json->where('nama', $request->kota)->first()['id'];
+            $request->merge(['kota_id' => $kota_id ]);
+
+            //get kecamatan_id
+            $path = file_get_contents(public_path("json/kecamatan/$kota_id.json"));
+            $json = collect(json_decode($path, true));
+            $kecamatan_id = $json->where('nama', $request->kecamatan)->first()['id'];
+            $request->merge(['kecamatan_id' => $kecamatan_id ]);
+
+            //get kelurahan_id
+            $path = file_get_contents(public_path("json/kelurahan/$kecamatan_id.json"));
+            $json = collect(json_decode($path, true));
+            $kelurahan_id = $json->where('nama', $request->kelurahan)->first()['id'];
+            $request->merge(['kelurahan_id' => $kelurahan_id ]);
         }
 
         $user->fill($request->all())->save();
