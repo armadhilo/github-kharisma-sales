@@ -18,7 +18,7 @@ class SalesLogController extends Controller
         $data['id'] = $id;
         return view('admin.sales-log.detail', $data);
     }
-    
+
     public function detail_data($id){
         $data = SalesLog::where('sales_id', $id)->orderBy('created_at', 'asc')->get();
         return response()->json([
@@ -28,7 +28,7 @@ class SalesLogController extends Controller
     }
 
     public function datatables(){
-        $data = User::where('type', 1)->orderby('id','desc')->get();
+        $data = User::where('type', 1)->has('sales_log')->orderby('id','desc')->get();
 
         return DataTables::of($data)
                     ->addIndexColumn()

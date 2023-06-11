@@ -71,4 +71,8 @@ class User extends Authenticatable
     public function scopePelangganActive($query){
         return $query->where(['type' => 2])->whereNotNull('keylog');
     }
+
+    public function sales_log(){
+        return $this->hasMany(SalesLog::class, 'sales_id', 'id');
+    }
 }
