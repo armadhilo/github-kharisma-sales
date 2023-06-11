@@ -66,7 +66,9 @@ class PelangganController extends Controller
         // $collection = collect(collect($response)['original']);
         // dd($collection->where('nama', 'KAB. KUPANG')->first()['id']);
 
-        $request->request->add(['password' =>Hash::make($request->password)]);
+        if(request()->has('password')){
+            $request->request->add(['password' =>Hash::make($request->password)]);
+        }
 
 
         User::updateOrCreate(['id' => $request->id],$request->all() );

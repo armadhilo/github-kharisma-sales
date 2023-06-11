@@ -45,6 +45,8 @@ class PelangganRequest extends FormRequest
                     Rule::when(request()->isMethod('PUT'), 'nullable'),
                     'same:password'
                 ],
+                'provinsi' => 'required',
+                'kota' => 'required',
                 'kelurahan' => 'required',
                 'kecamatan' => 'required',
                 'kota' => 'required',
@@ -69,7 +71,7 @@ class PelangganRequest extends FormRequest
                 ],
             ];
         }
-        
+
     }
 
     protected function prepareForValidation()
