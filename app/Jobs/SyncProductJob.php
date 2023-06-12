@@ -169,7 +169,9 @@ class SyncProductJob implements ShouldQueue
                     // get product pricelist for b2c
                     $pricelist_b2c = $this->models->execute_kw($this->db, $this->uid, $this->password,
                     'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 1], ['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity']]);
-                    if(count($pricelist_b2c)){
+
+                    $is_array = is_array($pricelist_b2c) && is_object($pricelist_b2c);
+                    if($is_array || count($pricelist_b2c)){
                         foreach($pricelist_b2c as $item){
                             DB::table('odoo_pricelist')->insert([
                                 'product_tmpl_id' => $item['product_tmpl_id'][0],
@@ -184,7 +186,9 @@ class SyncProductJob implements ShouldQueue
                     // get product pricelist for b2b
                     $pricelist_b2b = $this->models->execute_kw($this->db, $this->uid, $this->password,
                     'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 7], ['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity']]);
-                    if(count($pricelist_b2b)){
+                    
+                    $is_array = is_array($pricelist_b2b) && is_object($pricelist_b2b);
+                    if($is_array || count($pricelist_b2b)){
                         foreach($pricelist_b2b as $item){
                             DB::table('odoo_pricelist')->insert([
                                 'product_tmpl_id' => $item['product_tmpl_id'][0],
@@ -198,7 +202,8 @@ class SyncProductJob implements ShouldQueue
                     //relational product and product_tag
                     $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
                     'product.template', 'search_read', [[['id', '=', $array_product_tmpl_product]]], ['fields' => ['id','tag_ids']]);
-                    if(count($product_tag)){
+                    $is_array = is_array($product_tag) && is_object($product_tag);
+                    if($is_array || count($product_tag)){
                         foreach($product_tag as $item){
                             DB::table('odoo_product')->where('product_tmpl_id', $item['id'])->update(['product_tag_id' => $item['tag_ids'][0]]);
                         }
