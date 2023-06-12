@@ -157,7 +157,7 @@
                 { data: "id", render: function (data, type, row, meta) { return meta.row + meta.settings._iDisplayStart + 1;}, searchable: false, orderable: false},
                 { data: 'gd_image_small_path' },
                 { data: 'product_name' },
-                { data: 'product_tag.name' },
+                { data: 'null', "defaultContent": "" },
                 { data: 'sku' },
                 { data: 'stock' },
                 { data: 'unit' },
@@ -172,6 +172,10 @@
                     } else {
                         $('td:eq(8)', row).html(`Rp. ` + fungsiRupiah(data.pricelist[i].price));
                     }
+                }
+
+                if(typeof(data.product_tag) != "undefined" && data.product_tag !== null) {
+                    $('td:eq(3)', row).html(data.product_tag.name);
                 }
 
                 if(typeof(data.gd_image_small_path) != "undefined" && data.gd_image_small_path !== null) {
