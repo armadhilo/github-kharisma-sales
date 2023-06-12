@@ -98,7 +98,9 @@ class OdooController extends Controller
 
             DB::table('odoo_product_tag')->insert([
                 'product_tag_id' => $item['id'],
-                'name' => $item['name']
+                'name' => $item['name'],
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 

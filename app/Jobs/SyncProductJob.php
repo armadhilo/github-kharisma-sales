@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
+use \Carbon\Carbon;
 use ripcord;
 use Str;
 use DB;
@@ -141,6 +142,8 @@ class SyncProductJob implements ShouldQueue
                             'unit' => $item['uom_id'][1],
                             'weight' => $item['weight'],
                             'stock' => $item['qty_available'],
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
                         ]);
                     }
                 }
@@ -178,6 +181,8 @@ class SyncProductJob implements ShouldQueue
                                 'price' => $item['fixed_price'],
                                 'min_quantity' => $item['min_quantity'],
                                 'type' => 'b2c',
+                                'created_at' => Carbon::now(),
+                                'updated_at' => Carbon::now(),
                             ]);
                         }
                     }
@@ -186,7 +191,7 @@ class SyncProductJob implements ShouldQueue
                     // get product pricelist for b2b
                     $pricelist_b2b = $this->models->execute_kw($this->db, $this->uid, $this->password,
                     'product.pricelist.item', 'search_read', [[['pricelist_id', '=', 7], ['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => ['product_tmpl_id','fixed_price','min_quantity']]);
-                    
+
                     $is_array = is_array($pricelist_b2b) && is_object($pricelist_b2b);
                     if($is_array || count($pricelist_b2b)){
                         foreach($pricelist_b2b as $item){
@@ -195,6 +200,8 @@ class SyncProductJob implements ShouldQueue
                                 'price' => $item['fixed_price'],
                                 'min_quantity' => $item['min_quantity'],
                                 'type' => 'b2b',
+                                'created_at' => Carbon::now(),
+                                'updated_at' => Carbon::now(),
                             ]);
                         }
                     }
