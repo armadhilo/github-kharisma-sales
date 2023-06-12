@@ -58,7 +58,7 @@
 <script>
 
     $(document).ready(function(){
-        // list_data();
+        list_data();
     });
     
     var basemaps= {
@@ -104,7 +104,7 @@
     }
 
    var map = L.map('myMap', {
-        // center: [-7.320063,112.7292863],
+        center: [-7.320063,112.7292863],
         zoom: 3,
         preferCanvas:true,
         bounceAtZoomLimits:false,
@@ -114,16 +114,6 @@
                 basemaps["Google Satelite"]
         ],
     });
-
-    routingControl = L.Routing.control({
-        waypoints: [
-            L.latLng(57.74, 11.94),
-            L.latLng(57.6792, 11.949)
-        ],
-        routeWhileDragging: false,
-        addWaypoints: false,
-        draggableWaypoints: false
-    }).addTo(map);
 
     //disable default scroll 
     map.scrollWheelZoom.disable();
@@ -155,33 +145,43 @@
         map.flyTo([-5.1114857,119.3325868], 5);
     }
 
-    // function list_data(){
-    //     $("#modal_loading").modal('show');
-    //     $.ajax({
-    //         url : "/admin/sales-log/detail-data/" + {{ $id }},
-    //         type: "GET",
-    //         dataType: "JSON",
-    //         success: function(response){
-    //            setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
-    //             var data = response.data;
-    //             if(response.status === 200){
-    //                 for(var i = 0; i  < data.length; i++ ){
-    //                     if(data[i].lat != null){
-    //                         // routingControl.setWaypoints([
-    //                         //     L.latLng(data[i].lat, data[i].lng)
-    //                         // ])
-    //                         // L.Routing.control({waypoints:[data[i].lat, data[i].lng]}).addTo(map);
-    //                     }
-    //                 }
-    //             }else{
-    //                 swal(response.message, {  icon: 'error', });
-    //             }
-    //         },
-    //         error: function (jqXHR, textStatus, errorThrown){
-    //            setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
-    //            swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
-    //         }
-    //     });
-    // }
+    function list_data(){
+        $("#modal_loading").modal('show');
+        $.ajax({
+            url : "/admin/sales-log/detail-data/" + {{ $id }},
+            type: "GET",
+            dataType: "JSON",
+            success: function(response){
+               setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                var data = response.data;
+                if(response.status === 200){
+                    let arr = new Array();
+                    for(var i = 0; i  < data.length; i++ ){
+                        if(data[i].lat != null){
+                            arr.push(new L.LatLng(data[i].lat, data[i].lng));
+                            // routingControl.setWaypoints([
+                            //     L.latLng(data[i].lat, data[i].lng)
+                            // ])
+                            // L.Routing.control({waypoints:[data[i].lat, data[i].lng]}).addTo(map);
+                        }
+                    }
+                    console.log(arr)
+                    routingControl = L.Routing.control({
+                        waypoints: arr,
+                        routeWhileDragging: false,
+                        addWaypoints: false,
+                        draggableWaypoints: false,
+                        createMarker: function() { return null; }
+                    }).addTo(map);
+                }else{
+                    swal(response.message, {  icon: 'error', });
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown){
+               setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+               swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
+            }
+        });
+    }
 </script>
 @endsection

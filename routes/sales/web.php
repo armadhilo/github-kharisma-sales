@@ -46,8 +46,8 @@ Route::middleware(['cors','cek_login'])->group(function () {
 
         Route::prefix('kunjungan-sales')->group(function () {
             Route::get('/','BackOffice\KunjunganSalesController@index');
-            Route::get('/detail/{id}','BackOffice\KunjunganSalesController@detail');
             Route::get('/datatables','BackOffice\KunjunganSalesController@datatables');
+            Route::get('/datatables/detail','BackOffice\KunjunganSalesController@datatables_detail');
         });
 
         Route::prefix('sales-log')->group(function () {
