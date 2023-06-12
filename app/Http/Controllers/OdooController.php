@@ -50,6 +50,20 @@ class OdooController extends Controller
         $this->models = ripcord::client("$url/xmlrpc/2/object");
     }
 
+    public function try_code(){
+
+        $array_product_tmpl_product = ['25612', '25604'];
+
+        $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
+        'product.template', 'search_read', [[['id', '=', $array_product_tmpl_product]]], ['fields' => ['id','tag_ids']]);
+
+        if(count($product_tag)){
+            foreach($product_tag as $item){
+                DB::table('odoo_product')->where('product_tmpl_id', $item['id'])->update(['product_tag_id' => $item['tag_ids'][0]]);
+            }
+        }
+    }
+
     public function sync_product(Request $request){
 
         $content = request()->file('file');
@@ -112,24 +126,27 @@ class OdooController extends Controller
         'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 50]);
 
         try {
-            foreach($pelanggan as $item){
-                $user = User::updateOrCreate([
-                    'pelanggan_id' => $item['id'],
-                    'email' => $item['email'],
-                ],[
-                    'type' => 'pelanggan',
-                    'pelanggan_id' => $item['id'],
-                    'email' => $item['email'] == false ? null : $item['email'],
-                    'nama' => trim($item['name']),
-                    'telepon' => $item['mobile'],
-                    'nama_toko' => trim($item['display_name']),
-                    'alamat_toko' => $item['street'] . ($item['street2'] != false ? ' - ' . $item['street2'] : '') . ($item['city'] != false ? ' - ' . $item['city'] : '') . ($item['zip'] != false ? ' - ' . $item['zip'] : ''),
-                ]);
-
-                if($user->wasRecentlyCreated){
-                    User::where('id', $user->id)->update([
-                        'password' => Hash::make('pelanggan')
+            $is_array = is_array($pelanggan) && is_object($pelanggan);
+            if($is_array || count($pelanggan)){
+                foreach($pelanggan as $item){
+                    $user = User::updateOrCreate([
+                        'pelanggan_id' => $item['id'],
+                        'email' => $item['email'],
+                    ],[
+                        'type' => 'pelanggan',
+                        'pelanggan_id' => $item['id'],
+                        'email' => $item['email'] == false ? null : $item['email'],
+                        'nama' => trim($item['name']),
+                        'telepon' => $item['mobile'],
+                        'nama_toko' => trim($item['display_name']),
+                        'alamat_toko' => $item['street'] . ($item['street2'] != false ? ' - ' . $item['street2'] : '') . ($item['city'] != false ? ' - ' . $item['city'] : '') . ($item['zip'] != false ? ' - ' . $item['zip'] : ''),
                     ]);
+
+                    if($user->wasRecentlyCreated){
+                        User::where('id', $user->id)->update([
+                            'password' => Hash::make('pelanggan')
+                        ]);
+                    }
                 }
             }
 

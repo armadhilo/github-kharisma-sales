@@ -20,7 +20,7 @@ class ProdukController extends Controller
     }
 
     public function datatables(){
-        $product = OdooProductOriginal::with('pricelist')->get();
+        $product = OdooProductOriginal::with('pricelist','product_tag')->get();
 
         $message = ' Data product berhasil ditampilkan';
         return ApiFormatter::success(200, $message, $product);
