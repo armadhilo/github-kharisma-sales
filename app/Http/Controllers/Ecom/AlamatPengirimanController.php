@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 use App\Helpers\ApiFormatter;
+use App\Helpers\OdooApi;
 use App\Http\Requests\PelangganRequest;
 use App\Http\Requests\Ecom\AlamatPengirimanRequest;
 
@@ -45,12 +46,37 @@ class AlamatPengirimanController extends Controller
 
     public function store_update(AlamatPengirimanRequest $request){
 
+        //jika bukan update cek karena alamat pengiriman cuma boleh ada 1
+        if(!$request->has('id')){
+            $alamat_pengiriman = AlamatPengiriman::where('user_id', auth('api')->user()->id)->count();
+            if($alamat_pengiriman > 0){
+                return ApiFormatter::error(400, 'Oops! anda tidak dapat menambahkan alamat pengiriman baru');
+            }
+        }
+
         $request->request->add(['user_id' => auth('api')->user()->id]);
 
         $count_alamat_pengiriman = AlamatPengiriman::where('user_id', $request->user_id)->count();
         if($count_alamat_pengiriman == 0){
             $request->request->add(['alamat_utama' => '1']);
         }
+
+        //format telepon tanpa 0 dan 62
+        $telepon_custom = $request->no_telepon;
+        if(substr($request->no_telepon, 0, 1) == '0'){
+            $telepon_custom = substr($request->no_telepon, 1);
+        }elseif(substr($request->no_telepon, 0, 2) == '62'){
+            $telepon_custom = substr($request->no_telepon, 0,2);
+        }
+
+        //update data di odoo
+        $request_odoo = new \Illuminate\Http\Request();
+        $request_odoo->merge(['pelanggan_id' => auth('api')->user()->pelanggan_id]);
+        $request_odoo->merge(['street' => $request->alamat]);
+        $request_odoo->merge(['phone' => $telepon_custom]);
+        $request_odoo->merge(['zip' => $request->kode_pos]);
+
+        OdooApi::updateCustomer($request_odoo);
 
         $alamat_pengiriman = AlamatPengiriman::updateOrCreate(['id' => $request->id],$request->all() );
 

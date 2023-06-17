@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 use App\Helpers\ApiFormatter;
+use App\Helpers\OdooApi;
 use App\Http\Requests\PelangganRequest;
 
 use App\Models\User;
@@ -89,6 +90,25 @@ class PelangganController extends Controller
         $json = collect(json_decode($path, true));
         $kelurahan_id = $json->where('nama', $request->kelurahan)->first()['id'];
         $request->merge(['kelurahan_id' => $kelurahan_id ]);
+
+        //format telepon tanpa 0 dan 62
+        $telepon_custom = $request->telepon;
+        if(substr($request->telepon, 0, 1) == '0'){
+            $telepon_custom = substr($request->telepon, 1);
+        }elseif(substr($request->telepon, 0, 2) == '62'){
+            $telepon_custom = substr($request->telepon, 0,2);
+        }
+
+        //create customer odoo
+        $request_odoo = new \Illuminate\Http\Request();
+        $request_odoo->merge(['name' => $request->nama]);
+        $request_odoo->merge(['street' => $request->alamat]);
+        $request_odoo->merge(['phone' => $telepon_custom]);
+        $request_odoo->merge(['zip' => $request->zip]);
+        $pelanggan_id = OdooApi::createCustomer($request_odoo);
+
+        //append data pelanggan_id from create customer
+        $request->merge(['pelanggan_id' => $pelanggan_id[0]]);
 
         User::create($request->all());
 

@@ -22,6 +22,7 @@ use App\Models\OdooPricelist;
 use App\Models\User;
 
 use App\Helpers\ApiFormatter;
+use App\Helpers\OdooApi;
 use App\Jobs\SimpleJob;
 use App\Jobs\SyncProductJob;
 use App\Models\OdooProductTag;
@@ -51,17 +52,74 @@ class OdooController extends Controller
     }
 
     public function try_code(){
+        
+        // return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        // 'product.product', 'search_read', [[[]]], ['fields' => [], 'limit'=> 1]);
 
-        $array_product_tmpl_product = ['25612', '25604'];
+        
+        //GET STATE UNTUK UPDATE SO STATUS
+        // $array = ['64842'];
+        // return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        // 'sale.order', 'search_read', [[['id','=', $array]]], ['fields' => ['state'], 'limit'=> 1]);
 
-        $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'product.template', 'search_read', [[['id', '=', $array_product_tmpl_product]]], ['fields' => ['id','tag_ids']]);
+        //CREATE CUSTOMER DI SO
+        // $partnerData = array(
+        //     array('name' => "Partner 1"),
+        //     array('name' => "Partner 2"),
+        //     array('name' => "Partner 3"),
+        // );
 
-        if(count($product_tag)){
-            foreach($product_tag as $item){
-                DB::table('odoo_product')->where('product_tmpl_id', $item['id'])->update(['product_tag_id' => $item['tag_ids'][0]]);
-            }
-        }
+        // $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
+        // 'res.partner', 'create', [$partnerData]);
+        
+        //CREATE SO
+        // $partnerData = [
+        //     [
+        //         'partner_id' => 37368,
+        //         'order_line' => [
+        //             [
+        //                 0,
+        //                 0,
+        //                 [
+        //                     'product_id' => 36228, //integer
+        //                     'product_uom' => 1103,
+        //                     'product_uom_qty' => 2,
+        //                     'price_unit' => 4000,
+        //                     'tax_id' => [[4,9]],
+        //                     'name' => '2TAPE 12x12Y 573912 ALLIGATOR',
+        //                 ],
+        //             ],
+        //             [
+        //                 0,
+        //                 0,
+        //                 [
+        //                     'product_id' => 37235, //integer
+        //                     'product_uom' => 1580,
+        //                     'product_uom_qty' => 2,
+        //                     'price_unit' => 5000,
+        //                     'tax_id' => [[4,9]],
+        //                     'name' => '2TAPE 12x12Y 573912 ALLIGATOR',
+        //                 ],
+        //             ],
+        //             [
+        //                 0,
+        //                 0,
+        //                 [
+        //                     'product_id' => 38839, //ONGKOS PENGIRIMAN
+        //                     'product_uom' => 1,
+        //                     'product_uom_qty' => 1,
+        //                     'price_unit' => 5000, //custom
+        //                     'name' => 'JNE - HEMAT', //custom
+        //                 ],
+        //             ]
+        //         ],
+        //     ],
+        // ];
+
+        // $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
+        // 'sale.order', 'create', [$partnerData]);
+
+        // return $product_tag;
     }
 
     public function sync_product(Request $request){

@@ -27,51 +27,32 @@ class PelangganRequest extends FormRequest
      */
     public function rules()
     {
-        if(request()->isMethod('PUT')){
-            return [
-                'nama' => 'required',
-                'nama_toko' => 'required',
-                'alamat' => 'required',
-                'alamat_toko' => 'required',
-                'email' => 'required|email|unique:users,email,' . $this->id,
-                'telepon' => 'required|digits_between:10,12',
-                'password' => [
-                    Rule::when(request()->isMethod('POST'), 'required'),
-                    Rule::when(request()->isMethod('PUT'), 'nullable'),
-                    'min:6',
-                ],
-                'retype_password' => [
-                    Rule::when(request()->isMethod('POST'), 'required'),
-                    Rule::when(request()->isMethod('PUT'), 'nullable'),
-                    'same:password'
-                ],
-                'provinsi' => 'required',
-                'kota' => 'required',
-                'kelurahan' => 'required',
-                'kecamatan' => 'required',
-                'kota' => 'required',
-                'lat' => 'required',
-                'lng' => 'required',
-            ];
-        } else {
-            return [
-                'nama' => 'required',
-                'alamat' => 'required',
-                'email' => 'required|email|unique:users,email',
-                'telepon' => 'required|digits_between:10,12',
-                'password' => [
-                    Rule::when(request()->isMethod('POST'), 'required'),
-                    Rule::when(request()->isMethod('PUT'), 'nullable'),
-                    'min:6',
-                ],
-                'retype_password' => [
-                    Rule::when(request()->isMethod('POST'), 'required'),
-                    Rule::when(request()->isMethod('PUT'), 'nullable'),
-                    'same:password'
-                ],
-            ];
-        }
-
+        return [
+            'nama' => 'required',
+            'nama_toko' => 'required',
+            'alamat' => 'required',
+            'alamat_toko' => 'required',
+            'email' => 'required|email|unique:users,email,' . $this->id,
+            'telepon' => 'required|digits_between:10,12',
+            'password' => [
+                Rule::when(request()->isMethod('POST'), 'required'),
+                Rule::when(request()->isMethod('PUT'), 'nullable'),
+                'min:6',
+            ],
+            'retype_password' => [
+                Rule::when(request()->isMethod('POST'), 'required'),
+                Rule::when(request()->isMethod('PUT'), 'nullable'),
+                'same:password'
+            ],
+            'provinsi' => 'required',
+            'kota' => 'required',
+            'kelurahan' => 'required',
+            'kecamatan' => 'required',
+            'kota' => 'required',
+            'zip' => 'required',
+            'lat' => 'required',
+            'lng' => 'required',
+        ];
     }
 
     protected function prepareForValidation()
