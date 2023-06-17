@@ -20,6 +20,10 @@ Route::group(['prefix' => 'ecom'], function(){
     Route::post('/login', 'Ecom\AuthController@login');
     Route::post('/forgot-password', 'Ecom\AuthController@forgot_password');
 
+    Route::group(['prefix' => 'data-master'], function(){
+        Route::get('/check-price','Ecom\DataMasterController@check_price');
+    });
+
     Route::group(['prefix' => 'product'], function(){
         Route::get('/', 'Ecom\ProductController@index');
         Route::get('/{id}', 'Ecom\ProductController@detail');
