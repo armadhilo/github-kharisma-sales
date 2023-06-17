@@ -21,7 +21,7 @@ Route::group(['prefix' => 'ecom'], function(){
     Route::post('/forgot-password', 'Ecom\AuthController@forgot_password');
 
     Route::group(['prefix' => 'data-master'], function(){
-        Route::get('/check-price','Ecom\DataMasterController@check_price');
+        Route::get('/check-price','Ecom\DataMasterController@checking_price');
     });
 
     Route::group(['prefix' => 'product'], function(){
@@ -76,6 +76,11 @@ Route::group(['prefix' => 'ecom'], function(){
         Route::group(['prefix' => 'checkout'], function(){
             Route::get('/', 'Ecom\CheckoutController@index');
             Route::post('/', 'Ecom\CheckoutController@checkout');
+        });
+
+        Route::group(['prefix' => 'buy-now'], function(){
+            Route::get('/', 'Ecom\BuyNowController@index');
+            Route::post('/', 'Ecom\BuyNowController@buy_now');
         });
 
         Route::group(['prefix' => 'wishlist'], function(){

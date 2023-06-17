@@ -12,6 +12,7 @@ use Illuminate\Support\Collection;
 use App\Pagination\CustomPagination;
 
 use App\Models\OdooProduct;
+use App\Models\OdooPricelist;
 
 class Controller extends BaseController
 {
@@ -31,5 +32,20 @@ class Controller extends BaseController
         }
 
         return true;
+    }
+
+    public function check_price($product_tmpl_id, $quantity){
+        $type = 'b2c';
+        if(auth('api')->check()){
+            $type = 'b2b';
+        }
+
+        $odoo_pricelist = OdooPricelist::where(['type' => $type, 'product_tmpl_id' => $product_tmpl_id])
+            ->where('min_quantity','<=', $quantity)->orderBy('min_quantity', 'desc')->first();
+
+        $data['price'] = $odoo_pricelist->price;
+        $data['total_price'] = $quantity * $data['price'];
+
+        return $data;
     }
 }

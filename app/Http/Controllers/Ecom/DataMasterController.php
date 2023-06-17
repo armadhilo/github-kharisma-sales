@@ -19,7 +19,7 @@ use App\Models\OdooPricelist;
 
 class DataMasterController extends Controller
 {
-    public function check_price(Request $request){
+    public function checking_price(Request $request){
         $validator = Validator::make($request->all(), [
             'product_tmpl_id' => 'required',
             'quantity' => 'required',
@@ -33,8 +33,6 @@ class DataMasterController extends Controller
         if(auth('api')->check()){
             $type = 'b2b';
         }
-
-        $type = 'b2b';
 
         $odoo_pricelist = OdooPricelist::where(['type' => $type, 'product_tmpl_id' => $request->product_tmpl_id])
             ->where('min_quantity','<=', $request->quantity)->orderBy('min_quantity', 'desc')->first();

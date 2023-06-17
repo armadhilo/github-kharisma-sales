@@ -15,6 +15,7 @@ use App\Helpers\ApiFormatter;
 use App\Http\Requests\Ecom\CartRequest;
 use App\Http\Requests\Ecom\CheckoutRequest;
 use App\Models\Cart;
+use App\Models\OdooProduct;
 
 class CartController extends Controller
 {
@@ -44,6 +45,11 @@ class CartController extends Controller
 
         $request->merge(['uuid' => Str::uuid() ]);
         $request->merge(['user_id' => auth('api')->user()->id ]);
+
+        //recheck price
+        $odoo_product = OdooProduct::where('product_id', $request->product_id)->first();
+        $recheck_price = $this->check_price($odoo_product->product_tmpl_id, $request->quantity);
+        $request->merge(['price' => $recheck_price['price'] ]);
 
         //jika barang yang dibeli kembar jadikan 1 cart
         $cart = Cart::active()->where(['product_id' => $request->product_id])->first();
