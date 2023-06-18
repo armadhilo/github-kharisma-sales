@@ -16,4 +16,8 @@ class SalesOrder extends Model
 
     protected $table = 'sales_order';
     protected $guarded = ['id'];
+
+    public function sales_order_product(){
+        return $this->hasMany(SalesOrderProduct::class);
+    }
 }
