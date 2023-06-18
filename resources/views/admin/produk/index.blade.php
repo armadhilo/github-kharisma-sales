@@ -68,7 +68,7 @@
                     <thead>
                        <tr>
                           <th scope="col" class="text-center">No</th>
-                          <th scope="col" class="text-center" style="width:10%">Gambar</th>
+                          <th scope="col" class="text-center">Gambar</th>
                           <th scope="col" class="text-center">Nama</th>
                           <th scope="col" class="text-center">Kategori</th>
                           <th scope="col" class="text-center">SKU</th>
@@ -152,6 +152,7 @@
             },
             columnDefs: [
                 { className: 'text-center', targets: [0,1,3,4,5,6,7,8] },
+                {"width": "5%", "targets": 1},
             ],
             columns: [
                 { data: "id", render: function (data, type, row, meta) { return meta.row + meta.settings._iDisplayStart + 1;}, searchable: false, orderable: false},

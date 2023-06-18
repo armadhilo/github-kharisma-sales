@@ -68,7 +68,7 @@ class SyncProductJob implements ShouldQueue
             $array_filename = [];
 
             $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                'product.product', 'search_read', [[['id', '=', $this->data],['qty_available','>',0]]], ['fields' => ['id','product_tmpl_id','uom_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
+                'product.product', 'search_read', [[['id', '=', $this->data],['qty_available','>',0]]], ['fields' => ['id','product_tmpl_id','uom_id','tag_ids','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
 
             if(isset($product['faultCode']) && $product['faultCode'] == 1){
                 Log::error($product['faultString']);
@@ -132,7 +132,8 @@ class SyncProductJob implements ShouldQueue
                         DB::table('odoo_product')->insert([
                             'product_id' => $item['id'],
                             'product_tmpl_id' => $item['product_tmpl_id'][0],
-                            'product_uom_id' => $item['product_uom_id'][0],
+                            'product_uom_id' => $item['uom_id'][0],
+                            'product_tag_id' => $item['tag_ids'][0],
                             'sku' => $item['barcode'],
                             'product_name' => $item['name'],
                             'product_name_slug' => Str::slug($item['name']),
@@ -204,16 +205,6 @@ class SyncProductJob implements ShouldQueue
                                 'created_at' => Carbon::now(),
                                 'updated_at' => Carbon::now(),
                             ]);
-                        }
-                    }
-
-                    //relational product and product_tag
-                    $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                    'product.template', 'search_read', [[['id', '=', $array_product_tmpl_product]]], ['fields' => ['id','tag_ids']]);
-                    $is_array = is_array($product_tag) && is_object($product_tag);
-                    if($is_array || count($product_tag)){
-                        foreach($product_tag as $item){
-                            DB::table('odoo_product')->where('product_tmpl_id', $item['id'])->update(['product_tag_id' => $item['tag_ids'][0]]);
                         }
                     }
                 }
