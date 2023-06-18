@@ -68,7 +68,7 @@ class SyncProductJob implements ShouldQueue
             $array_filename = [];
 
             $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                'product.product', 'search_read', [[['id', '=', $this->data],['qty_available','>',0]]], ['fields' => ['id','product_tmpl_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
+                'product.product', 'search_read', [[['id', '=', $this->data],['qty_available','>',0]]], ['fields' => ['id','product_tmpl_id','uom_id','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
 
             if(isset($product['faultCode']) && $product['faultCode'] == 1){
                 Log::error($product['faultString']);
@@ -132,6 +132,7 @@ class SyncProductJob implements ShouldQueue
                         DB::table('odoo_product')->insert([
                             'product_id' => $item['id'],
                             'product_tmpl_id' => $item['product_tmpl_id'][0],
+                            'product_uom_id' => $item['product_uom_id'][0],
                             'sku' => $item['barcode'],
                             'product_name' => $item['name'],
                             'product_name_slug' => Str::slug($item['name']),
