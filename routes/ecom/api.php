@@ -92,6 +92,11 @@ Route::group(['prefix' => 'ecom'], function(){
         Route::group(['prefix' => 'ongkos-kirim'], function(){
             Route::get('/', 'Ecom\OngkosKirimController@index');
         });
+
+        Route::group(['prefix' => 'sales-order'], function(){
+            Route::get('/', 'Ecom\SalesOrderController@index');
+            Route::post('/', 'OdooController@sales_order');
+        });
     });
 });
 

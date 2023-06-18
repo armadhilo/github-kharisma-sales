@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 use App\Helpers\ApiFormatter;
 use App\Http\Requests\Ecom\ForgotPasswordRequest;
@@ -89,6 +90,7 @@ class AuthController extends Controller
 
     public function logout(){
         auth('api')->user()->AauthAcessToken()->delete();
+        Session::flush();
 
         $message = 'Successfully logout.';
         return ApiFormatter::success(200, $message);

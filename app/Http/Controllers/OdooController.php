@@ -23,9 +23,13 @@ use App\Models\User;
 
 use App\Helpers\ApiFormatter;
 use App\Helpers\OdooApi;
+use App\Http\Requests\SalesOrderRequest;
 use App\Jobs\SimpleJob;
 use App\Jobs\SyncProductJob;
+use App\Models\Cart;
 use App\Models\OdooProductTag;
+use App\Models\SalesOrder;
+use App\Models\SalesOrderProduct;
 use Log;
 use ripcord;
 
@@ -53,9 +57,14 @@ class OdooController extends Controller
 
     public function try_code(){
         
+        //GET PRODUCT
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        // 'product.product', 'search_read', [[[]]], ['fields' => [], 'limit'=> 1]);
+        // 'product.product', 'search_read', [[]], ['fields' => [], 'limit'=> 1]);
 
+        //GET PRODUCT TAG
+        // $array_product_tmpl_product = ['37374'];
+        // return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        //     'product.template', 'search_read', [[['id','=',$array_product_tmpl_product]]], ['fields' => [], 'limit' => 1]);
         
         //GET STATE UNTUK UPDATE SO STATUS
         // $array = ['64842'];
@@ -120,6 +129,133 @@ class OdooController extends Controller
         // 'sale.order', 'create', [$partnerData]);
 
         // return $product_tag;
+    }
+
+    public function sales_order(SalesOrderRequest $request){
+
+        DB::beginTransaction();
+
+        try{
+            
+            // 'product_id' => 'required',
+            // 'product_id.*' => 'required',
+            // 'quantity' => 'required',
+            // 'quantity.*' => 'required',
+            // 'total_berat' => 'required',
+            // 'ongkos_kirim' => 'required',
+            // 'jasa_pengiriman' => 'required'
+
+            $array_product_no_stock = [];
+            $array_order_line = [];
+            $array_cart_id = [];
+            $total_harga_produk = 0;
+
+            $cart = Cart::with('product')->whereIn('uuid', $request->cart_id)->get();
+
+            //create SALES_ORDER table
+            $sales_order = SalesOrder::create([
+                'uuid' => Str::uuid(),
+                'user_id' => auth('api')->user()->id,
+                'sales_id' => session('sales_id'),
+                'total_berat' => $request->total_berat,
+                'ongkos_kirim' => $request->ongkos_kirim,
+                'jasa_pengiriman' => $request->jasa_pengiriman,
+            ]);
+
+            foreach($cart as $key => $item){
+
+                $array_cart_id[] = $item->id;
+
+                //check stock barang
+                $cek_stock = $this->check_stock($item->product->product_id, $item->quantity);
+                if(!$cek_stock){
+                    $array_product_no_stock[] = $item;
+                    //delete barang yang stocknya habis
+                }
+
+                //recheck price
+                $recheck_price = $this->check_price($item->product->product_tmpl_id, $item->quantity);
+                $total_harga_produk += $recheck_price['price'] * $item->quantity;
+
+                //siapkan parameter order line
+                $array_order_line[] = [
+                    0,
+                    0,
+                    [
+                        'product_id' => $item->product->product_id, //integer
+                        'product_uom' => $item->product->product_uom_id,
+                        'product_uom_qty' => $item->quantity,
+                        'price_unit' => $recheck_price['price'],
+                        'tax_id' => [[4,9]],
+                        'name' => $item->product->product_name,
+                    ],
+                ];
+
+                //insert into SALES_ORDER_PRODUCT table
+                SalesOrderProduct::create([
+                    'sales_order_id' => $sales_order->id,
+                    'cart_id' => $item->id,
+                    'product_id' => $item->product->product_id,
+                    'quantity' => $item->quantity,
+                    'harga' => $recheck_price['price']
+                ]);
+            }
+
+            //add ongkos kirim ke dalam order line
+            $array_order_line[] = [
+                0,
+                0,
+                [
+                    'product_id' => 38839, //ONGKOS PENGIRIMAN
+                    'product_uom' => 1,
+                    'product_uom_qty' => 1,
+                    'price_unit' => $request->ongkos_kirim, //custom
+                    'name' => $request->jasa_pengiriman, //custom
+                ],
+            ];
+
+            //jika ada product yang tidak punya stock dihapus dari cart
+            if(count($array_product_no_stock)){
+
+                Cart::active()->whereIn(['product_id', $array_product_no_stock])->delete();
+
+                $message = 'Oops! beberapa barang sudah habis kami hapus dari keranjangmu ya';
+                return ApiFormatter::error(400, $message);
+            }
+
+            $salesOrderData = [
+                'partner_id' => auth('api')->user()->pelanggan_id,
+                'order_line' => [
+                    $array_order_line
+                ],
+            ];
+
+            $sales_order_odoo = $this->models->execute_kw($this->db, $this->uid, $this->password,
+            'sale.order', 'create', [[$salesOrderData]]);
+
+            //update data SALES_ORDER TABLE
+            SalesOrder::where('id', $sales_order->id)->update([
+                'odoo_order_id' => $sales_order_odoo[0],
+                'total_harga_produk' => $total_harga_produk,
+                'total_harga' => $total_harga_produk + $request->ongkos_kirim,
+            ]);
+
+            //update status on CART table
+            Cart::whereIn('id', $array_cart_id)->update([
+                'status' => 1,
+            ]);
+
+            DB::commit();
+
+            return ApiFormatter::success(200, 'Sales Order berhasil dibuat');
+
+        }
+
+        catch(\Exception $e){
+
+            DB::rollback();
+            return ApiFormatter::error(500, $e->getMessage());
+        }
     }
 
     public function sync_product(Request $request){

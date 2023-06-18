@@ -44,7 +44,7 @@ class CheckoutController extends Controller
         catch(\Exception $e){
 
             DB::rollback();
-            return ApiFormatter::error(500, $e);
+            return ApiFormatter::error(500, $e->getMessage());
         }
     }
 }

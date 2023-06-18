@@ -63,10 +63,8 @@ class BuyNowController extends Controller
 
         catch(\Exception $e){
 
-            dd($e);
-
             DB::rollback();
-            return ApiFormatter::error(500, $e);
+            return ApiFormatter::error(500, $e->getMessage());
         }
     }
 }
