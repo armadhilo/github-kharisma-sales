@@ -13,7 +13,6 @@ use DB;
 
 use App\Helpers\ApiFormatter;
 use App\Http\Requests\Ecom\CartRequest;
-use App\Http\Requests\Ecom\CheckoutRequest;
 use App\Models\Cart;
 use App\Models\OdooProduct;
 

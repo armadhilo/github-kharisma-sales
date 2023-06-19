@@ -26,8 +26,8 @@ class CheckoutRequest extends FormRequest
     public function rules()
     {
         return [
-            'product_id' => 'required',
-            'product_id.*' => 'required',
+            'cart_uuid' => 'required',
+            'cart_uuid.*' => 'required',
         ];
     }
 

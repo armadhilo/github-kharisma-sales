@@ -32,7 +32,7 @@ class CheckoutController extends Controller
         try{
 
             Cart::active()->update(['is_checkout' => 0]);
-            Cart::active()->whereIn('uuid', $request->product_id)->update(['is_checkout' => 1]);
+            Cart::active()->whereIn('uuid', $request->cart_uuid)->update(['is_checkout' => 1]);
 
             DB::commit();
 
