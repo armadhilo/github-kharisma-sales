@@ -56,7 +56,7 @@ class BuyNowController extends Controller
             DB::commit();
 
             $message = ' Data product buy now berhasil ditambahkan';
-            return ApiFormatter::success(200, $message);
+            return ApiFormatter::success(200, $message, $request->uuid);
 
         }
 
