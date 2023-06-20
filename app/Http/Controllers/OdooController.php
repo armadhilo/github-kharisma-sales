@@ -136,14 +136,6 @@ class OdooController extends Controller
         DB::beginTransaction();
 
         try{
-            
-            // 'product_id' => 'required',
-            // 'product_id.*' => 'required',
-            // 'quantity' => 'required',
-            // 'quantity.*' => 'required',
-            // 'total_berat' => 'required',
-            // 'ongkos_kirim' => 'required',
-            // 'jasa_pengiriman' => 'required'
 
             $array_product_no_stock = [];
             $array_order_line = [];
@@ -277,10 +269,7 @@ class OdooController extends Controller
         // #read -> akan return DETAIL
         // return $models->execute_kw($db, $uid, $password,
         // 'product.product', 'search_read', [[['write_uid', '=', 1]]], ['fields' => ['default_code','active','product_tmpl_id'], 'limit'=> 5]);
-
-        OdooPricelist::truncate();
-        OdooProductTag::truncate();
-        OdooProduct::truncate();
+        
         DB::table('jobs')->truncate();
         DB::table('failed_jobs')->truncate();
 
@@ -290,7 +279,7 @@ class OdooController extends Controller
 
         foreach($product_tag as $item){
 
-            DB::table('odoo_product_tag')->insert([
+            DB::table('odoo_product_tag')->updateOrInsert(['product_tag_id' => $item['id']],[
                 'product_tag_id' => $item['id'],
                 'name' => $item['name'],
                 'created_at' => Carbon::now(),

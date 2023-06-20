@@ -67,6 +67,9 @@ class SyncProductJob implements ShouldQueue
             $array_product_tmpl_product = [];
             $array_filename = [];
 
+            //get list data ODOO_PRODUCT table
+            $odoo_product = OdooProduct::whereIn('product_id', $this->data)->get();
+
             $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
                 'product.product', 'search_read', [[['id', '=', $this->data],['qty_available','>',0]]], ['fields' => ['id','product_tmpl_id','uom_id','tag_ids','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
 
@@ -102,9 +105,13 @@ class SyncProductJob implements ShouldQueue
                             finfo_close($finfo);
 
                             $filename = $item['barcode'] .'-'. 'big.' . $mimeType;
-                            $array_filename[] = $filename;
 
-                            Storage::disk('google')->put($filename, base64_decode($item['image']));
+                            //check apabila gambar sudah ada tidak perlu menambahkan image baru
+                            $filteredCollection = $odoo_product->where('gd_image_name', $filename);
+                            if(count($filteredCollection) == 0){
+                                $array_filename[] = $filename;
+                                Storage::disk('google')->put($filename, base64_decode($item['image']));
+                            }
                         }
 
                         if(!empty($item['image_medium'])){
@@ -122,14 +129,18 @@ class SyncProductJob implements ShouldQueue
                             finfo_close($finfo);
 
                             $filename_small = $item['barcode'] .'-'. 'medium.' . $mimeType_small;
-                            $array_filename[] = $filename_small;
 
-                            Storage::disk('google')->put($filename_small, base64_decode($item['image_medium']));
+                            //check apabila gambar sudah ada tidak perlu menambahkan image baru
+                            $filteredCollection = $odoo_product->where('gd_image_small_name', $filename_small);
+                            if(count($filteredCollection) == 0){
+                                $array_filename[] = $filename_small;
+                                Storage::disk('google')->put($filename_small, base64_decode($item['image_medium']));
+                            }
                         }
 
                         $array_product_tmpl_product[] = is_array($item['product_tmpl_id']) ? $item['product_tmpl_id'][0] : $item['product_tmpl_id'];
 
-                        DB::table('odoo_product')->insert([
+                        DB::table('odoo_product')->updateOrInsert(['product_id' => $item['id']],[
                             'product_id' => $item['id'],
                             'product_tmpl_id' => $item['product_tmpl_id'][0],
                             'product_uom_id' => $item['uom_id'][0],
@@ -177,7 +188,12 @@ class SyncProductJob implements ShouldQueue
 
                     $is_array = is_array($pricelist_b2c) && is_object($pricelist_b2c);
                     if($is_array || count($pricelist_b2c)){
+
+                        //delete pricelist B2C yang akan diupdate harganya
+                        OdooPricelist::where('type', 'b2c')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
+
                         foreach($pricelist_b2c as $item){
+
                             DB::table('odoo_pricelist')->insert([
                                 'product_tmpl_id' => $item['product_tmpl_id'][0],
                                 'price' => $item['fixed_price'],
@@ -196,6 +212,10 @@ class SyncProductJob implements ShouldQueue
 
                     $is_array = is_array($pricelist_b2b) && is_object($pricelist_b2b);
                     if($is_array || count($pricelist_b2b)){
+
+                        //delete pricelist B2B yang akan diupdate harganya
+                        OdooPricelist::where('type', 'b2b')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
+
                         foreach($pricelist_b2b as $item){
                             DB::table('odoo_pricelist')->insert([
                                 'product_tmpl_id' => $item['product_tmpl_id'][0],
