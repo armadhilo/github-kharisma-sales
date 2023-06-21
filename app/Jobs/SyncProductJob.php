@@ -5,7 +5,7 @@ namespace App\Jobs;
 require_once(base_path() . '/public/ripcord-master/ripcord.php');
 
 use App\Models\OdooPricelist;
-use App\Models\OdooProduct;
+use App\Models\OdooProductOriginal;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -68,7 +68,7 @@ class SyncProductJob implements ShouldQueue
             $array_filename = [];
 
             //get list data ODOO_PRODUCT table
-            $odoo_product = OdooProduct::whereIn('product_id', $this->data)->get();
+            $odoo_product = OdooProductOriginal::whereIn('product_id', $this->data)->get();
 
             $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
                 'product.product', 'search_read', [[['id', '=', $this->data],['qty_available','>',0]]], ['fields' => ['id','product_tmpl_id','uom_id','tag_ids','barcode','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
@@ -107,8 +107,7 @@ class SyncProductJob implements ShouldQueue
                             $filename = $item['barcode'] .'-'. 'big.' . $mimeType;
 
                             //check apabila gambar sudah ada tidak perlu menambahkan image baru
-                            $filteredCollection = $odoo_product->where('gd_image_name', $filename);
-                            if(count($filteredCollection) == 0){
+                            if(!count($odoo_product->where('gd_image_name', $filename))){
                                 $array_filename[] = $filename;
                                 Storage::disk('google')->put($filename, base64_decode($item['image']));
                             }
@@ -131,8 +130,7 @@ class SyncProductJob implements ShouldQueue
                             $filename_small = $item['barcode'] .'-'. 'medium.' . $mimeType_small;
 
                             //check apabila gambar sudah ada tidak perlu menambahkan image baru
-                            $filteredCollection = $odoo_product->where('gd_image_small_name', $filename_small);
-                            if(count($filteredCollection) == 0){
+                            if(!count($odoo_product->where('gd_image_small_name', $filename_small))){
                                 $array_filename[] = $filename_small;
                                 Storage::disk('google')->put($filename_small, base64_decode($item['image_medium']));
                             }
