@@ -22,6 +22,6 @@ class Cart extends Model
     }
 
     public function scopeActive($query){
-        $query->where(['user_id' => auth('api')->user()->id, 'status' => 0]);
+        $query->where(['user_id' => auth('api')->user()->id, 'status' => 0])->whereHas('product');
     }
 }

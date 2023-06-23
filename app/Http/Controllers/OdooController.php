@@ -56,6 +56,11 @@ class OdooController extends Controller
     }
 
     public function try_code(){
+
+        $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
+        'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 1]);
+
+        dd($pelanggan);
         
         //GET PRODUCT
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
@@ -142,7 +147,12 @@ class OdooController extends Controller
             $array_cart_id = [];
             $total_harga_produk = 0;
 
-            $cart = Cart::with('product')->whereIn('uuid', $request->cart_id)->get();
+            $cart = Cart::with('product','user')->whereIn('uuid', $request->cart_id)->get();
+
+            if(!count($cart)){
+                $message = 'Oops! Produk tidak ditemukan';
+                return ApiFormatter::error(400, $message);
+            }
 
             //create SALES_ORDER table
             $sales_order = SalesOrder::create([
@@ -216,7 +226,7 @@ class OdooController extends Controller
             }
 
             $salesOrderData = [
-                'partner_id' => auth('api')->user()->pelanggan_id,
+                'partner_id' => (int) $cart[0]->user->pelanggan_id,
                 'order_line' => [
                     $array_order_line
                 ],
@@ -224,6 +234,11 @@ class OdooController extends Controller
 
             $sales_order_odoo = $this->models->execute_kw($this->db, $this->uid, $this->password,
             'sale.order', 'create', [[$salesOrderData]]);
+
+            if(isset($sales_order_odoo['faultCode'])){
+                $message = 'Oops! terjadi kesalahan waktu membuat sales order odoo';
+                return ApiFormatter::error(400, $message);
+            }
 
             //update data SALES_ORDER TABLE
             SalesOrder::where('id', $sales_order->id)->update([

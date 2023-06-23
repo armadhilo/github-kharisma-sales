@@ -55,7 +55,6 @@ class CartController extends Controller
         if(!empty($cart)) {
             $request->merge(['quantity' => $cart->quantity + $request->quantity ]);
             $request->merge(['uuid' => $cart->uuid ]);
-
         }
 
         //check stock barang
@@ -87,6 +86,11 @@ class CartController extends Controller
             $message = 'Oops! stock tidak cukup';
             return ApiFormatter::success(400, $message);
         }
+
+         //recheck price
+         $odoo_product = OdooProduct::where('product_id', $request->product_id)->first();
+         $recheck_price = $this->check_price($odoo_product->product_tmpl_id, $request->quantity);
+         $request->merge(['price' => $recheck_price['price'] ]);
 
         $request->merge(['total_price' => $request->price * $request->quantity ]);
 
