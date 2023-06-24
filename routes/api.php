@@ -28,3 +28,7 @@ Route::group(['prefix' => 'odoo'], function(){
     Route::post('/sync-product', 'OdooController@sync_product');
     Route::get('/sync-pelanggan', 'OdooController@sync_pelanggan');
 });
+
+Route::group(['prefix' => 'reset-password'], function(){
+    Route::post('/','ResetPasswordController@reset_password');
+});
