@@ -17,7 +17,7 @@ class SalesOrderController extends Controller
 {
     public function index(Request $request){
         
-        $sales_order = SalesOrder::where('user_id', auth('api')->user()->id)->with('sales_order_product');
+        $sales_order = SalesOrder::where('user_id', auth('api')->user()->id)->has('sales_order_product.product')->with('sales_order_product.product');
 
         if($request->has('status')){
             $sales_order = $sales_order->where('status', $request->status);

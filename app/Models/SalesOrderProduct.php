@@ -16,4 +16,8 @@ class SalesOrderProduct extends Model
 
     protected $table = 'sales_order_product';
     protected $guarded = ['id'];
+
+    public function product(){
+        return $this->belongsTo(OdooProduct::class, 'product_id', 'product_id');
+    }
 }
