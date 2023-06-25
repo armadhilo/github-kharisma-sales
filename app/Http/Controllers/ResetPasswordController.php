@@ -25,6 +25,10 @@ class ResetPasswordController extends Controller
 {
 
     public function index(Request $request){
+        $user = DB::table('password_resets')->where('token', '=', $request->token)->first();
+        if ($user === null) {
+            return view('errors/404');
+        }
         $data['token'] = $request->token;
         return view('auth.reset-password', $data);
     }
@@ -69,10 +73,9 @@ class ResetPasswordController extends Controller
 
     public function set_password(request $request){
         $validator = Validator::make($request->all(), [
-            'email' => 'required',
             'token' => 'required',
             'password' => 'required| min:6',
-            'ulangi_password' => 'required|same:password',
+            'confirm-password' => 'required|same:password',
 		]);
 
 		if($validator->fails()) {
@@ -82,9 +85,15 @@ class ResetPasswordController extends Controller
 			];
 		}
 
-        User::where('email', $request->email)->update(['password' => Hash::make($request->password)]);
-        DB::table('password_resets')->where('email', $request->email)->delete();
+        $email =  DB::table('password_resets')->where('token', $request->token)->pluck('email');
 
-        ApiFormatter::success(200, 'Password berhasil direset silahkan login menggunakan password baru');
+        User::where('email', $email)->update(['password' => Hash::make($request->password)]);
+        DB::table('password_resets')->where('email', $email)->delete();
+
+        return [
+            'status' => 201,
+            'link' => '/',
+            'message' => 'Password Berhasil Diubah'
+        ];
     }
 }

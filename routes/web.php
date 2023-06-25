@@ -22,6 +22,7 @@ Route::get('/logout','LoginController@logout');
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::get('reset-password','ResetPasswordController@index');
+Route::post('reset-password','ResetPasswordController@set_password');
 
 Route::middleware(['cors','cek_login'])->group(function () {
     Route::prefix('admin')->group(function () {
