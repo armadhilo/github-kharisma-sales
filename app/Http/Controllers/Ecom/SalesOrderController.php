@@ -17,7 +17,7 @@ class SalesOrderController extends Controller
 {
     public function index(Request $request){
         
-        $sales_order = SalesOrder::where('user_id', auth('api')->user()->id)->has('sales_order_product.product')->with('sales_order_product.product');
+        $sales_order = SalesOrder::with('sales_order_product.product')->has('sales_order_product.product');
 
         if($request->has('status')){
             $sales_order = $sales_order->where('status', $request->status);
@@ -28,7 +28,7 @@ class SalesOrderController extends Controller
 
     public function count(){
 
-        $sales_order = SalesOrder::where('user_id', auth('api')->user()->id)->selectRaw('status, count(*) as count')->groupBy('status')->get();
+        $sales_order = SalesOrder::selectRaw('status, count(*) as count')->groupBy('status')->get();
         $data['draft'] = 0;
         $data['sale'] = 0;
         $data['done'] = 0;
