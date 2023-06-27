@@ -16,8 +16,13 @@ class SalesOrderProduct extends Model
 
     protected $table = 'sales_order_product';
     protected $guarded = ['id'];
+    protected $appends = ['total_harga_produk'];
 
     public function product(){
         return $this->belongsTo(OdooProduct::class, 'product_id', 'product_id');
+    }
+
+    public function getTotalHargaProdukAttribute(){
+        return $this->attributes['harga'] * $this->attributes['quantity'];
     }
 }

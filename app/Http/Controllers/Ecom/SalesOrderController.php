@@ -26,6 +26,13 @@ class SalesOrderController extends Controller
         return ApiFormatter::success(200, 'Data Sales Order berhasil ditampilkan', $sales_order->get());
     }
 
+    public function detail($sales_order_uuid){
+        
+        $sales_order = SalesOrder::with('sales_order_product.product')->has('sales_order_product.product')->where('uuid', $sales_order_uuid)->first();
+
+        return ApiFormatter::success(200, 'Data Sales Order detail berhasil ditampilkan', $sales_order);
+    }
+
     public function count(){
 
         $sales_order = SalesOrder::selectRaw('status, count(*) as count')->groupBy('status')->get();

@@ -95,6 +95,7 @@ Route::group(['prefix' => 'ecom'], function(){
 
         Route::group(['prefix' => 'sales-order'], function(){
             Route::get('/', 'Ecom\SalesOrderController@index');
+            Route::get('/{sales_order_uuid}', 'Ecom\SalesOrderController@detail');
             Route::get('/count', 'Ecom\SalesOrderController@count');
             Route::post('/', 'OdooController@sales_order');
         });
