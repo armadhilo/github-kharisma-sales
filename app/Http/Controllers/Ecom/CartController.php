@@ -18,12 +18,18 @@ use App\Models\OdooProduct;
 
 class CartController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
 
-        $cart = Cart::with('product.product_tag')->active()->get();
+        $cart = Cart::with('product.product_tag')->active();
 
-        $message = 'Data cart berhasil ditampilkan';
-        if(count($cart) == 0) $message = 'Data cart list empty';
+        if($request->has('type') && $request->type == 'count'){
+            $message = 'Data jumlah cart berhasil ditampilkan';
+            $cart = $cart->count();
+        }else{
+            $message = 'Data cart berhasil ditampilkan';
+            $cart = $cart->get();
+            if(count($cart) == 0) $message = 'Data cart list empty';
+        }
 
         return ApiFormatter::success(200, $message, $cart);
     }
