@@ -53,6 +53,11 @@ class CartController extends Controller
 
         //recheck price
         $odoo_product = OdooProduct::where('product_id', $request->product_id)->first();
+        if(empty($odoo_product)){
+            $message = 'Oops! product tidak ditemukan, silahkan pilih product lainnya';
+            return ApiFormatter::error(400, $message);
+        }
+
         $recheck_price = $this->check_price($odoo_product->product_tmpl_id, $request->quantity);
         $request->merge(['price' => $recheck_price['price'] ]);
 

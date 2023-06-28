@@ -25,26 +25,23 @@ class Notification extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function transaksi(){
-        return $this->belongsTo(Transaksi::class);
+    public function sales_order(){
+        return $this->belongsTo(SalesOrder::class);
     }
 
     public function getNotificationTitleAttribute(){
         switch ($this->attributes['notification_type']) {
-            case "menunggu_pembayaran":
-                return "Transaksi " .$this->transaksi->no_invoice. " berhasil digenerate";
-                break;
-            case "sudah_bayar":
-                return "Pembayaranmu untuk Transaksi " .$this->transaksi->no_invoice. " sudah kami terima";
+            case "draft":
+                return "Transaksi " .$this->sales_order->no_invoice. " sedang menunggu untuk di acc";
                 break;
             case "proses_order":
-                return "Transaksi " .$this->transaksi->no_invoice. " sedang kami proses";
+                return "Transaksi " .$this->sales_order->no_invoice. " sedang kami proses";
                 break;
             case "transaksi_cancel":
-                return "Transaksi " .$this->transaksi->no_invoice. " telah dibatalkan";
+                return "Transaksi " .$this->sales_order->no_invoice. " telah dibatalkan";
                 break;
             case "transaksi_selesai":
-                return "Transaksi " .$this->transaksi->no_invoice. " telah selesai";
+                return "Transaksi " .$this->sales_order->no_invoice. " telah selesai";
                 break;
             case "new_user":
                 return "Hallo New Juragan, Selamat berbelanja di Kharisma Stationary";
@@ -56,11 +53,8 @@ class Notification extends Model
 
     public function getNotificationBodyAttribute(){
         switch ($this->attributes['notification_type']) {
-            case "menunggu_pembayaran":
-                return "Yuk bayar pesananmu agar segera kami proses dan kirimkan pesanan anda :) Terimakasih telah berbelanja di Kharisma Stationary";
-                break;
-            case "sudah_bayar":
-                return "Terimakasih sudah melakukan pembayaran transaksi " .$this->transaksi->no_invoice. " sejumlah " .number_format($this->transaksi->total_harga,0,',','.'). " rupiah";
+            case "draft":
+                return "Tunggu pesananmu sedang menunggu acc admin :) Terimakasih telah berbelanja di Kharisma Stationary";
                 break;
             case "proses_order":
                 return "Tunggu pesananmu sedang kami proses secepat mungkin :) Terimakasih telah berbelanja di Kharisma Stationary";

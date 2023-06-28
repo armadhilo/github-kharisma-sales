@@ -32,6 +32,13 @@ class BuyNowController extends Controller
         DB::beginTransaction();
         try{
 
+            //check barang
+            $odoo_product = OdooProduct::where('product_id', $request->product_id)->first();
+            if(empty($odoo_product)){
+                $message = 'Oops! product tidak ditemukan, silahkan pilih product lainnya';
+                return ApiFormatter::error(400, $message);
+            }
+
             //check stock barang
             $cek_stock = $this->check_stock($request->product_id, $request->quantity);
             if(!$cek_stock){
