@@ -164,15 +164,18 @@ class OdooController extends Controller
                 'jasa_pengiriman' => $request->jasa_pengiriman,
             ]);
 
+            $array_product = [];
+
             foreach($cart as $key => $item){
 
                 $array_cart_id[] = $item->id;
+                $array_product[$item->product->id] = $item->quantity;
 
                 //check stock barang
                 $cek_stock = $this->check_stock($item->product->product_id, $item->quantity);
                 if(!$cek_stock){
+                    //delete barang yang stocknya habis dari cart
                     $array_product_no_stock[] = $item;
-                    //delete barang yang stocknya habis
                 }
 
                 //recheck price
@@ -240,6 +243,16 @@ class OdooController extends Controller
                 return ApiFormatter::error(400, $message);
             }
 
+            //kurangi stock pada ODOO PRODUCT TABLE
+            foreach($array_product as $key => $item){
+                $odoo_product = OdooProduct::find($key);
+
+                $old_stock = $odoo_product->stock;
+
+                $odoo_product->stock = (int)$old_stock - (int)$item;
+                $odoo_product->save();
+            }
+
             //update data SALES_ORDER TABLE
             SalesOrder::where('id', $sales_order->id)->update([
                 'odoo_order_id' => $sales_order_odoo[0],
@@ -251,6 +264,8 @@ class OdooController extends Controller
             Cart::whereIn('id', $array_cart_id)->update([
                 'status' => 1,
             ]);
+
+            
 
             DB::commit();
 
