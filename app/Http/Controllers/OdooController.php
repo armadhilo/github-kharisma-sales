@@ -5,32 +5,23 @@ namespace App\Http\Controllers;
 ini_set('max_execution_time', '0');
 require_once(base_path() . '/public/ripcord-master/ripcord.php');
 
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Kavist\RajaOngkir\Facades\RajaOngkir;
 
 use DB;
-use Storage;
-use DataTables;
 use Carbon\Carbon;
 
-use App\Models\OdooProduct;
-use App\Models\OdooPricelist;
 use App\Models\User;
 
 use App\Helpers\ApiFormatter;
-use App\Helpers\OdooApi;
 use App\Http\Requests\SalesOrderRequest;
-use App\Jobs\SimpleJob;
 use App\Jobs\SyncProductJob;
 use App\Models\Cart;
-use App\Models\OdooProductTag;
 use App\Models\SalesOrder;
 use App\Models\SalesOrderProduct;
-use Log;
+use App\Models\Notification;
+use App\Models\OdooProduct;
 use ripcord;
 
 class OdooController extends Controller
@@ -61,7 +52,7 @@ class OdooController extends Controller
         'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 1]);
 
         dd($pelanggan);
-        
+
         //GET PRODUCT
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
         // 'product.product', 'search_read', [[]], ['fields' => [], 'limit'=> 1]);
@@ -70,7 +61,7 @@ class OdooController extends Controller
         // $array_product_tmpl_product = ['37374'];
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
         //     'product.template', 'search_read', [[['id','=',$array_product_tmpl_product]]], ['fields' => [], 'limit' => 1]);
-        
+
         //GET STATE UNTUK UPDATE SO STATUS
         // $array = ['64842'];
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
@@ -85,7 +76,7 @@ class OdooController extends Controller
 
         // $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
         // 'res.partner', 'create', [$partnerData]);
-        
+
         //CREATE SO
         // $partnerData = [
         //     [
@@ -265,7 +256,12 @@ class OdooController extends Controller
                 'status' => 1,
             ]);
 
-            
+            //simpan notification untuk order
+            Notification::create([
+                'user_id' => auth('api')->user()->id,
+                'sales_order_id' => $sales_order->id,
+                'notification_type' => 'draft',
+            ]);
 
             DB::commit();
 
@@ -299,7 +295,7 @@ class OdooController extends Controller
         // #read -> akan return DETAIL
         // return $models->execute_kw($db, $uid, $password,
         // 'product.product', 'search_read', [[['write_uid', '=', 1]]], ['fields' => ['default_code','active','product_tmpl_id'], 'limit'=> 5]);
-        
+
         DB::table('jobs')->truncate();
         DB::table('failed_jobs')->truncate();
 

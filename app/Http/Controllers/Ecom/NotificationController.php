@@ -17,8 +17,15 @@ class NotificationController extends Controller
             $notification->limit($request->limit);
         }
 
-        $message = 'Data notification berhasil ditampilkan';
-        return ApiFormatter::success(200, $message, $notification->get());
+        if($request->has('type') && $request->type == 'count'){
+            $message = 'Data jumlah notification berhasil ditampilkan';
+            $notification = $notification->count();
+        }else{
+            $message = 'Data notification berhasil ditampilkan';
+            $notification = $notification->get();
+        }
+
+        return ApiFormatter::success(200, $message, $notification);
     }
 
     public function mark_one_read($id){

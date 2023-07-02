@@ -18,16 +18,23 @@ use App\Http\Requests\PelangganRequest;
 
 class WishlistController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
         $type = auth('api')->check() ? 'b2b' : 'b2c';
         $product = OdooProduct::with('product_tag', 'pricelist', 'wishlist')->whereHas('pricelist', function($query) use ($type){
             $query->where('type', $type);
         })->whereHas('wishlist', function($query){
             $query->where('user_id', auth('api')->user()->id);
-        })->where('stock', '>', '0')->get();
+        })->where('stock', '>', '0');
 
         $message = 'Data wishlist berhasil ditampilkan';
-        if(count($product) == 0) $message = 'Data wishlist list empty';
+
+        if($request->has('type') && $request->type == 'count'){
+            $message = 'Data jumlah wishlist berhasil ditampilkan';
+            $product = $product->count();
+        }else{
+            $product = $product->get();
+            if(count($product) == 0) $message = 'Data wishlist list empty';
+        }
 
         return ApiFormatter::success(200, $message, $product);
     }
