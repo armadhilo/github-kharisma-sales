@@ -19,7 +19,7 @@ class NotificationController extends Controller
 
         if($request->has('type') && $request->type == 'count'){
             $message = 'Data jumlah notification berhasil ditampilkan';
-            $notification = $notification->count();
+            $notification = $notification->where('is_new', 1)->count();
         }else{
             $message = 'Data notification berhasil ditampilkan';
             $notification = $notification->get();

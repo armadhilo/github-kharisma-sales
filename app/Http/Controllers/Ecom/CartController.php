@@ -95,7 +95,7 @@ class CartController extends Controller
         $cek_stock = $this->check_stock($request->product_id, $request->quantity);
         if(!$cek_stock){
             $message = 'Oops! stock tidak cukup';
-            return ApiFormatter::success(400, $message);
+            return ApiFormatter::error(400, $message);
         }
 
          //recheck price

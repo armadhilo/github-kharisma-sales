@@ -32,7 +32,10 @@ class PelangganRequest extends FormRequest
             'nama_toko' => 'required',
             'alamat' => 'required',
             'alamat_toko' => 'required',
-            'email' => 'required|email|unique:users,email,' . $this->id,
+            'email' => [
+                Rule::when(request()->isMethod('POST'), 'required|email|unique:users,email,' . $this->id),
+                Rule::when(request()->isMethod('PUT'), 'nullable|email'),
+            ],
             'telepon' => 'required|digits_between:10,12',
             'password' => [
                 Rule::when(request()->isMethod('POST'), 'required'),
@@ -44,12 +47,30 @@ class PelangganRequest extends FormRequest
                 Rule::when(request()->isMethod('PUT'), 'nullable'),
                 'same:password'
             ],
-            'provinsi' => 'required',
-            'kota' => 'required',
-            'kelurahan' => 'required',
-            'kecamatan' => 'required',
-            'kota' => 'required',
-            'zip' => 'required',
+            'provinsi' => [
+                Rule::when(request()->isMethod('POST'), 'required'),
+                Rule::when(request()->isMethod('PUT'), 'nullable'),
+            ],
+            'kota' => [
+                Rule::when(request()->isMethod('POST'), 'required'),
+                Rule::when(request()->isMethod('PUT'), 'nullable'),
+            ],
+            'kelurahan' => [
+                Rule::when(request()->isMethod('POST'), 'required'),
+                Rule::when(request()->isMethod('PUT'), 'nullable'),
+            ],
+            'kecamatan' => [
+                Rule::when(request()->isMethod('POST'), 'required'),
+                Rule::when(request()->isMethod('PUT'), 'nullable'),
+            ],
+            'kota' => [
+                Rule::when(request()->isMethod('POST'), 'required'),
+                Rule::when(request()->isMethod('PUT'), 'nullable'),
+            ],
+            'zip' => [
+                Rule::when(request()->isMethod('POST'), 'required'),
+                Rule::when(request()->isMethod('PUT'), 'nullable'),
+            ],
             'lat' => 'required',
             'lng' => 'required',
         ];

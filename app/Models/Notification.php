@@ -32,7 +32,7 @@ class Notification extends Model
     public function getNotificationTitleAttribute(){
         switch ($this->attributes['notification_type']) {
             case "draft":
-                return "Transaksi " .$this->sales_order->no_invoice. " sedang menunggu untuk di acc";
+                return "Transaksi " .$this->sales_order->no_invoice. " sedang menunggu untuk diproses";
                 break;
             case "proses_order":
                 return "Transaksi " .$this->sales_order->no_invoice. " sedang kami proses";
