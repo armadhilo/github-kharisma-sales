@@ -326,7 +326,6 @@ class OdooController extends Controller
             // dispatch(new SyncProductJob($item))->delay(now()->addSeconds(30));
         }
 
-
         return [
             'status' => 200, // SUCCESS
             'message' => 'Export Product Odoo Successfully'
@@ -378,6 +377,25 @@ class OdooController extends Controller
             ];
 
         }
+    }
+
+    public function sync_status(){
+        $sales_order = SalesOrder::whereIn('status', ['draft','sale'])->get()->pluck('odoo_order_id');
+        $stringCollection = collect($sales_order)->map(function ($item) {
+            return (string) $item;
+        });
+        $stringArray = $stringCollection->all();
+        $odoo_api = $this->models->execute_kw($this->db, $this->uid, $this->password,
+        'sale.order', 'search_read', [[['id','=', $stringArray]]], ['fields' => ['state']]);
+
+        foreach($odoo_api as $item){
+            SalesOrder::where('odoo_order_id', $item['id'])->update(['status' => $item['state']]);
+        }
+
+        return [
+            'status' => 200, // SUCCESS
+            'message' => 'Export Status Sales Order Successfully'
+        ];
     }
 
     private function generate_no_invoice(){
