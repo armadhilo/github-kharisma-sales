@@ -13,7 +13,7 @@ class NotificationController extends Controller
     {
         $notification = Notification::active();
 
-        if($request->has('limit')){
+        if($request->has('limit') && !empty($request->limit)){
             $notification->limit($request->limit);
         }
 

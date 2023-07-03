@@ -150,6 +150,7 @@ class OdooController extends Controller
                 'uuid' => Str::uuid(),
                 'user_id' => auth('api')->user()->id,
                 'sales_id' => session('sales_id'),
+                'no_invoice' => $this->generate_no_invoice(),
                 'total_berat' => $request->total_berat,
                 'ongkos_kirim' => $request->ongkos_kirim,
                 'jasa_pengiriman' => $request->jasa_pengiriman,
@@ -377,5 +378,14 @@ class OdooController extends Controller
             ];
 
         }
+    }
+
+    private function generate_no_invoice(){
+        $tahun = Carbon::now()->year;
+        $month = Carbon::now()->format('m');
+        $date = Carbon::now()->format('d');
+        $count_sales_order = SalesOrder::whereYear('created_at', $tahun)->count();
+
+        return 'INV-' . $tahun .'/'. $date . $month . str_pad($count_sales_order + 1, 6, "0", STR_PAD_LEFT);
     }
 }

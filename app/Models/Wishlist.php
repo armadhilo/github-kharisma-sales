@@ -21,9 +21,11 @@ class wishlist extends Model
     {
         parent::boot();
 
-        static::addGlobalScope('wishlist_user', function (Builder $builder) {
-            $builder->where('user_id', auth('api')->user()->id);
-        });
+        if(auth('api')->check()){
+            static::addGlobalScope('wishlist_user', function (Builder $builder) {
+                $builder->where('user_id', auth('api')->user()->id);
+            });
+        }
     }
 
     public function product(){

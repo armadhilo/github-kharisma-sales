@@ -19,18 +19,18 @@ class ProductController extends Controller
     {
         $product = OdooProduct::with('product_tag', 'pricelist')->orderBy('updated_at','DESC');
 
-        if($request->has('search')){
+        if($request->has('search') && !empty($request->search)){
             $search = str_replace("+"," ",$request->search);
             $product->where('product_name','like',"%$search%");
         }
 
-        if($request->has('kategori')){
+        if($request->has('kategori') && !empty($request->kategori)){
             $product->where('product_tag_id', $request->kategori);
         }
 
         $product = $product->get();
 
-        if($request->has('filter')){
+        if($request->has('filter') && !empty($request->filter)){
             $filter = $request->filter;
             if($filter == 'termurah'){
                 $product = $product->sortBy(function($product){

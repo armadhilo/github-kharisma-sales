@@ -14,7 +14,7 @@ class Notification extends Model
     protected $appends = ['notification_title', 'notification_body'];
 
     public function scopeActive($query){
-        $query->select('id','notification_type', 'is_new','judul','pengumuman')->where(function($where){
+        $query->select('id','notification_type', 'is_new','judul','pengumuman','sales_order_id')->where(function($where){
             $where->where('notification_type', '!=', 'pengumuman')->where('user_id', auth('api')->user()->id)->where('status', 1);
         })->orWhere(function($where2){
             $where2->where('notification_type', 'pengumuman')->where('status', 1);
