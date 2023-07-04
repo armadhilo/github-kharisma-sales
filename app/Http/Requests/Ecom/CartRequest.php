@@ -28,29 +28,28 @@ class CartRequest extends FormRequest
         return [
             'product_id' => 'required',
             'price' => 'required|numeric',
-            'quantity' => 'required|integer|min:0'
+            'quantity' => 'required|integer|min:1'
         ];
     }
 
     protected function failedValidation(Validator $validator) {
 
-        $errors = json_decode($validator->errors());
-        $array = [];
+        // $errors = json_decode($validator->errors());
+        // $array = [];
 
-        //format error validation message laravel to Wowrack RESTAPI format
-        foreach($errors as $key => $item){
-            foreach($item as $error){
-                $array[] = [
-                    'message' => $error,
-                    'field' => $key,
-                ];
-            }
-        }
+        // //format error validation message laravel to Wowrack RESTAPI format
+        // foreach($errors as $key => $item){
+        //     foreach($item as $error){
+        //         $array[] = [
+        //             'message' => $error,
+        //             'field' => $key,
+        //         ];
+        //     }
+        // }
 
         throw new HttpResponseException(response()->json([
             'code' => 400,
-            'errors' => $array,
-            'message' => 'Input validation error'
+            'message' => $validator->errors()->first(),
         ], 400));
     }
 }
