@@ -27,7 +27,7 @@ class ResetPasswordController extends Controller
     public function index(Request $request){
         $user = DB::table('password_resets')->where('token', '=', $request->token)->first();
         if ($user === null) {
-            return view('errors/404');
+            return view('errors.404');
         }
         $data['token'] = $request->token;
         return view('auth.reset-password', $data);
@@ -64,7 +64,7 @@ class ResetPasswordController extends Controller
 
         $password_resets = DB::table('password_resets')->where(['token' => $request->token])->first();
         if(empty($password_resets)){
-            return view('errors/404');
+            return view('errors.404');
         }
 
         $data['data'] = $password_resets;
@@ -85,15 +85,45 @@ class ResetPasswordController extends Controller
 			];
 		}
 
-        $email =  DB::table('password_resets')->where('token', $request->token)->pluck('email');
+        DB::beginTransaction();
 
-        User::where('email', $email)->update(['password' => Hash::make($request->password)]);
-        DB::table('password_resets')->where('email', $email)->delete();
+        try{
+            $email =  DB::table('password_resets')->where('token', $request->token)->first();
+            if(empty($email)){
+                return [
+                    'status' => 300,
+                    'message' => 'Token sudah expired, silahkan cek email anda untuk menerima link baru'
+                ];
+            }
+    
+            $email = $email->email;
 
-        return [
-            'status' => 201,
-            'link' => '/',
-            'message' => 'Password Berhasil Diubah'
-        ];
+            $user = User::where('email', $email)->first();
+            $user->password = Hash::make($request->password);
+            $user->save();
+            DB::table('password_resets')->where('email', $email)->delete();
+
+            //destroy user and token
+            $user->AauthAcessToken()->delete();
+            Session::flush();
+
+            DB::commit();
+    
+            return [
+                'status' => 200,
+                'message' => 'Password Berhasil Diubah'
+            ];
+        }
+
+        catch(\Exception $e){
+    
+            DB::rollback();
+    
+            return [
+                'status'     => 300, // GAGAL
+                'message'       => (env('APP_DEBUG', 'true') == 'true')? $e->getMessage() : 'Operation error'
+            ];
+    
+        }
     }
 }
