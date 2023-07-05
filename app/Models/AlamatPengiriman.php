@@ -20,9 +20,12 @@ class AlamatPengiriman extends Model
     {
         parent::boot();
 
-        static::addGlobalScope('alamat_pengiriman_user_id', function (Builder $builder) {
-            $builder->where('user_id', '=', auth('api')->user()->id);
-        });
+        if(auth('api')->check()){
+            static::addGlobalScope('alamat_pengiriman_user_id', function (Builder $builder) {
+                $builder->where('user_id', '=', auth('api')->user()->id);
+            });
+        }
+
     }
 
     public function scopeActive($query){

@@ -181,7 +181,7 @@
        .then((willDelete) => {
              if (willDelete) {
                 $("#modal_loading").modal('show');
-                $('input,textarea.is-invalid').removeClass('is-invalid');
+                $('input,textarea,select.is-invalid').removeClass('is-invalid');
                 $('.invalid-feedback').text('');
                 $.ajax({
                    url:  $('#form_submit_request').attr('action'),
@@ -255,6 +255,8 @@
     }
 
     function edit_action(url, modal_text){
+      $('input,textarea,select.is-invalid').removeClass('is-invalid');
+      $('.invalid-feedback').text('');
        save_method = 'edit';
        $("#modal").modal('show');
        $(".modal-title").text(modal_text);
@@ -346,6 +348,7 @@
     }
 
     function reset_all_select(){
+      $('input,textarea,select.is-invalid').removeClass('is-invalid');
        $('.select2').each(function(){
           var name = $(this).attr("name");
           $('[name="'+name+'"]').select2().trigger('change');

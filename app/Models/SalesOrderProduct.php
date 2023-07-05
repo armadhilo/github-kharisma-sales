@@ -22,6 +22,10 @@ class SalesOrderProduct extends Model
         return $this->belongsTo(OdooProduct::class, 'product_id', 'product_id');
     }
 
+    public function product_original(){
+        return $this->belongsTo(OdooProductOriginal::class, 'product_id', 'product_id');
+    }
+
     public function getTotalHargaProdukAttribute(){
         return $this->attributes['harga'] * $this->attributes['quantity'];
     }

@@ -59,6 +59,7 @@
                                 <th scope="col" class="text-center">Waktu Mulai</th>
                                 <th scope="col" class="text-center">Tanggal Selesai</th>
                                 <th scope="col" class="text-center">Waktu Selesai</th>
+                                <th scope="col" class="text-center">Status</th>
                             </tr>
                         </thead>
                     </table>
@@ -97,13 +98,14 @@
             },
             columnDefs: [{
                 className: 'text-center',
-                targets: [0, 1, 2, 3, 4, 5]
+                targets: [0, 1, 2, 3, 4, 5, 6]
             }, ],
             columns: [
                 { data: 'DT_RowIndex',searchable: false,orderable: false },
                 { data: 'sales.nama' },
                 { data: 'date_start' },
                 { data: 'time_start' },
+                { data: 'date_end' },
                 { data: 'time_end' },
                 { data: 'badge_custom' },
             ]
