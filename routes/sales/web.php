@@ -90,6 +90,7 @@ Route::middleware(['cors','cek_login'])->group(function () {
 
             Route::post('/store-update', 'BackOffice\JasaPengirimanController@store_update');
         });
+
     });
 });
 

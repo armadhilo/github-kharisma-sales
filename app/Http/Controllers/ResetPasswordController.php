@@ -110,8 +110,9 @@ class ResetPasswordController extends Controller
             DB::commit();
     
             return [
-                'status' => 200,
-                'message' => 'Password Berhasil Diubah'
+                'status' => 201,
+                'message' => 'Password Berhasil Diubah',
+                'link' => 'reset-password-success'
             ];
         }
 
