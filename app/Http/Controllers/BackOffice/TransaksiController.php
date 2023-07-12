@@ -56,7 +56,7 @@ class TransaksiController extends Controller
 
     public function cetak_resi_pengiriman($id){
 
-        $data['transaksi'] = SalesOrder::with('user', 'sales_order_product.product_original')->where('id', $id)->first();
+        $data['transaksi'] = SalesOrder::with('user', 'sales_order_product.product_original')->has('sales_order_product.product')->where('id', $id)->first();
         $data['alamat_pengiriman'] = AlamatPengiriman::where('user_id', $data['transaksi']->user_id)->first();
         $data['asal_pengiriman'] = AsalPengiriman::first();
 

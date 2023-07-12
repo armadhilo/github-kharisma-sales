@@ -48,7 +48,7 @@
 		<div id="tb">
             <table class="table" width="50%" border="1" bordercolor="#000000" style="border-collapse: collapse;" cellpadding="2">
                 <tr style="height: 90px">
-                    <td style="text-align: center; vertical-align:middle" width='50%'><img src="https://kharismaonline.com/front/assets/images/custom-image/logo_new.png" alt="" width="85%"></td>
+                    <td style="text-align: center; vertical-align:middle" width='50%'><img src="https://kharismastationerykupang.com/assets/img/kharisma_logo.png" alt="" style="padding: 5px 0" width="30%"></td>
                     <td width='50%' style="text-align: center; vertical-align:middle">
 						<h4><b>{{ $transaksi->jasa_pengiriman }}</b></h4>
 					</td>

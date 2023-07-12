@@ -18,10 +18,8 @@ class CekLogin
      */
     public function handle($request, Closure $next)
     {
-        if (!Auth::check()) {
-            if(auth()->user()->type != 0){
-                return redirect()->route('login'); //jangan lupa berikan name pada route loginnya
-            }
+        if (!Auth::check() || auth()->user()->type != 0) {
+            return redirect()->route('login'); //jangan lupa berikan name pada route loginnya
         }
         return $next($request);
     }
