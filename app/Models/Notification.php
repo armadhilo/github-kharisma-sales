@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Notification extends Model
 {
@@ -11,10 +12,10 @@ class Notification extends Model
 
     protected $table = 'notification';
     protected $guarded = ['id'];
-    protected $appends = ['notification_title', 'notification_body'];
+    protected $appends = ['notification_title', 'notification_body', 'custom_datetime'];
 
     public function scopeActive($query){
-        $query->select('id','notification_type', 'is_new','judul','pengumuman','sales_order_id')->where(function($where){
+        $query->select('id','notification_type', 'is_new','judul','pengumuman','sales_order_id','created_at')->where(function($where){
             $where->where('notification_type', '!=', 'pengumuman')->where('user_id', auth('api')->user()->id)->where('status', 1);
         })->orWhere(function($where2){
             $where2->where('notification_type', 'pengumuman')->where('status', 1);
@@ -27,6 +28,10 @@ class Notification extends Model
 
     public function sales_order(){
         return $this->belongsTo(SalesOrder::class);
+    }
+
+    public function getCustomDatetimeAttribute(){
+        return Carbon::parse($this->attributes['created_at'])->format('Y-m-d H:i:s');
     }
 
     public function getNotificationTitleAttribute(){

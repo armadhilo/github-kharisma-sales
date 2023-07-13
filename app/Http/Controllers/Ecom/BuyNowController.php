@@ -20,10 +20,12 @@ class BuyNowController extends Controller
 {
 
     public function index(){
-        $checkout = Cart::with('product.product_tag')->where(['user_id' => auth('api')->user()->id, 'is_buy_now' => 1])->get();
+        $checkout = Cart::with('product.product_tag')->buyNow()->limit(1)->get();
 
         $message = 'Data buy now berhasil ditampilkan';
-        if(count($checkout) == 0) $message = 'Data buy now empty';
+        if(empty($checkout)){
+            $message = 'Data item buy now not found';
+        }
 
         return ApiFormatter::success(200, $message, $checkout);
     }
@@ -46,12 +48,13 @@ class BuyNowController extends Controller
                 return ApiFormatter::error(400, $message);
             }
 
-            Cart::active()->where('is_buy_now', 1)->delete();
-
             //recheck price
             $odoo_product = OdooProduct::where('product_id', $request->product_id)->first();
             $recheck_price = $this->check_price($odoo_product->product_tmpl_id, $request->quantity);
             $request->merge(['price' => $recheck_price['price'] ]);
+
+            //delete cart buy now
+            Cart::buyNow()->delete();
 
             //merge is_buy_now = 1
             $request->merge(['is_buy_now' => 1 ]);

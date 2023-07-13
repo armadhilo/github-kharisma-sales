@@ -35,18 +35,20 @@ class SalesOrderController extends Controller
 
     public function count(){
 
-        $sales_order = SalesOrder::active()->selectRaw('status, count(*) as count')->groupBy('status')->get();
-        $data['draft'] = 0;
-        $data['sale'] = 0;
-        $data['done'] = 0;
-        $data['cancel'] = 0;
+        $data['draft'] = "0";
+        $data['sale'] = "0";
+        $data['done'] = "0";
+        $data['cancel'] = "0";
 
-        foreach($sales_order as $item){
-            if($item['status'] == 'draft') $data['draft'] = $item['count'];
-            if($item['status'] == 'sale') $data['sale'] = $item['count'];
-            if($item['status'] == 'done') $data['done'] = $item['count'];
-            if($item['status'] == 'cancel') $data['cancel'] = $item['count'];
-        }
+        $sales_order = SalesOrder::active()->selectRaw('status, count(*) as count')->has('sales_order_product.product')->groupBy('status')->get();
+        if(count($sales_order)){
+            foreach($sales_order as $item){
+                if($item['status'] == 'draft') $data['draft'] = (string)$item['count'];
+                if($item['status'] == 'sale') $data['sale'] = (string)$item['count'];
+                if($item['status'] == 'done') $data['done'] = (string)$item['count'];
+                if($item['status'] == 'cancel') $data['cancel'] = (string)$item['count'];
+            }
+        }        
 
         return ApiFormatter::success(200, 'Data Sales Order berhasil ditampilkan', $data);
     }

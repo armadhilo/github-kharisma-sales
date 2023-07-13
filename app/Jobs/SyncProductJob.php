@@ -192,14 +192,17 @@ class SyncProductJob implements ShouldQueue
 
                         foreach($pricelist_b2c as $item){
 
-                            DB::table('odoo_pricelist')->insert([
-                                'product_tmpl_id' => $item['product_tmpl_id'][0],
-                                'price' => $item['fixed_price'],
-                                'min_quantity' => $item['min_quantity'],
-                                'type' => 'b2c',
-                                'created_at' => Carbon::now(),
-                                'updated_at' => Carbon::now(),
-                            ]);
+                            if(is_array($item['product_tmpl_id'])){
+                                DB::table('odoo_pricelist')->insert([
+                                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                                    'price' => $item['fixed_price'],
+                                    'min_quantity' => $item['min_quantity'],
+                                    'type' => 'b2c',
+                                    'created_at' => Carbon::now(),
+                                    'updated_at' => Carbon::now(),
+                                ]);
+                            }
+
                         }
                     }
 
@@ -214,15 +217,17 @@ class SyncProductJob implements ShouldQueue
                         //delete pricelist B2B yang akan diupdate harganya
                         OdooPricelist::where('type', 'b2b')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
 
-                        foreach($pricelist_b2b as $item){
-                            DB::table('odoo_pricelist')->insert([
-                                'product_tmpl_id' => $item['product_tmpl_id'][0],
-                                'price' => $item['fixed_price'],
-                                'min_quantity' => $item['min_quantity'],
-                                'type' => 'b2b',
-                                'created_at' => Carbon::now(),
-                                'updated_at' => Carbon::now(),
-                            ]);
+                        if(is_array($item['product_tmpl_id'])){
+                            foreach($pricelist_b2b as $item){
+                                DB::table('odoo_pricelist')->insert([
+                                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                                    'price' => $item['fixed_price'],
+                                    'min_quantity' => $item['min_quantity'],
+                                    'type' => 'b2b',
+                                    'created_at' => Carbon::now(),
+                                    'updated_at' => Carbon::now(),
+                                ]);
+                            }
                         }
                     }
                 }

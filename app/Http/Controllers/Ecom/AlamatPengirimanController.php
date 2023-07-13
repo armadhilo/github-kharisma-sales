@@ -21,7 +21,7 @@ class AlamatPengirimanController extends Controller
 
     public function index(){
 
-        $alamat_pengiriman = AlamatPengiriman::all();
+        $alamat_pengiriman = AlamatPengiriman::active()->get();
 
         if(!count($alamat_pengiriman)){
             $message = 'Alamat Pengiriman not found';

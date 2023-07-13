@@ -71,8 +71,8 @@ class PelangganRequest extends FormRequest
                 Rule::when(request()->isMethod('POST'), 'required'),
                 Rule::when(request()->isMethod('PUT'), 'nullable'),
             ],
-            'lat' => 'required',
-            'lng' => 'required',
+            'lat' => 'nullable',
+            'lng' => 'nullable',
         ];
     }
 
