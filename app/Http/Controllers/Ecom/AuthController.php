@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPassword;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\URL;
+
+use DB;
+use \Carbon\Carbon;
 
 use App\Helpers\ApiFormatter;
 use App\Http\Requests\Ecom\ForgotPasswordRequest;
@@ -80,9 +87,25 @@ class AuthController extends Controller
 
         $user = User::where(['email' => $request->email, 'type' => '2'])->first();
         if(empty($user)){
-            $message = 'Forgot password gagal, Pelanggan tidak ditemukan';
+            $message = 'Oops! Email anda tidak terdaftar di sistem kami';
             return ApiFormatter::error(404, $message);
         }
+
+        $token = Str::random(64);
+
+        DB::table('password_resets')->insert([
+            'email' => $request->email,
+            'token' => $token,
+            'created_at' => Carbon::now()
+        ]);
+        
+        $data = [
+            'nama' => $user->nama,
+            'link' => URL::to('/') . '/reset-password?token=' . $token,
+        ];
+
+        $email = $user->email;
+        Mail::to($email)->send(new ResetPassword($data));
 
         $message = 'Email Forgot Password telah dikirim ke email anda, harap segera cek email anda';
         return ApiFormatter::success(200, $message);

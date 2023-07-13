@@ -39,7 +39,7 @@ class ResetPasswordController extends Controller
 
         //jika error tetap kirim respon sukses
         if(empty($user)){
-            return ApiFormatter::success(200,'Berhasil request dan email verifikasi akan terkirim jika email anda valid, silahkan cek spam anda');
+            return ApiFormatter::error(400,'Email anda tidak terdaftar di sistem kami');
         }
 
         $token = Str::random(64);
