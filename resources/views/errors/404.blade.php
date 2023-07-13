@@ -25,7 +25,7 @@
         <div class="page-error">
           <div class="page-inner">
             {{-- <h1>404</h1> --}}
-            <img src="{{ asset('assets\img\project\error404.png') }}" width="500" alt="404" style="margin-top: 40px;">
+            <img src="{{ asset('assets/img/project/error404.png') }}" width="500" alt="404" style="margin-top: 40px;">
             <div class="page-description" style="margin-top: 20px; font-size: 30px;">
                Page Not Found!
             </div>

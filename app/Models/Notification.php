@@ -31,7 +31,7 @@ class Notification extends Model
     }
 
     public function getCustomDatetimeAttribute(){
-        return Carbon::parse($this->attributes['created_at'])->format('Y-m-d H:i:s');
+        return (string)Carbon::parse($this->attributes['created_at'])->format('Y-m-d H:i:s');
     }
 
     public function getNotificationTitleAttribute(){
