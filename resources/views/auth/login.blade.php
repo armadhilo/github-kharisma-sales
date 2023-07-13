@@ -36,9 +36,13 @@
        <div class="d-flex flex-wrap align-items-stretch">
           <div class="col-lg-4 col-md-6 col-12 order-lg-1 min-vh-100 order-2 bg-white" id="login_form">
              <div class="p-4 m-3">
-                <img src="{{ asset('assets/img/kharisma_logo.jpg') }}" alt="logo" width="180" class="mb-4 mt-2">
-                <h4 class="text-dark font-weight-normal">Welcome to <span class="font-weight-bold">SALES KHARISMA</span></h4>
-                <p class="text-muted">Before you get started, you must login.</p>
+                <div class="d-flex align-items-center" style="gap: 20px;">
+                  <img src="{{ asset('assets/img/kharisma_logo.png') }}" alt="logo" width="80" class="mb-4 mt-2">
+                  <div>
+                     <h4 class="text-dark font-weight-normal">Welcome to <span class="font-weight-bold">SALES KHARISMA</span></h4>
+                     <p class="text-muted">Before you get started, you must login.</p>
+                  </div>
+               </div>
                 <form id="form">
                    <div class="form-group">
                       <label>Email</label>

@@ -41,11 +41,18 @@ Route::middleware(['cors','cek_login'])->group(function () {
 
         Route::prefix('absensi-sales')->group(function () {
             Route::get('/','BackOffice\SalesAttendanceController@index');
+            Route::get('/edit','BackOffice\SalesAttendanceController@edit');
+            Route::post('/update','BackOffice\SalesAttendanceController@update');
+            Route::get('/detail/{id}','BackOffice\SalesAttendanceController@detail');
             Route::get('/datatables','BackOffice\SalesAttendanceController@datatables');
         });
 
         Route::prefix('kunjungan-sales')->group(function () {
             Route::get('/','BackOffice\KunjunganSalesController@index');
+            Route::get('/edit','BackOffice\KunjunganSalesController@edit');
+            Route::get('/detail/{id}','BackOffice\KunjunganSalesController@detail');
+            Route::post('/update','BackOffice\KunjunganSalesController@update');
+            Route::get('/datatables/edit','BackOffice\KunjunganSalesController@datatables_edit');
             Route::get('/datatables','BackOffice\KunjunganSalesController@datatables');
             Route::get('/datatables/detail','BackOffice\KunjunganSalesController@datatables_detail');
         });
@@ -67,6 +74,14 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::get('/datatables-history','BackOffice\KodeVoucherController@datatables_history');
         });
 
+        Route::prefix('transaksi')->group(function(){
+            Route::get('/', 'BackOffice\TransaksiController@index');
+            Route::get('/detail/{uuid}', 'BackOffice\TransaksiController@detail');
+            Route::get('/datatables', 'BackOffice\TransaksiController@datatables');
+            Route::get('/cetak-invoice-pdf/{uuid}', 'BackOffice\TransaksiController@cetak_invoice_pdf');
+            Route::get('/cetak-resi-pengiriman/{id}', 'BackOffice\TransaksiController@cetak_resi_pengiriman');
+        });
+
         Route::prefix('jasa-pengiriman')->group(function () {
             Route::get('/','BackOffice\JasaPengirimanController@index');
             Route::get('/datatables','BackOffice\JasaPengirimanController@datatables');
@@ -75,6 +90,7 @@ Route::middleware(['cors','cek_login'])->group(function () {
 
             Route::post('/store-update', 'BackOffice\JasaPengirimanController@store_update');
         });
+
     });
 });
 

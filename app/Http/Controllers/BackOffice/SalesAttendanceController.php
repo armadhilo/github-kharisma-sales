@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\BackOffice;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SalesAttendanceRequest;
 use Illuminate\Http\Request;
 use App\Models\SalesAttendance;
 use DataTables;
@@ -11,6 +12,10 @@ class SalesAttendanceController extends Controller
 {
     public function index(){
         return view('admin.absensi-sales.index');
+    }
+
+    public function edit(){
+        return view('admin.absensi-sales.edit');
     }
 
     public function detail($id){
@@ -36,5 +41,14 @@ class SalesAttendanceController extends Controller
                     })
                     ->rawColumns(['badge_custom'])
                     ->make(true);
+    }
+
+    public function update(SalesAttendanceRequest $request){
+        SalesAttendance::where('id', $request->id)->update($request->all() );
+
+        return [
+            'status' => 200, // SUCCESS
+            'message' => 'Data berhasil disimpan',
+        ];
     }
 }

@@ -44,11 +44,15 @@
           <li class="nav-item dropdown @if($url_menu == "pelanggan") active @endif"><a href="/admin/pelanggan" class="nav-link"><i class="fas fa-user"></i><span>Master Pelanggan</span></a></li>
           <li class="nav-item dropdown @if($url_menu == "produk") active @endif"><a href="/admin/produk" class="nav-link"><i class="fas fa-shopping-cart"></i><span>Master Produk</span></a></li>
           <li class="menu-header">Master Sales</li>
-          <li class="nav-item dropdown @if($url_menu == "absensi-sales") active @endif"><a href="/admin/absensi-sales" class="nav-link"><i class="fas fa-user-clock"></i><span>Absensi Sales</span></a></li>
-          <li class="nav-item dropdown @if($url_menu == "kunjungan-sales") active @endif"><a href="/admin/kunjungan-sales" class="nav-link"><i class="fas fa-running"></i><span>Kunjungan Sales</span></a></li>
+          <li class="nav-item dropdown @if($url_menu == "absensi-sales" && $url_submenu == "edit") active @endif"><a href="/admin/absensi-sales/edit" class="nav-link"><i class="fas fa-user-edit"></i><span>Edit Absensi Sales</span></a></li>
+          <li class="nav-item dropdown @if($url_menu == "kunjungan-sales" && $url_submenu == "edit") active @endif"><a href="/admin/kunjungan-sales/edit" class="nav-link"><i class="fas fa-street-view"></i><span>Edit Kunjungan Sales</span></a></li>
+          <li class="menu-header">Report Sales</li>
+          <li class="nav-item dropdown @if($url_menu == "absensi-sales" && !isset($url_submenu)) active @endif"><a href="/admin/absensi-sales" class="nav-link"><i class="fas fa-user-clock"></i><span>Absensi Sales</span></a></li>
+          <li class="nav-item dropdown @if($url_menu == "kunjungan-sales" && !isset($url_submenu)) active @endif"><a href="/admin/kunjungan-sales" class="nav-link"><i class="fas fa-running"></i><span>Kunjungan Sales</span></a></li>
           <li class="nav-item dropdown @if($url_menu == "sales-log") active @endif"><a href="/admin/sales-log" class="nav-link"><i class="fas fa-map"></i><span>Log Sales</span></a></li>
           <li class="menu-header">Apps</li>
-          <li class="nav-item dropdown @if($url_menu == "kode-voucher") active @endif"><a href="/admin/kode-voucher" class="nav-link"><i class="fas fa-tag"></i><span>Kode Voucher</span></a></li>
+          {{-- <li class="nav-item dropdown @if($url_menu == "kode-voucher") active @endif"><a href="/admin/kode-voucher" class="nav-link"><i class="fas fa-tag"></i><span>Kode Voucher</span></a></li> --}}
+          <li class="nav-item dropdown @if($url_menu == "transaksi") active @endif"><a href="/admin/transaksi" class="nav-link"><i class="fas fa-shopping-cart"></i><span>Transaksi</span></a></li>
           <li class="nav-item dropdown @if($url_menu == "jasa-pengiriman") active @endif"><a href="/admin/jasa-pengiriman" class="nav-link"><i class="fas fa-truck"></i><span>Jasa Pengiriman</span></a></li>
         </ul>
 

@@ -61,7 +61,8 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof NotFoundHttpException) {
-            return ApiFormatter::error(404, 'The specified URL cannot be found');
+            // return ApiFormatter::error(404, 'The specified URL cannot be found');
+            return response()->view('errors.404', [], 404);
         }
 
         if ($exception instanceof HttpException) {
