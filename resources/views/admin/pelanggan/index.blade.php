@@ -44,6 +44,55 @@
                     <div id="myMap" style="width: 100%; height: 400px;"></div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                    <div class="card card-statistic-1">
+                        <div class="card-icon bg-primary">
+                            <i class="far fa-user"></i>
+                        </div>
+                        <div class="card-wrap">
+                            <div class="card-header">
+                                <h4>Jobs Berjalan</h4>
+                            </div>
+                            <div class="card-body">
+                                {{ $jobs }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                    <a href="/logs" target="_blank">
+                        <div class="card card-statistic-1">
+                            <div class="card-icon bg-danger">
+                                <i class="far fa-newspaper"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Jobs Gagal</h4>
+                                </div>
+                                <div class="card-body">
+                                    {{ $failed_jobs }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="card card-statistic-1">
+                        <div class="card-icon bg-success">
+                            <i class="far fa-file"></i>
+                        </div>
+                        <div class="card-wrap">
+                            <div class="card-header">
+                                <h4>Total User</h4>
+                            </div>
+                            <div class="card-body">
+                                {{ $total_user }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="card">
                 <div class="card-header">
                     <h4>Data Pelanggan</h4>
@@ -184,7 +233,7 @@
             ],
          });
 
-      //disable default scroll 
+      //disable default scroll
       map.scrollWheelZoom.disable();
 
       $("#myMap").bind('mousewheel DOMMouseScroll', function (event) {
@@ -236,7 +285,7 @@
                            iconUrl: "{{ asset('assets/img/project/icon/icon-marker.png') }}",
                            iconSize: [25, 32],
                         });
-                        
+
                         L.marker([data[i].lat, data[i].lng], {icon: buildingIcon}).addTo(map).bindPopup(`Nama Pelanggan : <b>${data[i].nama}</b><br>Nama Toko : <b>${data[i].nama_toko}</b><br> Alamat : <b>${data[i].alamat}</b> <br> Telepon : <b>${data[i].telepon}</b>` );
                      }
                   }
@@ -270,6 +319,6 @@
             }
         });
     }
-    
+
 </script>
 @endsection
