@@ -90,7 +90,9 @@ class SyncProductJob implements ShouldQueue
                         $mimeType_small = null;
 
                         //jika data image tidak kosong
-                        if(!empty($item['image'])){
+                        if(!empty($item['image'] || $item['image'] != false || $item['image'] != '' )){
+
+                            \Log::info('ada image nih');
 
                             //save image on google drive
                             // Base64 encoded string

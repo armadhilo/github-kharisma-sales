@@ -69,7 +69,7 @@ Route::get('list-folder-contents', function() {
     $recursive = false; // Get subdirectories also?
     $contents = collect(Storage::cloud()->listContents($dir, $recursive));
 
-    //return $contents->where('type', '=', 'dir'); // directories
+    return $contents->where('type', '=', 'file'); // directories
     $filteredCollection = $contents->where('type', '=', 'file')->whereIn('filename', ['180900076-med']); // files
     return $filteredCollection->all();
 });

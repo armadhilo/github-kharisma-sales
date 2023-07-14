@@ -48,14 +48,18 @@ class OdooController extends Controller
 
     public function try_code(){
 
-        $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 1]);
+        // $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
+        // 'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 1]);
 
-        dd($pelanggan);
+        // dd($pelanggan);
+
+        //GET CUSTOMER    
+        // return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        // 'res.partner', 'search_read', [[['active','=', True]]], ['fields' => ['id','email','name','mobile','display_name','street','street2','city','zip'], 'limit'=> 100]);
 
         //GET PRODUCT
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        // 'product.product', 'search_read', [[]], ['fields' => [], 'limit'=> 1]);
+        // 'product.product', 'search_read', [[]], ['fields' => [], 'limit'=> 10]);
 
         //GET PRODUCT TAG
         // $array_product_tmpl_product = ['37374'];
@@ -334,7 +338,7 @@ class OdooController extends Controller
 
     public function sync_pelanggan(){
         $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 50]);
+        'res.partner', 'search_read', [[['active','=', True]]], ['fields' => ['id','email','name','mobile','display_name','street','street2','city','zip'], 'limit'=> 50]);
 
         try {
             $is_array = is_array($pelanggan) && is_object($pelanggan);
