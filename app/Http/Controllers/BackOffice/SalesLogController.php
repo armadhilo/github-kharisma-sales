@@ -7,6 +7,7 @@ use App\Models\SalesLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use DataTables;
+use Carbon\Carbon;
 
 class SalesLogController extends Controller
 {
@@ -27,8 +28,12 @@ class SalesLogController extends Controller
         ]);
     }
 
-    public function datatables(){
-        $data = User::where('type', 1)->has('sales_log')->orderby('id','desc')->get();
+    public function datatables(Request $request){
+        $tanggalMulai = Carbon::parse($request->tanggal_mulai)->startOfDay() ?? Carbon::now()->startOfDay();
+        $tanggalAkhir = Carbon::parse($request->tanggal_selesai)->endOfDay() ?? Carbon::now()->endOfDay();
+        $data = User::where('type', 1)->whereHas('sales_log', function($query) use ($tanggalMulai, $tanggalAkhir){
+            $query->whereBetween('created_at',[$tanggalMulai, $tanggalAkhir]);
+        })->orderby('id','desc')->get();
 
         return DataTables::of($data)
                     ->addIndexColumn()
