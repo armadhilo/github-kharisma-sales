@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use DataTables;
+use DB;
 use Illuminate\Support\Facades\Route;
 
 
@@ -16,7 +17,10 @@ class PelangganController extends Controller
 {
 
     public function index(){
-        return view('admin.pelanggan.index');
+        $data['jobs'] = DB::table('jobs')->count();
+        $data['failed_jobs'] = DB::table('failed_jobs')->count();
+        $data['total_user'] = User::count();
+        return view('admin.pelanggan.index', $data);
     }
 
     public function add(){
