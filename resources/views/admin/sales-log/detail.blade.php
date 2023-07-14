@@ -156,6 +156,13 @@
                 var data = response.data;
                 if(response.status === 200){
                     let arr = new Array();
+                    if(data.length == 1){
+                        iziToast.error({
+                            title: 'Error!',
+                            message: 'Not enough coordinates to create a route',
+                            position: 'topRight'
+                        });
+                    }
                     for(var i = 0; i  < data.length; i++ ){
                         if(data[i].lat != null){
                             arr.push(new L.LatLng(data[i].lat, data[i].lng));
@@ -165,7 +172,6 @@
                             // L.Routing.control({waypoints:[data[i].lat, data[i].lng]}).addTo(map);
                         }
                     }
-                    console.log(arr)
                     routingControl = L.Routing.control({
                         waypoints: arr,
                         routeWhileDragging: false,
