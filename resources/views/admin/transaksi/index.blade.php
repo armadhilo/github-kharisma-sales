@@ -57,6 +57,9 @@
                 <div class="card">
                     <div class="card-header">
                         <h4>Semua Transaksi</h4>
+                        <div class="card-header-action">
+                            <button type="button" class="btn btn-success" onclick="sync_status()"><i class="fa fa-sync mr-1"></i> Sync Status</button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -83,6 +86,9 @@
                 <div class="card">
                     <div class="card-header">
                         <h4>Konfirmasi Admin</h4>
+                        <div class="card-header-action">
+                            <button type="button" class="btn btn-success" onclick="sync_status()"><i class="fa fa-sync mr-1"></i> Sync Status</button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -109,6 +115,9 @@
                 <div class="card">
                     <div class="card-header">
                         <h4>Diproses</h4>
+                        <div class="card-header-action">
+                            <button type="button" class="btn btn-success" onclick="sync_status()"><i class="fa fa-sync mr-1"></i> Sync Status</button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -135,6 +144,9 @@
                 <div class="card">
                     <div class="card-header">
                         <h4>Selesai</h4>
+                        <div class="card-header-action">
+                            <button type="button" class="btn btn-success" onclick="sync_status()"><i class="fa fa-sync mr-1"></i> Sync Status</button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -161,6 +173,9 @@
                 <div class="card">
                     <div class="card-header">
                         <h4>Transaksi Cancel</h4>
+                        <div class="card-header-action">
+                            <button type="button" class="btn btn-success" onclick="sync_status()"><i class="fa fa-sync mr-1"></i> Sync Status</button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -426,6 +441,28 @@
             error: function(blob){
                 setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
                 swal("Oops! Terjadi kesalahan segera hubungi tim IT", {  icon: 'error', });
+            }
+        });
+    }
+
+    function sync_status(){
+        $("#modal_loading").modal('show');
+        $.ajax({
+            url : "/api/odoo/sync-status",
+            type: "GET",
+            dataType: "JSON",
+            success: function(response){
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                if(response.status === 200){
+                    swal(response.message, {  icon: 'success', }).then(function(){
+                        location.reload();
+                    });;
+                }else{
+                    swal(response.message, {  icon: 'error', });
+                }
+            },error: function (jqXHR, textStatus, errorThrown){
+                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
             }
         });
     }
