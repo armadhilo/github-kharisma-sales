@@ -301,23 +301,34 @@
     }
 
     function sync_pelanggan(){
-        $("#modal_loading").modal('show');
-        $.ajax({
-            url : "/api/odoo/sync-pelanggan",
-            type: "GET",
-            dataType: "JSON",
-            success: function(response){
-                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
-                if(response.status === 200){
-                    swal(response.message, {  icon: 'success', });
-                }else{
-                    swal(response.message, {  icon: 'error', });
-                }
-            },error: function (jqXHR, textStatus, errorThrown){
-                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
-                swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
-            }
-        });
+        swal({
+             title: 'Yakin?',
+             text: 'Apakah anda yakin akan sync data pelanggan?',
+             icon: 'warning',
+             buttons: true,
+             dangerMode: true,
+       })
+       .then((willDelete) => {
+             if (willDelete) {
+                $("#modal_loading").modal('show');
+                    $.ajax({
+                        url : "/api/odoo/sync-pelanggan",
+                        type: "GET",
+                        dataType: "JSON",
+                        success: function(response){
+                            setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                            if(response.status === 200){
+                                swal(response.message, {  icon: 'success', });
+                            }else{
+                                swal(response.message, {  icon: 'error', });
+                            }
+                        },error: function (jqXHR, textStatus, errorThrown){
+                            setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                            swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
+                        }
+                    });
+             }
+        })
     }
 
 </script>

@@ -345,7 +345,7 @@ class OdooController extends Controller
 
         return [
             'status' => 200, // SUCCESS
-            'message' => 'Export Customer Successfully'
+            'message' => 'Sync Pelanggan Successfully'
         ];
     }
 
