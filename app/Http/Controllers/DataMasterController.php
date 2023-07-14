@@ -16,6 +16,7 @@ use Carbon\Carbon;
 
 use App\Models\User;
 use App\Models\Kunjungan;
+use App\Models\Config;
 
 use App\Helpers\ApiFormatter;
 use ripcord;
@@ -208,6 +209,13 @@ class DataMasterCOntroller extends Controller
 
         return ApiFormatter::getResponse($data);
     }
+
+    public function get_call_center(){
+        $data = Config::where('config', 'NOMOR CALL CENTER')->first()->value;
+
+        return ApiFormatter::success(200,'Data call center berhasil didapatkan', $data);
+    }
+
     #================ DATA =====================#
 
     #================ DATATABLES ===============#
