@@ -71,24 +71,29 @@ class SyncPelangganJob implements ShouldQueue
             $is_array = is_array($pelanggan) && is_object($pelanggan);
             if($is_array || count($pelanggan)){
                 foreach($pelanggan as $item){
-                    $user = User::updateOrCreate([
-                        'pelanggan_id' => $item['id'],
-                        'email' => $item['email'],
-                    ],[
-                        'type' => 'pelanggan',
-                        'pelanggan_id' => $item['id'],
-                        'email' => $item['email'] == false ? null : $item['email'],
-                        'nama' => trim($item['name']),
-                        'telepon' => $item['mobile'],
-                        'nama_toko' => trim($item['display_name']),
-                        'alamat_toko' => $item['street'] . ($item['street2'] != false ? ' - ' . $item['street2'] : '') . ($item['city'] != false ? ' - ' . $item['city'] : '') . ($item['zip'] != false ? ' - ' . $item['zip'] : ''),
-                    ]);
 
-                    if($user->wasRecentlyCreated){
-                        User::where('id', $user->id)->update([
-                            'password' => Hash::make('pelanggan')
+                    //jika pelannggan punya nama
+                    if(!empty($item['nama'])){
+                        $user = User::updateOrCreate([
+                            'pelanggan_id' => $item['id'],
+                            'email' => $item['email'],
+                        ],[
+                            'type' => 'pelanggan',
+                            'pelanggan_id' => $item['id'],
+                            'email' => $item['email'] == false ? null : $item['email'],
+                            'nama' => trim($item['name']),
+                            'telepon' => $item['mobile'],
+                            'nama_toko' => trim($item['display_name']),
+                            'alamat_toko' => $item['street'] . ($item['street2'] != false ? ' - ' . $item['street2'] : '') . ($item['city'] != false ? ' - ' . $item['city'] : '') . ($item['zip'] != false ? ' - ' . $item['zip'] : ''),
                         ]);
+
+                        if($user->wasRecentlyCreated){
+                            User::where('id', $user->id)->update([
+                                'password' => Hash::make('pelanggan')
+                            ]);
+                        }
                     }
+
                 }
             }
         }
