@@ -30,8 +30,8 @@ class Kernel extends ConsoleKernel
         //      ->withoutOverlapping()
         //      ->appendOutputTo ('/my/logs/laravel_output.log');
 
-        $schedule->command('sales-kunjungan-absence:cron')
-            ->dailyAt('23:00');
+        $schedule->command('sales-kunjungan-absence:cron')->dailyAt('23:00');
+        $schedule->command('sync-status-odoo:cron')->everyMinute();;
     }
 
     /**
