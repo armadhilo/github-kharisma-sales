@@ -15,7 +15,7 @@
     <!-- Template CSS -->
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <style>
-        
+
     .success-checkmark {
         width: 80px;
         height: 115px;
@@ -29,7 +29,7 @@
         transform-origin: 100% 50%;
         border-radius: 100px 0 0 100px;
     }
-    
+
     .check-icon::after {
         top: 0;
         left: 30px;
@@ -38,7 +38,7 @@
         border-radius: 0 100px 100px 0;
         animation: rotate-circle 4.25s ease-in;
     }
-    
+
     .check-icon::before, .check-icon::after {
         content: '';
         height: 100px;
@@ -72,7 +72,7 @@
         transform: rotate(45deg);
         animation: icon-line-tip 0.75s;
     }
-    
+
     .icon-line.line-long {
         top: 38px;
         right: 8px;
@@ -80,7 +80,7 @@
         transform: rotate(-45deg);
         animation: icon-line-long 0.75s;
     }
-        
+
     .icon-circle {
         top: -4px;
         left: -4px;
@@ -92,7 +92,7 @@
         box-sizing: content-box;
         border: 4px solid rgba(76, 175, 80, .5);
     }
-    
+
     .icon-fix {
         top: 8px;
         width: 5px;
@@ -198,7 +198,8 @@
                         </div>
                         <div class="page-search">
                             <div class="mt-3">
-                                <p>You will be redirected in <span id="time">10</span> second</p>
+                                <p>Silahkan login kembali dengan password baru anda :)</p>
+                                {{-- <p>You will be redirected in <span id="time">10</span> second</p> --}}
                             </div>
                         </div>
                     </div>
@@ -221,29 +222,29 @@
             }
         });
 
-        function startTimer(duration, display) {
-            var timer = duration, minutes, seconds;
-            var end =setInterval(function () {
-                minutes = parseInt(timer / 60, 10)
-                seconds = parseInt(timer % 60, 10);
+        // function startTimer(duration, display) {
+        //     var timer = duration, minutes, seconds;
+        //     var end =setInterval(function () {
+        //         minutes = parseInt(timer / 60, 10)
+        //         seconds = parseInt(timer % 60, 10);
 
-                minutes = minutes < 10 ? + minutes : minutes;
-                seconds = seconds < 10 ? + seconds : seconds;
+        //         minutes = minutes < 10 ? + minutes : minutes;
+        //         seconds = seconds < 10 ? + seconds : seconds;
 
-                display.textContent = seconds;
+        //         display.textContent = seconds;
 
-                if (--timer < 0) {
-                    window.location = "/logout";
-                    clearInterval(end);
-                }
-            }, 1000);
-        }
+        //         if (--timer < 0) {
+        //             window.location = "/logout";
+        //             clearInterval(end);
+        //         }
+        //     }, 1000);
+        // }
 
-        window.onload = function () {
-            var fiveMinutes = 10,
-                display = document.querySelector('#time');
-            startTimer(fiveMinutes, display);
-        };
+        // window.onload = function () {
+        //     var fiveMinutes = 10,
+        //         display = document.querySelector('#time');
+        //     startTimer(fiveMinutes, display);
+        // };
 
     </script>
 </body>

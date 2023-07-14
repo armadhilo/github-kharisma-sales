@@ -63,6 +63,10 @@ class PelangganController extends Controller
 
     public function store(PelangganRequest $request){
 
+        if(!$request->has('lat') || !$request->has('lng')){
+            return ApiFormatter::error(400, 'Proses gagal, harap aktifkan lokasi anda untuk melakukan penambahan pelanggan');
+        }
+
         $request->merge(['type' => 'pelanggan' ]);
         $request->merge(['password' => Hash::make($request->password) ]);
         $request->merge(['keylog' => Str::random(40) ]);

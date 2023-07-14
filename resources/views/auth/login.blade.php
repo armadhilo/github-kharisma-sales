@@ -76,7 +76,7 @@
              </div>
           </div>
 
-          <div class="col-lg-8 col-md-6 col-12 order-lg-2 order-1 min-vh-100 background-walk-y position-relative overlay-gradient-bottom" style="background-size: cover" id="login_image" data-background="{{ asset('assets/img/login.jpg') }}">
+          <div class="col-lg-8 col-md-6 col-12 order-lg-2 order-1 min-vh-100 background-walk-y position-relative overlay-gradient-bottom" style="background-size: cover" id="login_image" data-background="{{ asset('assets/img/login.png') }}">
              <div class="absolute-bottom-left index-2">
                 <div class="text-light p-5 pb-0">
                    <div class="mb-0 pb-0">

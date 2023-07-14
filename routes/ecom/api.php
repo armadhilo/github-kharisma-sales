@@ -73,6 +73,8 @@ Route::group(['prefix' => 'ecom'], function(){
             Route::delete('/{uuid}', 'Ecom\CartController@delete');
         });
 
+        Route::get('/select-cart/{uuid?}/{is_checkout?}', 'Ecom\CartController@select_cart');
+
         Route::group(['prefix' => 'checkout'], function(){
             Route::get('/', 'Ecom\CheckoutController@index');
             Route::post('/', 'Ecom\CheckoutController@checkout');

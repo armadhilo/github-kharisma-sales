@@ -43,6 +43,11 @@ class ProductController extends Controller
             }else{
                 $product = $product->sortByDesc('updated_at');
             }
+
+            $product = $product->all();
+            $indexedData = array_values($product);
+
+            $product = $indexedData;
         }
 
         $message = ' Data product berhasil ditampilkan';

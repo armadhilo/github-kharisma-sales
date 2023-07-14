@@ -18,6 +18,7 @@ use App\Models\OdooProduct;
 
 class CartController extends Controller
 {
+
     public function index(Request $request){
 
         $cart = Cart::with('product.product_tag')->active();
@@ -25,14 +26,48 @@ class CartController extends Controller
         if($request->has('type') && $request->type == 'count'){
             $message = 'Data jumlah cart berhasil ditampilkan';
             $cart = $cart->count();
+            
         }else{
+
             $message = 'Data cart berhasil ditampilkan';
             $cart = $cart->get();
-            if(count($cart) == 0) $message = 'Data cart list empty';
+            
+            if(count($cart) == 0){
+                $message = 'Data cart list empty';
+                return ApiFormatter::success(200, $message, $cart);
+            }
+
+            //update is_checkout = 0 jika status = first_hit
+            if($request->has('status') && $request->status == 'first_time'){
+                Cart::with('product.product_tag')->active()->update(['is_checkout' => 0]);
+                
+                return response()->json([
+                    'code' => 200,
+                    'message' => $message,
+                    'data' => $cart,
+                    'total_harga' => $cart->where('is_checkout', 1)->sum('total_price')
+                ], 200);
+            }
         }
 
         return ApiFormatter::success(200, $message, $cart);
     }
+
+    // public function index(Request $request){
+
+    //     $cart = Cart::with('product.product_tag')->active();
+
+    //     if($request->has('type') && $request->type == 'count'){
+    //         $message = 'Data jumlah cart berhasil ditampilkan';
+    //         $cart = $cart->count();
+    //     }else{
+    //         $message = 'Data cart berhasil ditampilkan';
+    //         $cart = $cart->get();
+    //         if(count($cart) == 0) $message = 'Data cart list empty';
+    //     }
+
+    //     return ApiFormatter::success(200, $message, $cart);
+    // }
 
     public function detail($uuid){
 
@@ -83,26 +118,53 @@ class CartController extends Controller
         return ApiFormatter::success(200, $message);
     }
 
+    public function select_cart($uuid = null, $is_checkout = null){
+
+        if($uuid == 'true'){
+            Cart::active()->update(['is_checkout' => 1]);
+            $message = 'Semua cart berhasil di select';
+            return ApiFormatter::success(200, $message, (string)Cart::active()->where('is_checkout', 1)->sum('total_price'));
+        }
+
+        if($uuid == 'false'){
+            Cart::active()->update(['is_checkout' => 0]);
+            $message = 'Semua cart berhasil di unselect';
+            return ApiFormatter::success(200, $message, '0');
+        }
+
+        $cart = Cart::where(['uuid' => $uuid])->first();
+
+        $cart->is_checkout = $is_checkout == 'true' ? 1 : 0;
+        $cart->save();
+
+        $message = $is_checkout == 'true' ? 'select' : 'unselect';
+
+        return ApiFormatter::success(200, "Data berhasil di $message", (string)Cart::active()->where('is_checkout', 1)->sum('total_price'));
+    }
+
     public function update($uuid, CartRequest $request){
 
         $cart = Cart::where(['uuid' => $uuid])->first();
-        if(empty($cart)){
-            $message = 'Cart not found';
-            return ApiFormatter::error(404, $message);
-        }
+        // if(empty($cart)){
+        //     $message = 'Cart not found';
+        //     return ApiFormatter::error(404, $message);
+        // }
 
-        //check stock barang
-        $cek_stock = $this->check_stock($request->product_id, $request->quantity);
-        if(!$cek_stock){
-            $message = 'Oops! stock tidak cukup';
-            return ApiFormatter::error(400, $message);
-        }
+        // //check stock barang
+        // $cek_stock = $this->check_stock($request->product_id, $request->quantity);
+        // if(!$cek_stock){
+        //     $message = 'Oops! stock tidak cukup';
+        //     return ApiFormatter::error(400, $message);
+        // }
 
-         //recheck price
-         $odoo_product = OdooProduct::where('product_id', $request->product_id)->first();
-         $recheck_price = $this->check_price($odoo_product->product_tmpl_id, $request->quantity);
-         $request->merge(['price' => $recheck_price['price'] ]);
+        //recheck price
+        $odoo_product = OdooProduct::where('product_id', $request->product_id)->first();
+        $recheck_price = $this->check_price($odoo_product->product_tmpl_id, $request->quantity);
+        $request->merge(['price' => $recheck_price['price'] ]);
 
+        $is_checkout = ($cart->is_checkout == 1) ? 0 : 1;
+
+        $request->merge(['is_checkout' => $is_checkout]);
         $request->merge(['total_price' => $request->price * $request->quantity ]);
 
         $cart->fill($request->all())->save();

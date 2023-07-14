@@ -7,6 +7,16 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+
+    /**
+     * The Artisan commands provided by your application.
+     *
+     * @var array
+     */
+    protected $commands = [
+        Commands\SalesKunjunganAbsenceCron::class,
+    ];
+
     /**
      * Define the application's command schedule.
      *
@@ -15,10 +25,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('queue:work')
-             ->everyMinute()
-             ->withoutOverlapping()
-             ->appendOutputTo ('/my/logs/laravel_output.log');
+        // $schedule->command('queue:work')
+        //      ->everyMinute()
+        //      ->withoutOverlapping()
+        //      ->appendOutputTo ('/my/logs/laravel_output.log');
+
+        $schedule->command('sales-kunjungan-absence:cron')
+            ->dailyAt('23:00');
     }
 
     /**
