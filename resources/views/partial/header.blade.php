@@ -27,10 +27,10 @@
   <div class="main-sidebar">
     <aside id="sidebar-wrapper">
       <div class="sidebar-brand">
-        <a href="index.html">SALES KS</a>
+        <a href="/admin/dashboard">SALES KS</a>
       </div>
       <div class="sidebar-brand sidebar-brand-sm">
-        <a href="index.html">KS</a>
+        <a href="/admin/dashboard">KS</a>
       </div>
         <?php
           $url_menu = Request::segment(2);
@@ -38,7 +38,7 @@
         ?>
         <ul class="sidebar-menu">
           <li class="menu-header">Dashboard</li>
-          <li class="nav-item dropdown @if($url_menu == "dashboard") active @endif"><a href="admin/dashboard" class="nav-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+          <li class="nav-item dropdown @if($url_menu == "dashboard") active @endif"><a href="/admin/dashboard" class="nav-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
           <li class="menu-header">Data Master</li>
           <li class="nav-item dropdown @if($url_menu == "sales") active @endif"><a href="/admin/sales" class="nav-link"><i class="fas fa-user-cog"></i><span>Master Sales</span></a></li>
           <li class="nav-item dropdown @if($url_menu == "pelanggan") active @endif"><a href="/admin/pelanggan" class="nav-link"><i class="fas fa-user"></i><span>Master Pelanggan</span></a></li>

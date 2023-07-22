@@ -48,25 +48,43 @@
                @endif
             </div>
             <form autocomplete="off" id="form_submit_request" action="/admin/pelanggan/store-update" method="POST">
+                <input hidden type="text" name="provinsi" class="form-control" value="NUSA TENGGARA TIMUR">
                 @if(isset($data))
                 @method('PUT')
                 <input type="hidden" value="update" name="method">
+                <input type="text" hidden class="form-control" value="{{$data->id}}" name="id" id="id">
                 @endif
-               <div class="card-body pt-0">
+               <div class="card-body pt-3">
                   <div class="row">
-                     <div class="col-12 col-md-5 col-lg-5">
+                     <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
                            <label>Nama</label>
-                           <input type="text" hidden class="form-control" value="@if(isset($data)){{$data->id}}@endif" name="id" id="id">
                            <input type="text" name="nama" id="nama" value="@if(isset($data)) {{$data->nama}} @endif" class="form-control">
                            <span class="d-flex text-danger invalid-feedback" id="invalid-nama-feedback"></span>
                         </div>
                      </div>
-                     <div class="col-12 col-md-4 col-lg-4">
+                     <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
                            <label>Email</label>
                            <input type="text" name="email" id="email" value="@if(isset($data)) {{$data->email}} @endif" class="form-control">
                            <span class="d-flex text-danger invalid-feedback" id="invalid-email-feedback"></span>
+                        </div>
+                     </div>
+                     <div class="col-12 col-md-3 col-lg-3">
+                        <div class="form-group">
+                           <label>Pilih Sales</label>
+                           <select class="form-control select2" name="sales_id" id="sales_id">
+                              <option disabled selected>- Pilih -</option>
+                              @foreach ($sales as $item)
+                                 @if(isset($data) && $data->sales_id == $item->id)
+                                 <option value="{{ $item->id }}" selected>{{ $item->nama }}</option>
+                                 <p>testt</p>
+                                 @else
+                                 <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                 @endif
+                              @endforeach
+                           </select>
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-sales_id-feedback"></span>
                         </div>
                      </div>
                      <div class="col-12 col-md-3 col-lg-3">
@@ -76,14 +94,47 @@
                            <span class="d-flex text-danger invalid-feedback" id="invalid-telepon-feedback"></span>
                         </div>
                      </div>
+                     <div class="col-12 col-md-2 col-lg-2">
+                        <div class="form-group">
+                           <label>Tipe Pelanggan</label>
+                           <select class="form-control select2" name="type_pelanggan" id="type_pelanggan">
+                              <option disabled selected>- Pilih -</option>
+                              <option value="flores" @if(isset($data) && $data->type_pelanggan == 'flores') selected @endif>Flores</option>
+                              <option value="grosir" @if(isset($data) && $data->type_pelanggan == 'grosir') selected @endif>Grosir</option>
+                              <option value="retail" @if(isset($data) && $data->type_pelanggan == 'retail') selected @endif>Retail</option>
+                           </select>
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-type_pelanggan-feedback"></span>
+                        </div>
+                     </div>
+                     <div class="col-12 col-md-3 col-lg-3">
+                        <div class="form-group">
+                           <label>No KTP</label>
+                           <input type="text" name="no_ktp" id="no_ktp" value="@if(isset($data)) {{$data->no_ktp}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-no_ktp-feedback"></span>
+                        </div>
+                     </div>
+                     <div class="col-12 col-md-4 col-lg-4">
+                        <div class="form-group">
+                           <label>Nama NPWP</label>
+                           <input type="text" name="nama_npwp" id="nama_npwp" value="@if(isset($data)) {{$data->nama_npwp}} @endif" class="form-control" autocomplete="off">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-nama_npwp-feedback"></span>
+                        </div>
+                     </div>
+                     <div class="col-12 col-md-3 col-lg-3">
+                        <div class="form-group">
+                           <label>No NPWP</label>
+                           <input type="text" name="no_npwp" id="no_npwp" value="@if(isset($data)) {{$data->no_npwp}} @endif" onkeypress="return hanyaAngka(event,false);" autocomplete="off" class="form-control">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-no_npwp-feedback"></span>
+                        </div>
+                     </div>
                      @if(isset($data))
                      <div class="col-12 col-md-6 col-lg-6">
                         <div class="form-group">
-                           <div class="d-flex justify-content-between">
+                           <div class="d-flex justify-content-between" style="flex-direction: row-reverse">
+                              <span class="invalid-feedback float-right d-block" style="text-align: end">*Tidak Perlu Diisi Bila Password Tidak Diubah</span>
                                  <label style="white-space: nowrap">Change Password</label>
-                                 <span class="invalid-feedback float-right d-block" style="text-align: end">*Tidak Perlu Diisi Bila Password Tidak Diubah</span>
                            </div>
-                           <input type="password" name="password" id="password" class="form-control">
+                           <input type="password" name="password" id="password" class="form-control" autocomplete="off">
                            <span class="d-flex text-danger invalid-feedback" id="invalid-password-feedback"></span>
                         </div>
                      </div>
@@ -113,18 +164,18 @@
                     <div class="col-12 col-md-6 col-lg-6">
                         <div class="form-group">
                            <label>Alamat</label>
-                           <textarea class="form-control" style="height: 90px" name="alamat">@isset($data->alamat) {{$data->alamat}} @endisset</textarea>
+                           <textarea class="form-control" style="min-height: 90px" name="alamat">@isset($data->alamat) {{$data->alamat}} @endisset</textarea>
                            <span class="d-flex text-danger invalid-feedback" id="invalid-alamat-feedback"></span>
                         </div>
                      </div>
                      <div class="col-12 col-md-6 col-lg-6">
                         <div class="form-group">
                            <label>Alamat Toko</label>
-                           <textarea class="form-control" style="height: 90px" name="alamat_toko">@isset($data->alamat_toko) {{$data->alamat_toko}} @endisset</textarea>
+                           <textarea class="form-control" style="min-height: 90px" name="alamat_toko">@isset($data->alamat_toko) {{$data->alamat_toko}} @endisset</textarea>
                            <span class="d-flex text-danger invalid-feedback" id="invalid-alamat_toko-feedback"></span>
                         </div>
                      </div>
-                     <div class="col-12 col-md-4 col-lg-4">
+                     <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
                             <label>Kota</label>
                             <input hidden type="text" id="data_kota" name="kota_id" class="form-control" value="@if(isset($data)){{$data->kota_id}}@endif">
@@ -134,7 +185,7 @@
                             <span class="d-flex text-danger invalid-feedback" id="invalid-kota-feedback"></span>
                         </div>
                     </div>
-                    <div class="col-12 col-md-4 col-lg-4">
+                    <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
                             <label>Kecamatan</label>
                             <input hidden type="text" id="data_kecamatan" name="kecamatan_id" class="form-control" value="@if(isset($data)){{$data->kecamatan_id}}@endif">
@@ -144,14 +195,18 @@
                             <span class="d-flex text-danger invalid-feedback" id="invalid-kecamatan-feedback"></span>
                         </div>
                     </div>
-                    <div class="col-12 col-md-4 col-lg-4">
+                    <div class="col-12 col-md-3 col-lg-3">
                         <div class="form-group">
                             <label>Kelurahan</label>
-                            <input hidden type="text" id="data_kelurahan" name="kelurahan_id" class="form-control" value="@if(isset($data)){{$data->kelurahan_id}}@endif">
-                            <select class="form-control select2" name="kelurahan" onchange="change_kelurahan()" id="kelurahan" @if(!isset($data->kelurahan)){{ 'disabled' }}@endif>
-                                <option selected disabled>- Pilih -</option>
-                            </select>
+                            <input type="text" class="form-control" id="kelurahan" name="kelurahan" @if(!isset($data)){{ "disabled" }}@endif value="@if(isset($data)){{ $data->kelurahan }}@endif">
                             <span class="d-flex text-danger invalid-feedback" id="invalid-kelurahan-feedback"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label>Kode Pos</label>
+                            <input type="text" class="form-control" id="zip" name="zip" value="@if(isset($data)){{ $data->zip }}@endif">
+                            <span class="d-flex text-danger invalid-feedback" id="invalid-zip-feedback"></span>
                         </div>
                     </div>
                     <div class="col-12 col-md-5 col-lg-5">
@@ -411,22 +466,28 @@
     function get_kota(){
        $("#modal_loading").modal('show');
         $.ajax({
-            url : "/api/kabkota/53",
+            url : "/api/city-raja-ongkir/23",
             type: "GET",
             dataType: "JSON",
             success: function(response){
-                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
-                var data_kota = $("#data_kota").val();
-                $("#kota").empty();
-                $("#kota").append(`<option selected disabled>- Pilih -</option>`);
-                for (var i = 0; i < response.length; i++) {
-                    if(data_kota == response[i]['id']){
-                        $("#kota").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
-                        change_kota();
-                    }else{
-                        $("#kota").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}">${response[i]['nama']}</option>`);
-                    }
-                }
+               var data_kota = $("#data_kota").val();
+               let check_loading = false;
+               $("#kota").empty();
+               $("#kota").append(`<option selected disabled>- Pilih -</option>`);
+               for (var i = 0; i < response.data.length; i++) {
+                  if(data_kota == response.data[i]['city_id']){
+                     $("#kota").append(`<option value="${response.data[i]['city_name']}" data-id="${response.data[i]['city_id']}" postal_code="${response.data[i]['postal_code']}" selected>${response.data[i]['city_name']}</option>`);
+                     check_loading = true;
+                     change_kota();
+                  }else{
+                     $("#kota").append(`<option value="${response.data[i]['city_name']}" data-id="${response.data[i]['city_id']}" postal_code="${response.data[i]['postal_code']}">${response.data[i]['city_name']}</option>`);
+                  }
+               }
+               if (check_loading == false){
+                  setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+               } else {
+                  setTimeout(function () {  $('#modal_loading').modal('hide'); }, 15000);
+               }
             },error: function (jqXHR, textStatus, errorThrown){
                 swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
             }
@@ -434,10 +495,12 @@
     }
 
     function change_kota(){
+      $('#kelurahan').prop('disabled', true);
       $('#data_kota').val($('#kota').find(":selected").attr('data-id'))
+      $('#zip').val($('#kota').find(":selected").attr('postal_code'))
        $("#modal_loading").modal('show');
         $.ajax({
-            url : "/api/kecamatan/" + $('#data_kota').val(),
+            url : "/api/kecamatan-raja-ongkir/" + $('#data_kota').val(),
             type: "GET",
             dataType: "JSON",
             success: function(response){
@@ -446,14 +509,14 @@
                 $("#kecamatan").empty();
                 $('#kecamatan').append('<option selected disabled>- Pilih -</option>');
                 $('#kecamatan').prop('disabled', false);
-                for (var i = 0; i < response.length; i++) {
-                  if(data_kecamatan == response[i]['id']){
-                     $("#kecamatan").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
-                     change_kecamatan();
-                  } else {
-                     $("#kecamatan").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}">${response[i]['nama']}</option>`);
+                for (var i = 0; i < response.data.length; i++) {
+                   if(data_kecamatan == response.data[i]['subdistrict_id']){
+                      $("#kecamatan").append(`<option value="${response.data[i]['subdistrict_name']}" data-id="${response.data[i]['subdistrict_id']}" selected>${response.data[i]['subdistrict_name']}</option>`);
+                      change_kecamatan();
+                     } else {
+                        $("#kecamatan").append(`<option value="${response.data[i]['subdistrict_name']}" data-id="${response.data[i]['subdistrict_id']}">${response.data[i]['subdistrict_name']}</option>`);
+                     }
                   }
-                }
             },error: function (jqXHR, textStatus, errorThrown){
                 setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
                  Swal.fire('Oops!','Terjadi kesalahan segera hubungi tim IT (' + errorThrown + ')','error');
@@ -461,35 +524,40 @@
         });
     }
 
-    function change_kecamatan(){
-      $('#data_kecamatan').val($('#kecamatan').find(":selected").attr('data-id'))
-       $("#modal_loading").modal('show');
-        $.ajax({
-            url : "/api/kelurahan/" + $('#data_kecamatan').val(),
-            type: "GET",
-            dataType: "JSON",
-            success: function(response){
-                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
-                var data_kelurahan = $("#data_kelurahan").val();
-                $("#kelurahan").empty();
-                $('#kelurahan').append('<option selected disabled>- Pilih -</option>');
-                $('#kelurahan').prop('disabled', false);
-                for (var i = 0; i < response.length; i++) {
-                if(data_kelurahan == response[i]['id']){
-                  $("#kelurahan").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
-                } else {
-                  $("#kelurahan").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}">${response[i]['nama']}</option>`);
-                }
-                }
-            },error: function (jqXHR, textStatus, errorThrown){
-                setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
-                 Swal.fire('Oops!','Terjadi kesalahan segera hubungi tim IT (' + errorThrown + ')','error');
-            }
-        });
-    }
+   function change_kecamatan(){
+      $('#data_kecamatan').val($('#kecamatan').find(":selected").attr('data-id'));
+      $('#kelurahan').prop('disabled', false);
+   }
 
-    function change_kelurahan(){
-      $('#data_kelurahan').val($('#kelurahan').find(":selected").attr('data-id'))
-    }
+   //  function change_kecamatan(){
+   //    $('#data_kecamatan').val($('#kecamatan').find(":selected").attr('data-id'))
+   //     $("#modal_loading").modal('show');
+   //      $.ajax({
+   //          url : "/api/kelurahan/" + $('#data_kecamatan').val(),
+   //          type: "GET",
+   //          dataType: "JSON",
+   //          success: function(response){
+   //              setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+   //              var data_kelurahan = $("#data_kelurahan").val();
+   //              $("#kelurahan").empty();
+   //              $('#kelurahan').append('<option selected disabled>- Pilih -</option>');
+   //              $('#kelurahan').prop('disabled', false);
+   //              for (var i = 0; i < response.length; i++) {
+   //              if(data_kelurahan == response[i]['id']){
+   //                $("#kelurahan").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}" selected>${response[i]['nama']}</option>`);
+   //              } else {
+   //                $("#kelurahan").append(`<option value="${response[i]['nama']}" data-id="${response[i]['id']}">${response[i]['nama']}</option>`);
+   //              }
+   //              }
+   //          },error: function (jqXHR, textStatus, errorThrown){
+   //              setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+   //               Swal.fire('Oops!','Terjadi kesalahan segera hubungi tim IT (' + errorThrown + ')','error');
+   //          }
+   //      });
+   //  }
+
+   //  function change_kelurahan(){
+   //    $('#data_kelurahan').val($('#kelurahan').find(":selected").attr('data-id'))
+   //  }
 </script>
 @endsection

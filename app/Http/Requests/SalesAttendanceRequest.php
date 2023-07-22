@@ -30,8 +30,6 @@ class SalesAttendanceRequest extends FormRequest
             'id' => 'required',
             'date_start' => 'required|date',
             'time_start' => 'required',
-            'date_end' => 'required|date',
-            'time_end' => 'required',
         ];
     }
 

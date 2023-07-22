@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>Login &mdash; SALES KHARISMA</title>
-  <link rel="shortcut icon" type="image/x-icon" href="{{asset('assets/public_page/images/favicon.ico')}}">
+   <meta charset="UTF-8">
+   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+   <title>Login &mdash; SALES KHARISMA</title>
 
-    <!-- General CSS Files -->
-    <link rel="stylesheet" href="{{ asset('assets/css/login/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/modules/fontawesome/css/all.min.css') }}">
+   <!-- Favicon -->
+   <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon-32x32.png') }}" sizes="32x32" />
+   <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon-16x16.png') }}" sizes="16x16" />
 
-    <!-- CSS Libraries -->
-    <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap-social/bootstrap-social.css') }}">
+   <!-- General CSS Files -->
+   <link rel="stylesheet" href="{{ asset('assets/css/login/bootstrap.min.css') }}">
+   <link rel="stylesheet" href="{{ asset('assets/modules/fontawesome/css/all.min.css') }}">
 
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
-    <style>
-      @media (max-width: 767px){
-         #login_image{
-            display: none!important;
-         }
-         #login_form{
-            padding: 0 10% 0 10%;
-         }
+   <!-- CSS Libraries -->
+   <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap-social/bootstrap-social.css') }}">
+
+   <!-- Template CSS -->
+   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+   <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
+   <style>
+   @media (max-width: 767px){
+      #login_image{
+         display: none!important;
       }
-    </style>
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+      #login_form{
+         padding: 0 10% 0 10%;
+      }
+   }
+   </style>
+   <meta name="csrf-token" content="{{ csrf_token() }}" />
+   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 </head>
 
 <body>

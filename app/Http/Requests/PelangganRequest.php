@@ -32,6 +32,8 @@ class PelangganRequest extends FormRequest
             'nama_toko' => 'required',
             'alamat' => 'required',
             'alamat_toko' => 'required',
+            'type_pelanggan' => 'required',
+            'sales_id' => 'required',
             'email' => [
                 Rule::when(request()->isMethod('POST'), 'required|email|unique:users,email,' . $this->id),
                 Rule::when(request()->isMethod('PUT'), 'nullable|email'),
@@ -71,6 +73,12 @@ class PelangganRequest extends FormRequest
                 Rule::when(request()->isMethod('POST'), 'required'),
                 Rule::when(request()->isMethod('PUT'), 'nullable'),
             ],
+            'no_ktp' => [
+                Rule::when(request()->isMethod('POST'), 'nullable|numeric|unique:users,no_ktp'),
+                Rule::when(request()->isMethod('PUT'), 'nullable|numeric'),
+            ],
+            'nama_npwp' => 'nullable',
+            'no_npwp' => 'nullable|numeric',
             'lat' => 'nullable',
             'lng' => 'nullable',
         ];

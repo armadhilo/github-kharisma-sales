@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <title>Reset Password</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/img/upn/logo-upn-min.png') }}">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon-32x32.png') }}" sizes="32x32" />
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon-16x16.png') }}" sizes="16x16" />
 
     <!-- General CSS Files -->
     <link rel="stylesheet" href="{{ asset('assets/css/login/bootstrap.min.css') }}">

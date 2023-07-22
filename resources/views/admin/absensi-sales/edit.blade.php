@@ -65,18 +65,19 @@
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="form-group">
                             <label>Tanggal Selesai</label>
-                            <input type="date" class="form-control required-field" name="date_end" id="date_end">
+                            <input type="date" class="form-control" name="date_end" id="date_end">
                         </div>
                     </div>
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="form-group">
                             <label>Waktu Selesai</label>
-                            <input type="time" class="form-control required-field" name="time_end" id="time_end">
+                            <input type="time" class="form-control" name="time_end" id="time_end">
                         </div>
                     </div>
                 </div>
              </div>
              <div class="modal-footer bg-whitesmoke br">
+                <button type="button" class="btn btn-success" onclick="reset_absensi();"><i class="fas fa-sync-alt mr-2"></i>Reset Absensi</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-warning">Simpan</button>
              </div>
@@ -122,6 +123,11 @@
         $("#form_submit_request")[0].reset();
         reset_all_select();
         $('#sales').val(sales_nama);
+    }
+
+    function reset_absensi(){
+        $('#date_end').val(null);
+        $('#time_end').val(null);
     }
 </script>
 @endsection
