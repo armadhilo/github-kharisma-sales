@@ -111,7 +111,7 @@ class SyncProductJob implements ShouldQueue
                             $url_image = null;
                             if(!count($odoo_product->where('gd_image_name', $filename))){
                                 Storage::disk('s3')->put('product/images/' . $filename, base64_decode($item['image_medium']));
-                                $url_image = 'https://'. env('AWS_BUCKET') .'s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images/' . $filename;
+                                $url_image = 'https://'. env('AWS_BUCKET') .'.s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images/' . $filename;
                             }
                         }
 
@@ -135,7 +135,7 @@ class SyncProductJob implements ShouldQueue
                             $url_image_small = null;
                             if(!count($odoo_product->where('gd_image_small_name', $filename_small))){
                                 Storage::disk('s3')->put('product/images-small/' . $filename_small, base64_decode($item['image_medium']));
-                                $url_image_small = 'https://'. env('AWS_BUCKET') .'s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images-small/' . $filename_small;
+                                $url_image_small = 'https://'. env('AWS_BUCKET') .'.s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images-small/' . $filename_small;
                             }
                         }
 
