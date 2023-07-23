@@ -16,17 +16,7 @@ class OdooProductOriginal extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
     public function pricelist(){
-        return $this->hasMany(OdooPricelist::class, 'product_tmpl_id', 'product_tmpl_id');
-    }
-
-    public function pricelist_b2b()
-    {
-        return $this->hasMany(OdooPricelist::class, 'product_tmpl_id', 'product_tmpl_id')->where('type', 'b2b');
-    }
-
-    public function pricelist_b2c()
-    {
-        return $this->hasMany(OdooPricelist::class, 'product_tmpl_id', 'product_tmpl_id')->where('type', 'b2c');
+        return $this->hasMany(OdooProductPricelist::class, 'product_tmpl_id', 'product_tmpl_id');
     }
 
     public function product_tag(){

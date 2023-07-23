@@ -23,7 +23,9 @@ use App\Models\SalesOrder;
 use App\Models\SalesOrderProduct;
 use App\Models\Notification;
 use App\Models\OdooProduct;
+use App\Models\OdooProductOriginal;
 use ripcord;
+use Storage;
 
 class OdooController extends Controller
 {
@@ -37,9 +39,9 @@ class OdooController extends Controller
     public function __construct()
     {
         $url = 'http://103.215.177.203:8096';
-        $this->db = 'odoo_kharisma_stationery_test5';
+        $this->db = 'odoo_kharisma_stationery_test6';
         $this->username = "kevin_kevin";
-        $this->password = "kevin123";
+        $this->password = "kevin234";
 
         $common = ripcord::client("$url/xmlrpc/2/common");
         $this->uid = $common->authenticate($this->db, $this->username, $this->password, []);
@@ -54,13 +56,17 @@ class OdooController extends Controller
 
         // dd($pelanggan);
 
-        //GET CUSTOMER    
+        //GET CUSTOMER
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
         // 'res.partner', 'search_read', [[['active','=', True]]], ['fields' => ['id','email','name','mobile','display_name','street','street2','city','zip'], 'limit'=> 100]);
 
         //GET PRODUCT
-        // return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        // 'product.product', 'search_read', [[]], ['fields' => [], 'limit'=> 10]);
+        return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        'product.product', 'search_read', [[['product_tmpl_id', '=', [37374]]]], ['fields' => [], 'limit'=> 1]);
+
+        //PRICELIST
+        return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', [37374]]]], ['fields' => ['product_tmpl_id', 'min_quantity', 'pricelist_id', 'fixed_price', 'uom_id'], 'limit'=> 10]);
 
         //GET PRODUCT TAG
         // $array_product_tmpl_product = ['37374'];
@@ -71,6 +77,22 @@ class OdooController extends Controller
         // $array = ['64842'];
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
         // 'sale.order', 'search_read', [[['id','=', $array]]], ['fields' => ['state'], 'limit'=> 1]);
+
+        // $models->execute_kw($db, $uid, $password,
+        //     'res.partner', 'check_access_rights',
+        //     array('read'), array('raise_exception' => false));
+
+        # search -> akan return ID
+        // $models->execute_kw($db, $uid, $password,
+        // 'product.product', 'search', [[['write_uid', '=', 1]]]);
+
+        #read -> akan return DETAIL
+        // return $models->execute_kw($db, $uid, $password,
+        // 'product.product', 'read', [[36228]]);
+
+        // #read -> akan return DETAIL
+        // return $models->execute_kw($db, $uid, $password,
+        // 'product.product', 'search_read', [[['write_uid', '=', 1]]], ['fields' => ['default_code','active','product_tmpl_id'], 'limit'=> 5]);
 
         //CREATE CUSTOMER DI SO
         // $partnerData = array(
@@ -284,62 +306,195 @@ class OdooController extends Controller
 
     public function sync_product(Request $request){
 
-        $content = request()->file('file');
 
-        // $models->execute_kw($db, $uid, $password,
-        //     'res.partner', 'check_access_rights',
-        //     array('read'), array('raise_exception' => false));
 
-        # search -> akan return ID
-        // $models->execute_kw($db, $uid, $password,
-        // 'product.product', 'search', [[['write_uid', '=', 1]]]);
+            $array_product_tmpl_product = [];
 
-        #read -> akan return DETAIL
-        // return $models->execute_kw($db, $uid, $password,
-        // 'product.product', 'read', [[36228]]);
+            //get list data ODOO_PRODUCT table
+            $odoo_product = OdooProductOriginal::whereIn('product_id', [37374])->get();
 
-        // #read -> akan return DETAIL
-        // return $models->execute_kw($db, $uid, $password,
-        // 'product.product', 'search_read', [[['write_uid', '=', 1]]], ['fields' => ['default_code','active','product_tmpl_id'], 'limit'=> 5]);
 
-        DB::table('jobs')->truncate();
-        DB::table('failed_jobs')->truncate();
+            $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
+            'product.product', 'search_read', [[['id', '=', [37374]]]], ['fields' => ['id','product_tmpl_id','uom_id','tag_ids','default_code','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
 
-        // #======PRODUCT TAG==========#
-        $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'product.tag', 'search_read', [[['active', '=', True]]], ['fields' => ['id','name']]);
+            if(isset($product['faultCode']) && $product['faultCode'] == 1){
+                dd($product['faultString']);
+                // $this->fail(new \Exception($product['faultString']));
+            }
 
-        foreach($product_tag as $item){
+            $is_array = is_array($product) && is_object($product);
 
-            DB::table('odoo_product_tag')->updateOrInsert(['product_tag_id' => $item['id']],[
-                'product_tag_id' => $item['id'],
-                'name' => $item['name'],
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-        }
+            if($is_array || count($product)){
+                foreach($product as $item){
 
-        #=========PRODUCT===========#
+                    if(is_array($item)){
+                        $filename = null;
+                        $mimeType = null;
+                        $filename_small = null;
+                        $mimeType_small = null;
 
-        // $product_id = "37234, 36228, 37235, 37236, 38716, 37232";
-        $product_id = file_get_contents($content);
-        $product_id = explode(", ",$product_id);
-        $chunk = array_chunk($product_id, 10);
+                        //jika data image tidak kosong
+                        if(!empty($item['image'] || $item['image'] != false || $item['image'] != '' )){
 
-        foreach($chunk as $item){
-            dispatch(new SyncProductJob($item));
-            // dispatch(new SyncProductJob($item))->delay(now()->addSeconds(30));
-        }
+                            \Log::info('ada image nih');
 
-        return [
-            'status' => 200, // SUCCESS
-            'message' => 'Export Product Odoo Successfully'
-        ];
+                            //save image on google drive
+                            // Base64 encoded string
+                            $base64String = $item['image'];
+                            // Decode the Base64 string
+                            $decodedData = base64_decode($base64String);
+                            // Create a Fileinfo resource
+                            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                            // Get the MIME type of the decoded data
+                            $mimeType = explode('/', finfo_buffer($finfo, $decodedData))[1];
+                            // Close the Fileinfo resource
+                            finfo_close($finfo);
+
+                            $filename = $item['default_code'] .'-'. 'big.' . $mimeType;
+
+                            //check apabila gambar sudah ada tidak perlu menambahkan image baru
+                            $url_image = null;
+                            if(!count($odoo_product->where('gd_image_name', $filename))){
+                                dd(Storage::disk('s3')->put('product/images/' . $filename, base64_decode($item['image_medium'])));
+                                Storage::disk('s3')->put('product/images/' . $filename, base64_decode($item['image_medium']));
+                                $url_image = 'https://'. env('AWS_BUCKET') .'s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images/' . $filename;
+                            }
+                        }
+
+                        if(!empty($item['image_medium'])){
+
+                            //save image on google drive
+                            // Base64 encoded string
+                            $base64String = $item['image_medium'];
+                            // Decode the Base64 string
+                            $decodedData = base64_decode($base64String);
+                            // Create a Fileinfo resource
+                            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                            // Get the MIME type of the decoded data
+                            $mimeType_small = explode('/', finfo_buffer($finfo, $decodedData))[1];
+                            // Close the Fileinfo resource
+                            finfo_close($finfo);
+
+                            $filename_small = $item['default_code'] .'-'. 'medium.' . $mimeType_small;
+
+                            //check apabila gambar sudah ada tidak perlu menambahkan image baru
+                            $url_image_small = null;
+                            if(!count($odoo_product->where('gd_image_small_name', $filename_small))){
+                                Storage::disk('s3')->put('product/images-small/' . $filename_small, base64_decode($item['image_medium']));
+                                $url_image_small = 'https://'. env('AWS_BUCKET') .'s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images-small/' . $filename_small;
+                            }
+                        }
+
+                        $array_product_tmpl_product[] = is_array($item['product_tmpl_id']) ? $item['product_tmpl_id'][0] : $item['product_tmpl_id'];
+
+                        DB::table('odoo_product')->updateOrInsert(['product_id' => $item['id']],[
+                            'product_id' => $item['id'],
+                            'product_tmpl_id' => $item['product_tmpl_id'][0],
+                            'product_uom_id' => $item['uom_id'][0],
+                            'product_tag_id' => $item['tag_ids'][0],
+                            'sku' => $item['default_code'],
+                            'product_name' => $item['name'],
+                            'product_name_slug' => Str::slug($item['name']),
+                            'gd_image_name' => $filename,
+                            'gd_image_mimetype' => $mimeType,
+                            'gd_image_path' => $url_image,
+                            'gd_image_small_name' => $filename_small,
+                            'gd_image_small_mimetype' => $mimeType_small,
+                            'gd_image_small_path' => $url_image_small,
+                            'unit' => $item['uom_id'][1],
+                            'weight' => $item['weight'],
+                            'stock' => $item['qty_available'],
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ]);
+                    }
+                }
+
+                if(count($array_product_tmpl_product)){
+                    // get product pricelist for b2c
+                    $product_pricelist = $this->models->execute_kw($this->db, $this->uid, $this->password,
+                    'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => []]);
+
+                    $is_array = is_array($product_pricelist) && is_object($product_pricelist);
+                    if($is_array || count($product_pricelist)){
+
+                        //delete pricelist yang akan diupdate harganya
+                        DB::table('odoo_product_uom')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
+                        DB::table('odoo_product_pricelist')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
+
+                        foreach($product_pricelist as $item){
+
+                            if(is_array($item['product_tmpl_id'])){
+
+                                //field stock pada odoo_product_uom
+                                $stock = 1;
+                                if (str_contains($item['uom_id'][1], '/')) {
+                                    $explode_stock = explode("/",$item['uom_id'][1]);
+                                    $stock = $explode_stock[1];
+                                }
+
+                                DB::table('odoo_product_uom')->insert([
+                                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                                    'product_uom_id' => $item['uom_id'][0],
+                                    'label' => $item['uom_id'][1],
+                                    'stock' => $stock,
+                                    'type' => $item['pricelist_id'][1],
+                                    'created_at' => Carbon::now(),
+                                    'updated_at' => Carbon::now(),
+                                ]);
+
+                                DB::table('odoo_product_pricelist')->insert([
+                                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                                    'product_uom_id' => $item['uom_id'][0],
+                                    'price' => $item['fixed_price'],
+                                    'min_quantity' => $item['min_quantity'],
+                                    'created_at' => Carbon::now(),
+                                    'updated_at' => Carbon::now(),
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+
+        // $content = request()->file('file');
+
+        // DB::table('jobs')->truncate();
+        // DB::table('failed_jobs')->truncate();
+
+        // // #======PRODUCT TAG==========#
+        // $product_tag = $this->models->execute_kw($this->db, $this->uid, $this->password,
+        // 'product.tag', 'search_read', [[['active', '=', True]]], ['fields' => ['id','name']]);
+
+        // foreach($product_tag as $item){
+
+        //     DB::table('odoo_product_tag')->updateOrInsert(['product_tag_id' => $item['id']],[
+        //         'product_tag_id' => $item['id'],
+        //         'name' => $item['name'],
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //     ]);
+        // }
+
+        // #=========PRODUCT===========#
+
+        // // $product_id = "37234, 36228, 37235, 37236, 38716, 37232";
+        // $product_id = file_get_contents($content);
+        // $product_id = explode(", ",$product_id);
+        // $chunk = array_chunk($product_id, 10);
+
+        // foreach($chunk as $item){
+        //     dispatch(new SyncProductJob($item));
+        //     // dispatch(new SyncProductJob($item))->delay(now()->addSeconds(30));
+        // }
+
+        // return [
+        //     'status' => 200, // SUCCESS
+        //     'message' => 'Export Product Odoo Successfully'
+        // ];
     }
 
     public function sync_pelanggan(){
-        // $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        // 'res.partner', 'search', [[['active','=', True]]], ['limit'=> 50]);
 
         $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
         'res.partner', 'search', [[['active','=', True]]], ['limit'=> 100]);

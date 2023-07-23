@@ -44,17 +44,7 @@ class OdooProduct extends Model
     }
 
     public function pricelist(){
-        return $this->hasMany(OdooPricelist::class, 'product_tmpl_id', 'product_tmpl_id');
-    }
-
-    public function pricelist_b2b()
-    {
-        return $this->hasMany(OdooPricelist::class, 'product_tmpl_id', 'product_tmpl_id')->where('type', 'b2b');
-    }
-
-    public function pricelist_b2c()
-    {
-        return $this->hasMany(OdooPricelist::class, 'product_tmpl_id', 'product_tmpl_id')->where('type', 'b2c');
+        return $this->hasMany(OdooProductPricelist::class, 'product_tmpl_id', 'product_tmpl_id');
     }
 
     public function product_tag(){
@@ -67,6 +57,6 @@ class OdooProduct extends Model
 
     public function getIsWishlistAttribute(){
         $wishlist = Wishlist::where('product_id', $this->attributes['product_id'])->first();
-        return !empty($wishlist) ? 1 : 0; 
+        return !empty($wishlist) ? 1 : 0;
     }
 }
