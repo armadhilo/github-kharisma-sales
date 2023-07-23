@@ -102,8 +102,6 @@ class SyncProductJob implements ShouldQueue
                         //jika data image tidak kosong
                         if(!empty($item['image'] || $item['image'] != false || $item['image'] != '' )){
 
-                            \Log::info('ada image nih');
-
                             //save image on google drive
                             // Base64 encoded string
                             $base64String = $item['image'];
@@ -118,17 +116,19 @@ class SyncProductJob implements ShouldQueue
 
                             $filename = $item['default_code'] .'-'. 'big.' . $mimeType;
 
+                            //DELETE
+                            Storage::disk('s3')->delete('product/images/' . $filename);
+
                             //array insert product
                             $array_insert_product['gd_image_name'] = $filename;
                             $array_insert_product['gd_image_mimetype'] = $mimeType;
 
                             //check apabila gambar sudah ada tidak perlu menambahkan image baru
-                            if(!count($odoo_product->where('gd_image_name', $filename))){
-                                Storage::disk('s3')->put('product/images/' . $filename, base64_decode($item['image_medium']));
-                                $url_image = 'https://'. env('AWS_BUCKET') .'.s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images/' . $filename;
+                            Storage::disk('s3')->put('product/images/' . $filename, base64_decode($item['image']));
+                            $url_image = 'https://'. env('AWS_BUCKET') .'.s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images/' . $filename;
 
-                                $array_insert_product['gd_image_path'] = $url_image;
-                            }
+                            $array_insert_product['gd_image_path'] = $url_image;
+
                         }
 
                         if(!empty($item['image_medium'])){
@@ -147,17 +147,18 @@ class SyncProductJob implements ShouldQueue
 
                             $filename_small = $item['default_code'] .'-'. 'medium.' . $mimeType_small;
 
+                            //DELETE
+                            Storage::disk('s3')->delete('product/images-small/' . $filename_small);
+
                             //array insert product
                             $array_insert_product['gd_image_small_name'] = $filename_small;
                             $array_insert_product['gd_image_small_mimetype'] = $mimeType_small;
 
                             //check apabila gambar sudah ada tidak perlu menambahkan image baru
-                            if(!count($odoo_product->where('gd_image_small_name', $filename_small))){
-                                Storage::disk('s3')->put('product/images-small/' . $filename_small, base64_decode($item['image_medium']));
-                                $url_image_small = 'https://'. env('AWS_BUCKET') .'.s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images-small/' . $filename_small;
+                            Storage::disk('s3')->put('product/images-small/' . $filename_small, base64_decode($item['image_medium']));
+                            $url_image_small = 'https://'. env('AWS_BUCKET') .'.s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images-small/' . $filename_small;
 
-                                $array_insert_product['gd_image_small_path'] = $url_image_small;
-                            }
+                            $array_insert_product['gd_image_small_path'] = $url_image_small;
                         }
 
                         $array_product_tmpl_product[] = is_array($item['product_tmpl_id']) ? $item['product_tmpl_id'][0] : $item['product_tmpl_id'];
