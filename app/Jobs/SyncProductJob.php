@@ -82,11 +82,22 @@ class SyncProductJob implements ShouldQueue
             if($is_array || count($product)){
                 foreach($product as $item){
 
+                    $array_insert_product = [
+                        'product_id' => $item['id'],
+                        'product_tmpl_id' => $item['product_tmpl_id'][0],
+                        'product_uom_id' => $item['uom_id'][0],
+                        'product_tag_id' => $item['tag_ids'][0],
+                        'sku' => $item['default_code'],
+                        'product_name' => $item['name'],
+                        'product_name_slug' => Str::slug($item['name']),
+                        'unit' => $item['uom_id'][1],
+                        'weight' => $item['weight'],
+                        'stock' => $item['qty_available'],
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                    ];
+
                     if(is_array($item)){
-                        $filename = null;
-                        $mimeType = null;
-                        $filename_small = null;
-                        $mimeType_small = null;
 
                         //jika data image tidak kosong
                         if(!empty($item['image'] || $item['image'] != false || $item['image'] != '' )){
@@ -107,11 +118,16 @@ class SyncProductJob implements ShouldQueue
 
                             $filename = $item['default_code'] .'-'. 'big.' . $mimeType;
 
+                            //array insert product
+                            $array_insert_product['gd_image_name'] = $filename;
+                            $array_insert_product['gd_image_mimetype'] = $mimeType;
+
                             //check apabila gambar sudah ada tidak perlu menambahkan image baru
-                            $url_image = null;
                             if(!count($odoo_product->where('gd_image_name', $filename))){
                                 Storage::disk('s3')->put('product/images/' . $filename, base64_decode($item['image_medium']));
                                 $url_image = 'https://'. env('AWS_BUCKET') .'.s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images/' . $filename;
+
+                                $array_insert_product['gd_image_path'] = $url_image;
                             }
                         }
 
@@ -131,36 +147,22 @@ class SyncProductJob implements ShouldQueue
 
                             $filename_small = $item['default_code'] .'-'. 'medium.' . $mimeType_small;
 
+                            //array insert product
+                            $array_insert_product['gd_image_small_name'] = $filename_small;
+                            $array_insert_product['gd_image_small_mimetype'] = $mimeType_small;
+
                             //check apabila gambar sudah ada tidak perlu menambahkan image baru
-                            $url_image_small = null;
                             if(!count($odoo_product->where('gd_image_small_name', $filename_small))){
                                 Storage::disk('s3')->put('product/images-small/' . $filename_small, base64_decode($item['image_medium']));
                                 $url_image_small = 'https://'. env('AWS_BUCKET') .'.s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images-small/' . $filename_small;
+
+                                $array_insert_product['gd_image_small_path'] = $url_image_small;
                             }
                         }
 
                         $array_product_tmpl_product[] = is_array($item['product_tmpl_id']) ? $item['product_tmpl_id'][0] : $item['product_tmpl_id'];
 
-                        DB::table('odoo_product')->updateOrInsert(['product_id' => $item['id']],[
-                            'product_id' => $item['id'],
-                            'product_tmpl_id' => $item['product_tmpl_id'][0],
-                            'product_uom_id' => $item['uom_id'][0],
-                            'product_tag_id' => $item['tag_ids'][0],
-                            'sku' => $item['default_code'],
-                            'product_name' => $item['name'],
-                            'product_name_slug' => Str::slug($item['name']),
-                            'gd_image_name' => $filename,
-                            'gd_image_mimetype' => $mimeType,
-                            'gd_image_path' => $url_image,
-                            'gd_image_small_name' => $filename_small,
-                            'gd_image_small_mimetype' => $mimeType_small,
-                            'gd_image_small_path' => $url_image_small,
-                            'unit' => $item['uom_id'][1],
-                            'weight' => $item['weight'],
-                            'stock' => $item['qty_available'],
-                            'created_at' => Carbon::now(),
-                            'updated_at' => Carbon::now(),
-                        ]);
+                        DB::table('odoo_product')->updateOrInsert(['product_id' => $item['id']], $array_insert_product);
                     }
                 }
 

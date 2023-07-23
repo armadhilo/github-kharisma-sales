@@ -62,7 +62,7 @@ class OdooController extends Controller
 
         //GET PRODUCT
         return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'product.product', 'search_read', [[['product_tmpl_id', '=', [37374]]]], ['fields' => [], 'limit'=> 1]);
+        'product.product', 'search_read', [[['product_tmpl_id', '=', [36368]]]], ['fields' => [], 'limit'=> 1]);
 
         //PRICELIST
         return $this->models->execute_kw($this->db, $this->uid, $this->password,
