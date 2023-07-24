@@ -66,19 +66,20 @@ class SyncPelangganJob implements ShouldQueue
 
         try{
             $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                'res.partner', 'search_read', [[['id', '=', $this->data], ['active','=', True]]], ['fields' => [], 'limit'=> 50]);
+                'res.partner', 'search_read', [[['id', '=', $this->data], ['active','=', True]]], ['fields' => ['property_product_pricelist','id','email','name','mobile','display_name','street','street2','city','zip']]);
 
             $is_array = is_array($pelanggan) && is_object($pelanggan);
             if($is_array || count($pelanggan)){
                 foreach($pelanggan as $item){
 
                     //jika pelannggan punya nama
-                    if(!empty($item['nama'])){
+                    if(!empty($item['name'])){
                         $user = User::updateOrCreate([
                             'pelanggan_id' => $item['id'],
                             'email' => $item['email'],
                         ],[
                             'type' => 'pelanggan',
+                            'type_pelanggan' => $item['property_product_pricelist'][1],
                             'pelanggan_id' => $item['id'],
                             'email' => $item['email'] == false ? null : $item['email'],
                             'nama' => trim($item['name']),
@@ -93,7 +94,6 @@ class SyncPelangganJob implements ShouldQueue
                             ]);
                         }
                     }
-
                 }
             }
         }
