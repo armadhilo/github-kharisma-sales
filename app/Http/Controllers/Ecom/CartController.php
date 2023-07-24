@@ -152,10 +152,10 @@ class CartController extends Controller
     public function update($uuid, CartRequest $request){
 
         $cart = Cart::where(['uuid' => $uuid])->first();
-        // if(empty($cart)){
-        //     $message = 'Cart not found';
-        //     return ApiFormatter::error(404, $message);
-        // }
+        if(empty($cart)){
+            $message = 'Cart not found';
+            return ApiFormatter::error(404, $message);
+        }
 
         // //check stock barang
         // $cek_stock = $this->check_stock($request->product_id, $request->quantity);

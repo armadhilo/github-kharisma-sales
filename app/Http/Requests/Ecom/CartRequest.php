@@ -29,6 +29,8 @@ class CartRequest extends FormRequest
             'product_id' => 'required',
             'product_tmpl_id' => 'required',
             'product_uom_id' => 'required',
+            'satuan' => 'required',
+            'satuan_stock' => 'required',
             'price' => 'required|numeric',
             'quantity' => 'required|integer|min:1'
         ];
