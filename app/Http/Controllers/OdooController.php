@@ -191,14 +191,14 @@ class OdooController extends Controller
                 $array_product[$item->product->id] = $item->quantity;
 
                 //check stock barang
-                $cek_stock = $this->check_stock($item->product->product_id, $item->quantity);
+                $cek_stock = $this->check_stock($item->product_tmpl_id, $item->product_uom_id, $item->quantity);
                 if(!$cek_stock){
                     //delete barang yang stocknya habis dari cart
                     $array_product_no_stock[] = $item;
                 }
 
                 //recheck price
-                $recheck_price = $this->check_price($item->product->product_tmpl_id, $item->quantity);
+                $recheck_price = $this->check_price($item->product_tmpl_id, $item->product_uom_id, $item->quantity);
                 $total_harga_produk += $recheck_price['price'] * $item->quantity;
 
                 //siapkan parameter order line
@@ -206,8 +206,8 @@ class OdooController extends Controller
                     0,
                     0,
                     [
-                        'product_id' => $item->product->product_id, //integer
-                        'product_uom' => $item->product->product_uom_id,
+                        'product_id' => $item->product_id, //integer
+                        'product_uom' => $item->product_uom_id,
                         'product_uom_qty' => $item->quantity,
                         'price_unit' => $recheck_price['price'],
                         'tax_id' => [[4,9]],
@@ -219,7 +219,9 @@ class OdooController extends Controller
                 SalesOrderProduct::create([
                     'sales_order_id' => $sales_order->id,
                     'cart_id' => $item->id,
-                    'product_id' => $item->product->product_id,
+                    'product_id' => $item->product_id,
+                    'product_tmpl_id' => $item->product_tmpl_id,
+                    'product_uom_id' => $item->product_uom_id,
                     'quantity' => $item->quantity,
                     'harga' => $recheck_price['price']
                 ]);

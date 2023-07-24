@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Blameable;
+use Awobaz\Compoships\Compoships;
 
 class SalesOrderProduct extends Model
 {
-    use HasFactory, Blameable, SoftDeletes, LogsActivity;
+    use HasFactory, Blameable, SoftDeletes, LogsActivity, Compoships;
 
     protected static $logAttributes = ["*"];
 
@@ -24,6 +25,10 @@ class SalesOrderProduct extends Model
 
     public function product_original(){
         return $this->belongsTo(OdooProductOriginal::class, 'product_id', 'product_id');
+    }
+
+    public function product_uom(){
+        return $this->belongsTo(OdooProductUom::class, ['product_uom_id', 'product_tmpl_id'], ['product_uom_id', 'product_tmpl_id']);
     }
 
     public function getTotalHargaProdukAttribute(){
