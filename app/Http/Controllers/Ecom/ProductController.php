@@ -56,7 +56,7 @@ class ProductController extends Controller
 
     public function detail($slug)
     {
-        $product = OdooProduct::with('product_tag', 'pricelist')->where('product_name_slug', $slug)->first();
+        $product = OdooProduct::with('product_tag', 'product_uom.product_pricelist')->where('product_name_slug', $slug)->first();
         if(empty($product)){
             $message = 'Data product tidak ditemukan';
             return ApiFormatter::error(404, $message);
