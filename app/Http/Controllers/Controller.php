@@ -14,7 +14,8 @@ use App\Pagination\CustomPagination;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 use App\Models\OdooProduct;
-use App\Models\OdooPricelist;
+use App\Models\OdooProductPricelist;
+use App\Models\OdooProductUom;
 
 class Controller extends BaseController
 {
@@ -27,27 +28,25 @@ class Controller extends BaseController
         return new CustomPagination(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, $options);
     }
 
-    public function check_stock($product_id, $quantity){
-        $stock = OdooProduct::where(['product_id' => $product_id])->first()->stock;
-        if($stock < $quantity){
+    public function check_stock($product_tmpl_id, $product_uom_id, $quantity){
+
+        $product_uom = OdooProductUom::where(['product_tmpl_id' => $product_tmpl_id, 'product_uom_id' => $product_uom_id])->first();
+        $product_uom_stock = $product_uom->stock * $quantity;
+
+        $stock = OdooProduct::where(['product_tmpl_id' => $product_tmpl_id])->first()->stock;
+        if($stock < $product_uom_stock){
             return false;
         }
 
         return true;
     }
 
-    public function check_price($product_tmpl_id, $quantity){
-        $type = 'b2c';
-        if(auth('api')->check()){
-            $type = 'b2b';
-        }
-
-        $odoo_pricelist = OdooPricelist::where(['type' => $type, 'product_tmpl_id' => $product_tmpl_id])
-            ->where('min_quantity','<=', $quantity)->orderBy('min_quantity', 'desc')->first();
+    public function check_price($product_tmpl_id, $product_uom_id, $quantity){
+        $odoo_pricelist = OdooProductPricelist::where('min_quantity','<=', $quantity)->where(['product_tmpl_id' => $product_tmpl_id, 'product_uom_id' => $product_uom_id])->orderBy('min_quantity', 'desc')->first();
 
         if(empty($odoo_pricelist)){
-            $odoo_pricelist = OdooPricelist::with('product')->where(['type' => $type, 'product_tmpl_id' => $product_tmpl_id])->orderBy('min_quantity', 'desc')->first();
-            throw new HttpResponseException(ApiFormatter::error(400, 'Minimal quantity untuk produk ' . $odoo_pricelist->product->product_name . ' adalah ' . $odoo_pricelist->min_quantity .' '. $odoo_pricelist->product->unit));
+            $odoo_pricelist = OdooProductPricelist::with('product', 'product_uom')->where(['product_tmpl_id' => $product_tmpl_id, 'product_uom_id' => $product_uom_id])->orderBy('min_quantity', 'desc')->first();
+            throw new HttpResponseException(ApiFormatter::error(400, 'Minimal quantity satuan '. $odoo_pricelist->product_uom->label .' untuk produk ' . $odoo_pricelist->product->product_name . ' adalah ' . $odoo_pricelist->min_quantity));
         }
 
         $data['price'] = $odoo_pricelist->price;

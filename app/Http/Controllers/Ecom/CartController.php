@@ -26,12 +26,12 @@ class CartController extends Controller
         if($request->has('type') && $request->type == 'count'){
             $message = 'Data jumlah cart berhasil ditampilkan';
             $cart = $cart->count();
-            
+
         }else{
 
             $message = 'Data cart berhasil ditampilkan';
             $cart = $cart->get();
-            
+
             if(count($cart) == 0){
                 $message = 'Data cart list empty';
                 return ApiFormatter::success(200, $message, $cart);
@@ -40,7 +40,7 @@ class CartController extends Controller
             //update is_checkout = 0 jika status = first_hit
             if($request->has('status') && $request->status == 'first_time'){
                 Cart::with('product.product_tag')->active()->update(['is_checkout' => 0]);
-                
+
                 return response()->json([
                     'code' => 200,
                     'message' => $message,
@@ -93,18 +93,25 @@ class CartController extends Controller
             return ApiFormatter::error(400, $message);
         }
 
-        $recheck_price = $this->check_price($odoo_product->product_tmpl_id, $request->quantity);
+        $recheck_price = $this->check_price($request->product_tmpl_id, $request->product_uom_id, $request->quantity);
         $request->merge(['price' => $recheck_price['price'] ]);
 
-        //jika barang yang dibeli kembar jadikan 1 cart
+
         $cart = Cart::active()->where(['product_id' => $request->product_id])->first();
-        if(!empty($cart)) {
-            $request->merge(['quantity' => $cart->quantity + $request->quantity ]);
-            $request->merge(['uuid' => $cart->uuid ]);
+        if(!empty($cart)){
+            //jika barang yang dibeli kembar jadikan 1 cart
+            if($cart->product_tmpl_id == $request->product_tmpl_id && $cart->product_uom_id == $request->product_uom_id){
+                $request->merge(['quantity' => $cart->quantity + $request->quantity ]);
+                $request->merge(['uuid' => $cart->uuid ]);
+
+            //kalo product_id sama tapi beda uom hapus yang lama
+            }else{
+                Cart::active()->where(['product_id' => $request->product_id])->delete();
+            }
         }
 
         //check stock barang
-        $cek_stock = $this->check_stock($request->product_id, $request->quantity);
+        $cek_stock = $this->check_stock($request->product_tmpl_id, $request->product_uom_id, $request->quantity);
         if(!$cek_stock){
             $message = 'Oops! stock tidak cukup';
             return ApiFormatter::error(400, $message);
@@ -158,8 +165,8 @@ class CartController extends Controller
         // }
 
         //recheck price
-        $odoo_product = OdooProduct::where('product_id', $request->product_id)->first();
-        $recheck_price = $this->check_price($odoo_product->product_tmpl_id, $request->quantity);
+        $recheck_price = $this->check_price($request->product_tmpl_id, $request->product_uom_id, $request->quantity);
+
         $request->merge(['price' => $recheck_price['price'] ]);
 
         $is_checkout = ($cart->is_checkout == 1) ? 0 : 1;
