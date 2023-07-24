@@ -17,7 +17,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $product = OdooProduct::with('product_tag', 'pricelist')->orderBy('updated_at','DESC');
+        $product = OdooProduct::with('product_tag', 'product_uom.product_pricelist')->orderBy('updated_at','DESC');
 
         if($request->has('search') && !empty($request->search)){
             $search = str_replace("+"," ",$request->search);

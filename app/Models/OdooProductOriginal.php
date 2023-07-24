@@ -15,8 +15,33 @@ class OdooProductOriginal extends Model
     protected $appends = [];
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function pricelist(){
-        return $this->hasMany(OdooProductPricelist::class, 'product_tmpl_id', 'product_tmpl_id');
+    protected static function boot()
+    {
+        parent::boot();
+
+        if(auth('api')->check()){
+
+            //kalo login mengikuti tipe pelanggan
+            static::addGlobalScope('type_pelanggan', function (Builder $builder) {
+                $builder->whereHas('product_uom', function($query){
+                    $query->where('type', auth('api')->user()->type_pelanggan);
+                })->where('stock', '>', '0');
+            });
+
+        }else{
+
+            //kalo tidak login default tipe RETAIL
+            static::addGlobalScope('type_pelanggan', function (Builder $builder) {
+                $builder->whereHas('product_uom', function($query){
+                    $query->where('type','RETAIL (IDR)');
+                })->where('stock', '>', '0');
+            });
+
+        }
+    }
+
+    public function product_uom(){
+        return $this->hasMany(OdooProductUom::class, 'product_tmpl_id', 'product_tmpl_id');
     }
 
     public function product_tag(){

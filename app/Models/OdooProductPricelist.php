@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Awobaz\Compoships\Compoships;
 
 class OdooProductPricelist extends Model
 {
-    use HasFactory;
+    use HasFactory, Compoships;
 
     protected $table = 'odoo_product_pricelist';
     protected $guarded = ['id'];
     protected $appends = [];
-    protected $hidden = ['created_at', 'updated_at', 'id','product_tmpl_id'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     // protected static function boot()
     // {
@@ -26,5 +27,9 @@ class OdooProductPricelist extends Model
 
     public function product(){
         return $this->belongsTo(OdooProduct::class, 'product_tmpl_id', 'product_tmpl_id');
+    }
+
+    public function product_uom(){
+        return $this->belongsTo(OdooProductUom::class, ['product_uom_id', 'product_tmpl_id'], ['product_uom_id', 'product_tmpl_id']);
     }
 }

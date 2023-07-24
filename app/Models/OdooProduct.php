@@ -22,29 +22,27 @@ class OdooProduct extends Model
 
         if(auth('api')->check()){
 
-            //pricelist user -> b2c and b2b
-            static::addGlobalScope('pricelist_user', function (Builder $builder) {
-                $builder->whereHas('pricelist', function($query){
-                    $query->where('type', 'b2b');
-                })->whereHas('pricelist', function($query){
-                    $query->where('type', 'b2c');
+            //kalo login mengikuti tipe pelanggan
+            static::addGlobalScope('type_pelanggan', function (Builder $builder) {
+                $builder->whereHas('product_uom', function($query){
+                    $query->where('type', auth('api')->user()->type_pelanggan);
                 })->where('stock', '>', '0');
             });
 
         }else{
 
-            //pricelist guest -> b2c
-            static::addGlobalScope('pricelist_user', function (Builder $builder) {
-                $builder->whereHas('pricelist', function($query){
-                    $query->where('type','b2c');
+            //kalo tidak login default tipe RETAIL
+            static::addGlobalScope('type_pelanggan', function (Builder $builder) {
+                $builder->whereHas('product_uom', function($query){
+                    $query->where('type','RETAIL (IDR)');
                 })->where('stock', '>', '0');
             });
 
         }
     }
 
-    public function pricelist(){
-        return $this->hasMany(OdooProductPricelist::class, 'product_tmpl_id', 'product_tmpl_id');
+    public function product_uom(){
+        return $this->hasMany(OdooProductUom::class, 'product_tmpl_id', 'product_tmpl_id')->orderBy('stock','ASC');
     }
 
     public function product_tag(){
