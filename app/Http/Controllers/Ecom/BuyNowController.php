@@ -42,15 +42,14 @@ class BuyNowController extends Controller
             }
 
             //check stock barang
-            $cek_stock = $this->check_stock($request->product_id, $request->quantity);
+            $cek_stock = $this->check_stock($request->product_tmpl_id, $request->product_uom_id, $request->quantity);
             if(!$cek_stock){
                 $message = 'Oops! stock tidak cukup';
                 return ApiFormatter::error(400, $message);
             }
 
             //recheck price
-            $odoo_product = OdooProduct::where('product_id', $request->product_id)->first();
-            $recheck_price = $this->check_price($odoo_product->product_tmpl_id, $request->quantity);
+            $recheck_price = $this->check_price($request->product_tmpl_id, $request->product_uom_id, $request->quantity);
             $request->merge(['price' => $recheck_price['price'] ]);
 
             //delete cart buy now
