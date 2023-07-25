@@ -12,7 +12,7 @@ class OdooProduct extends Model
 
     protected $table = 'odoo_product';
     protected $guarded = ['id'];
-    protected $appends = ['is_wishlist'];
+    protected $appends = ['is_wishlist','price_utama', 'label_utama'];
     protected $hidden = ['created_at', 'updated_at'];
 
 
@@ -24,7 +24,7 @@ class OdooProduct extends Model
 
             //kalo login mengikuti tipe pelanggan
             static::addGlobalScope('type_pelanggan', function (Builder $builder) {
-                $builder->whereHas('product_uom', function($query){
+                $builder->has('product_uom.product_pricelist')->whereHas('product_uom', function($query){
                     $query->where('type', auth('api')->user()->type_pelanggan);
                 })->where('stock', '>', '0');
             });
@@ -33,7 +33,7 @@ class OdooProduct extends Model
 
             //kalo tidak login default tipe RETAIL
             static::addGlobalScope('type_pelanggan', function (Builder $builder) {
-                $builder->whereHas('product_uom', function($query){
+                $builder->has('product_uom.product_pricelist')->whereHas('product_uom', function($query){
                     $query->where('type','RETAIL (IDR)');
                 })->where('stock', '>', '0');
             });
@@ -51,6 +51,16 @@ class OdooProduct extends Model
 
     public function wishlist(){
         return $this->hasMany(Wishlist::class, 'product_id', 'product_id')->where('user_id', auth('api')->user()->id);
+    }
+
+    public function getPriceUtamaAttribute(){
+        $odoo_product = OdooProduct::where('id', $this->attributes['id'])->first();
+        return $odoo_product->product_uom[0]->product_pricelist[0]->price;
+    }
+
+    public function getLabelUtamaAttribute(){
+        $odoo_product = OdooProduct::where('id', $this->attributes['id'])->first();
+        return $odoo_product->product_uom[0]->label;
     }
 
     public function getIsWishlistAttribute(){
