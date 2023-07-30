@@ -19,10 +19,7 @@ use App\Http\Requests\PelangganRequest;
 class WishlistController extends Controller
 {
     public function index(Request $request){
-        $type = auth('api')->check() ? 'b2b' : 'b2c';
-        $product = OdooProduct::with('product_tag', 'pricelist', 'wishlist')->whereHas('pricelist', function($query) use ($type){
-            $query->where('type', $type);
-        })->whereHas('wishlist', function($query){
+        $product = OdooProduct::with('product_tag', 'wishlist')->whereHas('wishlist', function($query){
             $query->where('user_id', auth('api')->user()->id);
         })->where('stock', '>', '0');
 

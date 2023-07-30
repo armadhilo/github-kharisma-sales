@@ -34,11 +34,11 @@ class ProductController extends Controller
             $filter = $request->filter;
             if($filter == 'termurah'){
                 $product = $product->sortBy(function($product){
-                    return $product->pricelist[0]->price;
+                    return $product->price_utama;
                 });
             }elseif($filter == 'termahal'){
                 $product = $product->sortByDesc(function($product){
-                    return $product->pricelist[0]->price;
+                    return $product->price_utama;
                 });
             }else{
                 $product = $product->sortByDesc('updated_at');
