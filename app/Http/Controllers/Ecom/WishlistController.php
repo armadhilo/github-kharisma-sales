@@ -19,7 +19,8 @@ use App\Http\Requests\PelangganRequest;
 class WishlistController extends Controller
 {
     public function index(Request $request){
-        $product = OdooProduct::with('product_tag', 'wishlist')->whereHas('wishlist', function($query){
+
+        $product = OdooProduct::with('product_tag', 'product_uom.product_pricelist')->whereHas('wishlist', function($query){
             $query->where('user_id', auth('api')->user()->id);
         })->where('stock', '>', '0');
 
