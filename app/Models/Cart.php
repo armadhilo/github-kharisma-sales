@@ -11,7 +11,7 @@ class Cart extends Model
 
     protected $table = 'cart';
     protected $guarded = ['id'];
-    protected $appends = [];
+    protected $appends = ['sisa_stock'];
 
     public function product(){
         return $this->belongsTo(OdooProduct::class, 'product_id', 'product_id');
@@ -27,5 +27,9 @@ class Cart extends Model
 
     public function scopeBuyNow($query){
         $query->where(['user_id' => auth('api')->user()->id, 'status' => 0, 'is_buy_now' => 1])->whereHas('product');
+    }
+
+    public function getSisaStockAttribute(){
+        return $this->product->stock - ($this->satuan_stock * $this->quantity);
     }
 }
