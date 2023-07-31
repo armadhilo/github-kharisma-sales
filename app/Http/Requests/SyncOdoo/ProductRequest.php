@@ -5,6 +5,7 @@ namespace App\Http\Requests\SyncOdoo;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
+use Str;
 
 class ProductRequest extends FormRequest
 {
@@ -38,6 +39,28 @@ class ProductRequest extends FormRequest
             'weight' => 'nullable',
             'qty_available' => 'nullable',
         ];
+    }
+
+    protected function passedValidation()
+    {
+        if($this->has('product_name')){
+            $this->merge(['product_name_slug' => Str::slug($this->product_name)]);
+        }
+
+        if($this->has('default_code')){
+            $this->merge(['sku' => $this->default_code]);
+            $this->request->remove('default_code');
+        }
+
+        if($this->has('qty_available')){
+            $this->merge(['stock' => $this->qty_available]);
+            $this->request->remove('qty_available');
+        }
+
+        if($this->has('image_medium')){
+            $this->merge(['image_small' => $this->image_medium]);
+            $this->request->remove('image_medium');
+        }
     }
 
     protected function failedValidation(Validator $validator) {

@@ -36,10 +36,28 @@ Route::group(['prefix' => 'sync-odoo'], function(){
     Route::get('/try', 'OdooController@try_code');
 
     Route::group(['prefix' => 'product'], function(){
-        Route::post('store-update', 'SyncOdooController@store_update_product');
-        Route::delete('{product_id}', 'SyncOdooController@delete_product');
+        Route::post('/store-update', 'SyncOdoo\ProductController@store_update');
+        Route::delete('/{product_id}', 'SyncOdoo\ProductController@delete');
     });
 
+    Route::group(['prefix' => 'pelanggan'], function(){
+        Route::post('/store-update', 'SyncOdoo\PelangganController@store_update');
+        Route::delete('/{pelanggan_id}', 'SyncOdoo\PelangganController@delete');
+    });
+
+    Route::group(['prefix' => 'product-tag'], function(){
+        Route::post('/store-update', 'SyncOdoo\ProductTagController@store_update');
+    });
+
+    Route::group(['prefix' => 'product-uom'], function(){
+        Route::post('/store-update', 'SyncOdoo\ProductUomController@store_update');
+        Route::delete('/{product_tmpl_id}/{product_uom_id}', 'SyncOdoo\ProductUomController@delete');
+    });
+
+    Route::group(['prefix' => 'product-pricelist'], function(){
+        Route::post('/store-update', 'SyncOdoo\ProductPricelistController@store_update');
+        Route::delete('/{product_tmpl_id}/{product_uom_id}', 'SyncOdoo\ProductPricelistController@delete');
+    });
 });
 
 Route::group(['prefix' => 'reset-password'], function(){
