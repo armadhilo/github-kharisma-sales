@@ -43,9 +43,8 @@ class ProductUomRequest extends FormRequest
             if (str_contains($this->label, '/')) {
                 $explode_stock = explode("/",$this->label);
                 $stock = $explode_stock[1];
-                $this->merge(['label' => $stock]);
             }
-
+            $this->merge(['stock' => $stock]);
             $this->request->remove('uom_desc');
         }
 

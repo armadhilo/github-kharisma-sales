@@ -50,6 +50,11 @@ class PelangganRequest extends FormRequest
             $this->request->remove('property_product_pricelist');
         }
 
+        if($this->has('name')){
+            $this->merge(['nama' => $this->name]);
+            $this->request->remove('name');
+        }
+
         if($this->has('npwp')){
             $this->merge(['no_npwp' => $this->npwp]);
             $this->request->remove('npwp');

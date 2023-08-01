@@ -10,6 +10,7 @@ use DB;
 use Storage;
 
 use App\Http\Requests\SyncOdoo\ProductRequest;
+use App\Models\OdooProductOriginal;
 
 class ProductController extends Controller
 {
@@ -74,7 +75,10 @@ class ProductController extends Controller
             $request->request->remove('image_small');
         }
 
-        DB::table('odoo_product')->updateOrInsert(['product_id' => $request->product_id], $request->all());
+        OdooProductOriginal::updateOrInsert([
+            'product_id' => $request->product_id,
+            'sku' => $request->sku,
+        ], $request->all());
 
         return ApiFormatter::success(200, 'Sync Product Berhasil');
 
@@ -82,13 +86,17 @@ class ProductController extends Controller
 
     public function delete($product_id){
 
-        $odoo_product = DB::table('odoo_product')->where('product_id', $product_id)->first();
+        $odoo_product = OdooProductOriginal::where('product_id', $product_id)->first();
+
+        if(empty($odoo_product)){
+            return ApiFormatter::error(404, 'Product Not Found');
+        }
 
         // DELETE AWS
         Storage::disk('s3')->delete('product/images/' . $odoo_product->gd_image_name);
         Storage::disk('s3')->delete('product/images-small/' . $odoo_product->gd_image_small_name);
 
-        DB::table('odoo_product')->where('product_id', $product_id)->delete();
+        OdooProductOriginal::where('product_id', $product_id)->delete();
 
         return ApiFormatter::success(200, 'Product Berhasil Dihapus');
     }

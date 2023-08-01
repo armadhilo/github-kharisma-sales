@@ -5,40 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OdooProductOriginal extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'odoo_product';
     protected $guarded = ['id'];
     protected $appends = [];
     protected $hidden = ['created_at', 'updated_at'];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        if(auth('api')->check()){
-
-            //kalo login mengikuti tipe pelanggan
-            static::addGlobalScope('type_pelanggan', function (Builder $builder) {
-                $builder->whereHas('product_uom', function($query){
-                    $query->where('type', auth('api')->user()->type_pelanggan);
-                })->where('stock', '>', '0');
-            });
-
-        }else{
-
-            //kalo tidak login default tipe RETAIL
-            static::addGlobalScope('type_pelanggan', function (Builder $builder) {
-                $builder->whereHas('product_uom', function($query){
-                    $query->where('type','RETAIL (IDR)');
-                })->where('stock', '>', '0');
-            });
-
-        }
-    }
 
     public function product_uom(){
         return $this->hasMany(OdooProductUom::class, 'product_tmpl_id', 'product_tmpl_id');

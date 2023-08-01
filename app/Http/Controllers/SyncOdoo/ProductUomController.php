@@ -14,6 +14,10 @@ use App\Http\Requests\SyncOdoo\ProductUomRequest;
 class ProductUomController extends Controller
 {
     public function store_update(ProductUomRequest $request){
+
+        $request->merge(['created_at' => Carbon::now()]);
+        $request->merge(['updated_at' => Carbon::now()]);
+
         DB::table('odoo_product_uom')->updateOrInsert([
             'product_tmpl_id' => $request->product_tmpl_id,
             'product_uom_id' => $request->product_uom_id

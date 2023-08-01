@@ -14,11 +14,11 @@ class Cart extends Model
     protected $appends = ['sisa_stock'];
 
     public function product(){
-        return $this->belongsTo(OdooProduct::class, 'product_id', 'product_id');
+        return $this->belongsTo(OdooProduct::class, 'product_id', 'product_id')->withTrashed();
     }
 
     public function user(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     public function scopeActive($query){

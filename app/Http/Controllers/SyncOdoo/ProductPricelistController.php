@@ -10,22 +10,27 @@ use DB;
 use Storage;
 
 use App\Http\Requests\SyncOdoo\ProductPricelistRequest;
+use App\Models\OdooProductPricelist;
 
 class ProductPricelistController extends Controller
 {
     public function store_update(ProductPricelistRequest $request){
-        DB::table('odoo_product_pricelist')->updateOrInsert([
+
+        $request->merge(['created_at' => Carbon::now()]);
+        $request->merge(['updated_at' => Carbon::now()]);
+
+        OdooProductPricelist::updateOrInsert([
             'product_tmpl_id' => $request->product_tmpl_id,
             'product_uom_id' => $request->product_uom_id
         ], $request->all());
-        return ApiFormatter::success(200, 'Sync Product Uom Berhasil');
+        return ApiFormatter::success(200, 'Sync Product Pricelist Berhasil');
     }
 
     public function delete($product_tmpl_id, $product_uom_id){
-        DB::table('odoo_product_pricelist')->where([
+        OdooProductPricelist::where([
             'product_tmpl_id' => $product_tmpl_id,
             'product_uom_id' => $product_uom_id
         ])->delete();
-        return ApiFormatter::success(200, 'Product Uom Berhasil Dihapus');
+        return ApiFormatter::success(200, 'Product Pricelist Berhasil Dihapus');
     }
 }
