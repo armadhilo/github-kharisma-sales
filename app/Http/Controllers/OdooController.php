@@ -256,13 +256,13 @@ class OdooController extends Controller
                 ],
             ];
 
-            // $sales_order_odoo = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            // 'sale.order', 'create', [[$salesOrderData]]);
+            $sales_order_odoo = $this->models->execute_kw($this->db, $this->uid, $this->password,
+            'sale.order', 'create', [[$salesOrderData]]);
 
-            // if(isset($sales_order_odoo['faultCode'])){
-            //     $message = 'Oops! terjadi kesalahan waktu membuat sales order odoo';
-            //     return ApiFormatter::error(400, $message);
-            // }
+            if(isset($sales_order_odoo['faultCode'])){
+                $message = 'Oops! terjadi kesalahan waktu membuat sales order odoo';
+                return ApiFormatter::error(400, $message);
+            }
 
             //kurangi stock pada ODOO PRODUCT TABLE
             foreach($array_product as $key => $item){
