@@ -30,10 +30,16 @@ class OdooApi
         $partnerData = array(
             [
                 'name' => $request->name,
-                'street' => $request->street,
                 'country_id' => 100,
+                'display_name' => $request->nama_toko,
                 'phone' => $request->phone,
-                'zip' => $request->zip
+                'npwp' => $request->no_npwp,
+                'npwp_name' => $request->nama_npwp,
+                'id_nik' => $request->no_ktp,
+                'email' => $request->email,
+                'name' => $request->nama,
+                'mobile' => $request->telepon,
+                'zip' => $request->zip,
             ]
         );
 

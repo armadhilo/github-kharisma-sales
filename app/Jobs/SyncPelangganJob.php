@@ -76,7 +76,6 @@ class SyncPelangganJob implements ShouldQueue
                     if(!empty($item['name'])){
                         $user = User::updateOrCreate([
                             'pelanggan_id' => $item['id'],
-                            'email' => $item['email'],
                         ],[
                             'type' => 'pelanggan',
                             'type_pelanggan' => $item['property_product_pricelist'][1],
@@ -85,6 +84,13 @@ class SyncPelangganJob implements ShouldQueue
                             'nama' => trim($item['name']),
                             'telepon' => $item['mobile'],
                             'nama_toko' => trim($item['display_name']),
+                            'no_npwp' => $item['npwp'],
+                            'nama_npwp' => $item['npwp_name'],
+                            'no_ktp' => $item['id_nik'],
+                            'street' => $item['street'],
+                            'street2' => $item['street2'],
+                            'city' => $item['city'],
+                            'zip' => $item['zip'],
                             'alamat_toko' => $item['street'] . ($item['street2'] != false ? ' - ' . $item['street2'] : '') . ($item['city'] != false ? ' - ' . $item['city'] : '') . ($item['zip'] != false ? ' - ' . $item['zip'] : ''),
                         ]);
 
