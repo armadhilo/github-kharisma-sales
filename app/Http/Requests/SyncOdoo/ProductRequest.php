@@ -32,6 +32,7 @@ class ProductRequest extends FormRequest
             'product_tmpl_id' => 'nullable',
             'product_uom_id' => 'nullable',
             'product_tag_id' => 'nullable',
+            'product_tag_id.*' => 'nullable',
             'product_name' => 'nullable',
             'image' => 'nullable',
             'image_medium' => 'nullable',

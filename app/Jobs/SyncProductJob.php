@@ -87,6 +87,7 @@ class SyncProductJob implements ShouldQueue
                         'product_tmpl_id' => $item['product_tmpl_id'][0],
                         'product_uom_id' => $item['uom_id'][0],
                         'product_tag_id' => $item['tag_ids'][0],
+                        'array_product_tag_id' => json_encode([$item['tag_ids'][0]]),
                         'sku' => $item['default_code'],
                         'product_name' => $item['name'],
                         'product_name_slug' => Str::slug($item['name']),

@@ -75,6 +75,16 @@ class ProductController extends Controller
             $request->request->remove('image_small');
         }
 
+        if($request->product_tag_id){
+
+            if(!is_array($request->product_tag_id)){
+                return ApiFormatter::error(400, 'Product Tag ID harus berupa array');
+            }
+
+            $request->merge(['array_product_tag_id' => json_encode($request->product_tag_id)]);
+            $request->merge(['product_tag_id' => $request->product_tag_id[0]]);
+        }
+
         OdooProductOriginal::updateOrInsert([
             'product_id' => $request->product_id,
             'sku' => $request->sku,
