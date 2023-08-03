@@ -73,6 +73,10 @@ class User extends Authenticatable
         return $query->where(['type' => 2])->whereNotNull('keylog');
     }
 
+    public function scopeSalesActive($query){
+        return $query->where(['type' => 1]);
+    }
+
     public function sales_log(){
         return $this->hasMany(SalesLog::class, 'sales_id', 'id');
     }
