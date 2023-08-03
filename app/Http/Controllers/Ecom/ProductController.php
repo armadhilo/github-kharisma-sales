@@ -25,7 +25,7 @@ class ProductController extends Controller
         }
 
         if($request->has('kategori') && !empty($request->kategori) && $request->kategori != 'All Category'){
-            $product->where('product_tag_id', $request->kategori);
+            $product->where('array_product_tag_id', 'like', '%' . $request->kategori . '%');
         }
 
         $product = $product->get();
