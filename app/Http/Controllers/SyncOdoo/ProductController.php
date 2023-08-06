@@ -81,7 +81,12 @@ class ProductController extends Controller
                 return ApiFormatter::error(400, 'Product Tag ID harus berupa array');
             }
 
-            $request->merge(['array_product_tag_id' => json_encode($request->product_tag_id)]);
+            $array = [];
+            foreach($request->product_tag_id as $item){
+                $array[] = (int) $item;
+            }
+
+            $request->merge(['array_product_tag_id' => json_encode($array)]);
             $request->merge(['product_tag_id' => $request->product_tag_id[0]]);
         }
 
