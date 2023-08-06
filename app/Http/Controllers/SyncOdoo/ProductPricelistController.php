@@ -19,6 +19,26 @@ class ProductPricelistController extends Controller
         $request->merge(['created_at' => Carbon::now()]);
         $request->merge(['updated_at' => Carbon::now()]);
 
+        $product_uom_check = DB::table('odoo_product_uom')->where('product_uom_id', $request->product_uom_id)->first();
+        if(empty($product_uom_check)){
+            return ApiFormatter::success(400, 'Master Uom tidak ditemukan harap daftarkan terlebih dahulu');
+        }
+
+        $product_uom = DB::table('odoo_product_uom')->where([
+                'product_uom_id' => $request->product_uom_id,
+                'product_tmpl_id' => $request->product_tmpl_id])
+            ->first();
+
+        if(empty($product_uom)){
+            DB::table('odoo_product_uom')->insert([
+                'product_tmpl_id' => $request->product_tmpl_id,
+                'product_uom_id' => $request->product_uom_id,
+                'label' => $product_uom_check->label,
+                'stock' => $product_uom_check->stock,
+                'type' => $product_uom_check->type,
+            ]);
+        }
+
         OdooProductPricelist::updateOrInsert([
             'product_tmpl_id' => $request->product_tmpl_id,
             'product_uom_id' => $request->product_uom_id

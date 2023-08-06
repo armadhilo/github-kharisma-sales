@@ -52,7 +52,7 @@ Route::group(['prefix' => 'sync-odoo'], function(){
 
     Route::group(['prefix' => 'product-uom'], function(){
         Route::post('/store-update', 'SyncOdoo\ProductUomController@store_update');
-        Route::delete('/{product_tmpl_id}/{product_uom_id}', 'SyncOdoo\ProductUomController@delete');
+        Route::delete('/{product_uom_id}', 'SyncOdoo\ProductUomController@delete');
     });
 
     Route::group(['prefix' => 'product-pricelist'], function(){

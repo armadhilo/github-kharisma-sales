@@ -27,7 +27,6 @@ class ProductUomRequest extends FormRequest
     public function rules()
     {
         return [
-            'product_tmpl_id' => 'required',
             'product_uom_id' => 'required',
             'uom_desc' => 'required',
             'pricelist_desc' => 'required',

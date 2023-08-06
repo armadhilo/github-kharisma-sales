@@ -18,21 +18,29 @@ class ProductUomController extends Controller
         $request->merge(['created_at' => Carbon::now()]);
         $request->merge(['updated_at' => Carbon::now()]);
 
-        DB::table('odoo_product_uom')->updateOrInsert([
-            'product_tmpl_id' => $request->product_tmpl_id,
-            'product_uom_id' => $request->product_uom_id
-        ], $request->all());
+        $product_uom = DB::table('odoo_product_uom')->where('product_uom_id', $request->product_uom_id)->first();
+        if(empty($product_uom)){
+            DB::table('odoo_product_uom')->insert([
+                'product_tmpl_id' => '00000',
+                'product_uom_id' => $request->product_uom_id,
+                'label' => $request->label,
+                'stock' => $request->stock,
+                'type' => $request->type,
+            ]);
+        }else{
+            DB::table('odoo_product_uom')->where('product_uom_id', $request->product_uom_id)
+                ->update($request->all());
+        }
+
         return ApiFormatter::success(200, 'Sync Product Uom Berhasil');
     }
 
-    public function delete($product_tmpl_id, $product_uom_id){
+    public function delete($product_uom_id){
         DB::table('odoo_product_uom')->where([
-            'product_tmpl_id' => $product_tmpl_id,
             'product_uom_id' => $product_uom_id
         ])->delete();
 
         DB::table('odoo_product_pricelist')->where([
-            'product_tmpl_id' => $product_tmpl_id,
             'product_uom_id' => $product_uom_id
         ])->delete();
 
