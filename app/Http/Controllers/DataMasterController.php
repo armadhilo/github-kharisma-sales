@@ -216,6 +216,12 @@ class DataMasterCOntroller extends Controller
         return ApiFormatter::success(200,'Data call center berhasil didapatkan', $data);
     }
 
+    public function get_sales_email(){
+        $data = User::SalesActive()->select('email')->get();
+
+        return ApiFormatter::success(200, 'Sales Email berhasil didapatkan', $data);
+    }
+
     #================ DATA =====================#
 
     #================ DATATABLES ===============#

@@ -20,7 +20,7 @@ class SalesOrderProduct extends Model
     protected $appends = ['total_harga_produk'];
 
     public function product(){
-        return $this->belongsTo(OdooProduct::class, 'product_id', 'product_id');
+        return $this->belongsTo(OdooProduct::class, 'product_id', 'product_id')->withTrashed();
     }
 
     public function product_original(){

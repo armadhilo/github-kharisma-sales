@@ -276,7 +276,8 @@ class OdooController extends Controller
 
             //update data SALES_ORDER TABLE
             SalesOrder::where('id', $sales_order->id)->update([
-                'odoo_order_id' => $sales_order_odoo[0],
+                // 'odoo_order_id' => $sales_order_odoo[0],
+                'odoo_order_id' => 1,
                 'total_harga_produk' => $total_harga_produk,
                 'total_harga' => $total_harga_produk + $request->ongkos_kirim,
             ]);

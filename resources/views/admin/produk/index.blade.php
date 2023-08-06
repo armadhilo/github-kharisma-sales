@@ -73,9 +73,8 @@
                           <th scope="col" class="text-center">Kategori</th>
                           <th scope="col" class="text-center">SKU</th>
                           <th scope="col" class="text-center">Stock</th>
-                          <th scope="col" class="text-center">Unit</th>
-                          <th scope="col" class="text-center">B2B</th>
-                          <th scope="col" class="text-center">B2C</th>
+                          <th scope="col" class="text-center">Berat</th>
+                          <th scope="col" class="text-center">Harga</th>
                        </tr>
                     </thead>
                  </table>
@@ -151,7 +150,7 @@
                 type: 'GET'
             },
             columnDefs: [
-                { className: 'text-center', targets: [0,1,3,4,5,6,7,8] },
+                { className: 'text-center', targets: [0,1,3,4,5,6] },
                 {"width": "5%", "targets": 1},
             ],
             columns: [
@@ -161,19 +160,12 @@
                 { data: 'null', "defaultContent": "" },
                 { data: 'sku' },
                 { data: 'stock' },
-                { data: 'unit' },
-                { data: 'null', "defaultContent": "" },
-                { data: 'null', "defaultContent": "" },
+                { data: 'weight' },
+                { data: 'custom_price' },
             ],
             rowCallback : function(row, data){
 
-                for(i=0; i<data.pricelist.length; i++){
-                    if(data.pricelist[i].type == "b2b"){
-                        $('td:eq(7)', row).html(`Rp. ` + fungsiRupiah(data.pricelist[i].price));
-                    } else {
-                        $('td:eq(8)', row).html(`Rp. ` + fungsiRupiah(data.pricelist[i].price));
-                    }
-                }
+                $('td:eq(5)', row).html(data.stock + ' ' + data.unit);
 
                 if(typeof(data.product_tag) != "undefined" && data.product_tag !== null) {
                     $('td:eq(3)', row).html(data.product_tag.name);

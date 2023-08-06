@@ -87,6 +87,7 @@ class SyncProductJob implements ShouldQueue
                         'product_tmpl_id' => $item['product_tmpl_id'][0],
                         'product_uom_id' => $item['uom_id'][0],
                         'product_tag_id' => $item['tag_ids'][0],
+                        'array_product_tag_id' => json_encode([$item['tag_ids'][0]]),
                         'sku' => $item['default_code'],
                         'product_name' => $item['name'],
                         'product_name_slug' => Str::slug($item['name']),
@@ -185,9 +186,11 @@ class SyncProductJob implements ShouldQueue
 
                                 //field stock pada odoo_product_uom
                                 $stock = 1;
-                                if (str_contains($item['uom_id'][1], '/')) {
-                                    $explode_stock = explode("/",$item['uom_id'][1]);
-                                    $stock = $explode_stock[1];
+                                if(is_string($item['uom_id'][1])){
+                                    if (str_contains($item['uom_id'][1], '/')) {
+                                        $explode_stock = explode("/",$item['uom_id'][1]);
+                                        $stock = $explode_stock[1];
+                                    }
                                 }
 
                                 DB::table('odoo_product_uom')->insert([
