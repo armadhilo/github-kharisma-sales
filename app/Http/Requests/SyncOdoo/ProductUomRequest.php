@@ -29,7 +29,6 @@ class ProductUomRequest extends FormRequest
         return [
             'product_uom_id' => 'required',
             'uom_desc' => 'required',
-            'pricelist_desc' => 'required',
         ];
     }
 
@@ -45,11 +44,6 @@ class ProductUomRequest extends FormRequest
             }
             $this->merge(['stock' => $stock]);
             $this->request->remove('uom_desc');
-        }
-
-        if($this->has('pricelist_desc')){
-            $this->merge(['type' => $this->pricelist_desc]);
-            $this->request->remove('pricelist_desc');
         }
     }
 

@@ -26,7 +26,9 @@ class ProductPricelistController extends Controller
 
         $product_uom = DB::table('odoo_product_uom')->where([
                 'product_uom_id' => $request->product_uom_id,
-                'product_tmpl_id' => $request->product_tmpl_id])
+                'product_tmpl_id' => $request->product_tmpl_id,
+                'type'=> $request->type,
+            ])
             ->first();
 
         if(empty($product_uom)){
@@ -35,7 +37,7 @@ class ProductPricelistController extends Controller
                 'product_uom_id' => $request->product_uom_id,
                 'label' => $product_uom_check->label,
                 'stock' => $product_uom_check->stock,
-                'type' => $product_uom_check->type,
+                'type' => $request->type,
             ]);
         }
 

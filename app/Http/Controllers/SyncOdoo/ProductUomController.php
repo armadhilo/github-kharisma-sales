@@ -25,7 +25,6 @@ class ProductUomController extends Controller
                 'product_uom_id' => $request->product_uom_id,
                 'label' => $request->label,
                 'stock' => $request->stock,
-                'type' => $request->type,
             ]);
         }else{
             DB::table('odoo_product_uom')->where('product_uom_id', $request->product_uom_id)

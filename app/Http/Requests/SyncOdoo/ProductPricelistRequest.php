@@ -31,7 +31,16 @@ class ProductPricelistRequest extends FormRequest
             'product_uom_id' => 'required',
             'price' => 'required',
             'min_quantity' => 'required',
+            'pricelist_desc' => 'required',
         ];
+    }
+
+    protected function passedValidation()
+    {
+        if($this->has('pricelist_desc')){
+            $this->merge(['type' => $this->pricelist_desc]);
+            $this->request->remove('pricelist_desc');
+        }
     }
 
     protected function failedValidation(Validator $validator) {
