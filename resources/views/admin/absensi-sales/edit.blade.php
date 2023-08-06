@@ -1,5 +1,5 @@
 @extends('partial.app')
-@section('title','Absensi Sales')
+@section('title','Edit Absensi Sales')
 
 @section('content')
 <div class="section-body">
@@ -40,7 +40,7 @@
              <span aria-hidden="true">&times;</span>
              </button>
           </div>
-          <form id="form_submit_request" action="/admin/absensi-sales/update" method="POST" autocomplete="off">
+          <form id="form_submit_request" action="/admin/edit-absensi-sales/update" method="POST" autocomplete="off">
              <div class="modal-body">
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
@@ -94,7 +94,7 @@
         serverSide: false,
         "bDestroy": true,
         ajax: {
-            url: '/admin/absensi-sales/datatables',
+            url: '/admin/edit-absensi-sales/datatables',
             type: 'GET'
         },
         columnDefs: [{
@@ -111,7 +111,7 @@
             { data: 'time_end' },
         ],
         rowCallback: function (row, data) {
-            var url_edit   = "/admin/absensi-sales/detail/" + data.id;
+            var url_edit   = "/admin/edit-absensi-sales/detail/" + data.id;
             $('td:eq(6)', row).html(`
                 <button class="btn btn-info btn-sm mr-1" onclick="edit_absensi('${url_edit}', '${data.sales.nama}')"><i class="fa fa-edit"></i></button>
             `);

@@ -1,5 +1,5 @@
 @extends('partial.app')
-@section('title','Kunjungan Sales')
+@section('title','Edit Kunjungan Sales')
 
 @section('content')
 <div class="section-body">
@@ -41,7 +41,7 @@
              <span aria-hidden="true">&times;</span>
              </button>
           </div>
-          <form id="form_submit_request" action="/admin/kunjungan-sales/update" method="POST" autocomplete="off">
+          <form id="form_submit_request" action="/admin/edit-kunjungan-sales/update" method="POST" autocomplete="off">
              <div class="modal-body">
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
@@ -94,7 +94,7 @@
         serverSide: false,
         "bDestroy": true,
         ajax: {
-            url: '/admin/kunjungan-sales/datatables/edit',
+            url: '/admin/edit-kunjungan-sales/datatables',
             type: 'GET',
         },
         columnDefs: [{
@@ -112,7 +112,7 @@
             { data: 'total_time' },
         ],
         rowCallback: function (row, data) {
-            var url_edit   = "/admin/kunjungan-sales/detail/" + data.id;
+            var url_edit   = "/admin/edit-kunjungan-sales/detail/" + data.id;
             $('td:eq(7)', row).html(`
                 <button class="btn btn-info btn-sm mr-1" onclick="edit_kunjungan('${url_edit}', '${data.sales.nama}', '${data.pelanggan.nama}')"><i class="fa fa-edit"></i></button>
             `);

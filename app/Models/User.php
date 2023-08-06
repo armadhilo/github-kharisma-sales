@@ -60,6 +60,18 @@ class User extends Authenticatable
         }
     }
 
+    // Accessor to automatically decode the JSON when accessing the attribute
+    public function getAccessMenuAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    // Mutator to automatically encode the array as JSON before storing it in the database
+    public function setAccessMenuAttribute($value)
+    {
+        $this->attributes['access_menu'] = json_encode($value);
+    }
+
     public function AauthAcessToken(){
         return $this->hasMany(OauthAccessToken::class);
     }
