@@ -19,9 +19,14 @@ class ProductPricelistController extends Controller
         $request->merge(['created_at' => Carbon::now()]);
         $request->merge(['updated_at' => Carbon::now()]);
 
+        $product = DB::table('odoo_product')->where('product_tmpl_id', $request->product_tmpl_id)->first();
+        if(empty($product)){
+            return ApiFormatter::error(400, 'Master Product tidak ditemukan harap daftarkan terlebih dahulu');
+        }
+
         $product_uom_check = DB::table('odoo_product_uom')->where('product_uom_id', $request->product_uom_id)->first();
         if(empty($product_uom_check)){
-            return ApiFormatter::success(400, 'Master Uom tidak ditemukan harap daftarkan terlebih dahulu');
+            return ApiFormatter::error(400, 'Master Uom tidak ditemukan harap daftarkan terlebih dahulu');
         }
 
         $product_uom = DB::table('odoo_product_uom')->where([
@@ -41,6 +46,7 @@ class ProductPricelistController extends Controller
             ]);
         }
 
+        $request->request->remove('type');
         OdooProductPricelist::updateOrInsert([
             'product_tmpl_id' => $request->product_tmpl_id,
             'product_uom_id' => $request->product_uom_id
