@@ -19,7 +19,7 @@ use \Carbon\Carbon;
 use App\Helpers\ApiFormatter;
 use App\Http\Requests\Ecom\ForgotPasswordRequest;
 use App\Http\Requests\Ecom\LoginRequest;
-
+use App\Models\SalesPelanggan;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -35,6 +35,13 @@ class AuthController extends Controller
 
             if(empty($sales) || empty($pelanggan)){
                 $message = 'Data anda tidak ditemukan pada sistem kami.';
+                return ApiFormatter::error(400, $message);
+            }
+
+            //cek apakah sales mempunyai hak untuk customer tersebut
+            $sales_pelanggan = SalesPelanggan::where(['user_id' => $sales->id, 'pelanggan_id' => $pelanggan->pelanggan_id])->first();
+            if(empty($sales_pelanggan)){
+                $message = 'Sales tidak mempunyai akses terhadap pelanggan tersebut';
                 return ApiFormatter::error(400, $message);
             }
 
@@ -98,7 +105,7 @@ class AuthController extends Controller
             'token' => $token,
             'created_at' => Carbon::now()
         ]);
-        
+
         $data = [
             'nama' => $user->nama,
             'link' => URL::to('/') . '/reset-password?token=' . $token,

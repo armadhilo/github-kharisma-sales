@@ -80,6 +80,7 @@ class OngkosKirimController extends Controller
             $kurir_kharisma = JasaPengiriman::active()->where('kode', 'staff')->first();
             if(!empty($kurir_kharisma)){
 
+                //disable karena harusnya sudah tidak ada ongkos
                 // if($request->berat <= 2000){
                 //     $harga = 10000;
                 // }else{
