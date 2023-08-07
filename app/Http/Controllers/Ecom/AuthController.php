@@ -38,12 +38,12 @@ class AuthController extends Controller
                 return ApiFormatter::error(400, $message);
             }
 
-            //cek apakah sales mempunyai hak untuk customer tersebut
-            $sales_pelanggan = SalesPelanggan::where(['user_id' => $sales->id, 'pelanggan_id' => $pelanggan->pelanggan_id])->first();
-            if(empty($sales_pelanggan)){
-                $message = 'Sales tidak mempunyai akses terhadap pelanggan tersebut';
-                return ApiFormatter::error(400, $message);
-            }
+            // //cek apakah sales mempunyai hak untuk customer tersebut
+            // $sales_pelanggan = SalesPelanggan::where(['user_id' => $sales->id, 'pelanggan_id' => $pelanggan->pelanggan_id])->first();
+            // if(empty($sales_pelanggan)){
+            //     $message = 'Sales tidak mempunyai akses terhadap pelanggan tersebut';
+            //     return ApiFormatter::error(400, $message);
+            // }
 
             session(['sales_id' => $sales->id]);
             $sales = [
