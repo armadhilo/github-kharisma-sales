@@ -39,20 +39,35 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::post('/sync-produk','BackOffice\ProdukController@sync_produk');
         });
 
-        Route::prefix('absensi-sales')->group(function () {
-            Route::get('/','BackOffice\SalesAttendanceController@index');
-            Route::get('/edit','BackOffice\SalesAttendanceController@edit');
+        Route::prefix('user')->group(function () {
+            Route::get('/','BackOffice\UserController@index');
+            Route::get('/detail/{id}','BackOffice\UserController@detail');
+            Route::get('/datatables','BackOffice\UserController@datatables');
+            Route::post('/store-update','BackOffice\UserController@store_update');
+            Route::delete('/delete/{id}','BackOffice\UserController@delete');
+        });
+
+        Route::prefix('edit-absensi-sales')->group(function () {
+            Route::get('/','BackOffice\SalesAttendanceController@edit');
             Route::post('/update','BackOffice\SalesAttendanceController@update');
             Route::get('/detail/{id}','BackOffice\SalesAttendanceController@detail');
+            Route::get('/datatables','BackOffice\SalesAttendanceController@datatables');
+        });
+        
+        Route::prefix('edit-kunjungan-sales')->group(function () {
+            Route::get('/','BackOffice\KunjunganSalesController@edit');
+            Route::get('/datatables','BackOffice\KunjunganSalesController@datatables_edit');
+            Route::get('/detail/{id}','BackOffice\KunjunganSalesController@detail');
+            Route::post('/update','BackOffice\KunjunganSalesController@update');
+        });
+
+        Route::prefix('absensi-sales')->group(function () {
+            Route::get('/','BackOffice\SalesAttendanceController@index');
             Route::get('/datatables','BackOffice\SalesAttendanceController@datatables');
         });
 
         Route::prefix('kunjungan-sales')->group(function () {
             Route::get('/','BackOffice\KunjunganSalesController@index');
-            Route::get('/edit','BackOffice\KunjunganSalesController@edit');
-            Route::get('/detail/{id}','BackOffice\KunjunganSalesController@detail');
-            Route::post('/update','BackOffice\KunjunganSalesController@update');
-            Route::get('/datatables/edit','BackOffice\KunjunganSalesController@datatables_edit');
             Route::get('/datatables','BackOffice\KunjunganSalesController@datatables');
             Route::get('/datatables/detail','BackOffice\KunjunganSalesController@datatables_detail');
         });

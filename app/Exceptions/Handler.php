@@ -9,9 +9,12 @@ use Throwable;
 use App\Traits\ApiResponser;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
@@ -63,6 +66,10 @@ class Handler extends ExceptionHandler
         if ($exception instanceof NotFoundHttpException) {
             // return ApiFormatter::error(404, 'The specified URL cannot be found');
             return response()->view('errors.404', [], 404);
+        }
+
+        if ($exception instanceof UnauthorizedHttpException) {
+            return parent::render($request, $exception);
         }
 
         if ($exception instanceof HttpException) {

@@ -198,9 +198,10 @@
                          tb.ajax.reload(null, false);
                       }
                       else if(response.status == 201){
-                         swal(response.message, { icon: 'success', });
                          $("#modal").modal('hide');
-                         window.location.href = response.link;
+                         swal(response.message, { icon: 'success', }).then(function(){
+                            window.location.href = response.link;
+                         });
                       }
                       else if(response.status == 203){
                          swal(response.message, { icon: 'success', });

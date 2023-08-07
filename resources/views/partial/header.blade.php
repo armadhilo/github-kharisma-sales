@@ -39,21 +39,56 @@
         <ul class="sidebar-menu">
           <li class="menu-header">Dashboard</li>
           <li class="nav-item dropdown @if($url_menu == "dashboard") active @endif"><a href="/admin/dashboard" class="nav-link"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+
+          @if(Auth::user()->access_menu == 0 || !empty(array_intersect([1,2,3,4], Auth::user()->access_menu)))
           <li class="menu-header">Data Master</li>
+          @if (Auth::user()->access_menu == 0 || in_array(1, Auth::user()->access_menu))
           <li class="nav-item dropdown @if($url_menu == "sales") active @endif"><a href="/admin/sales" class="nav-link"><i class="fas fa-user-cog"></i><span>Master Sales</span></a></li>
+          @endif
+          @if (Auth::user()->access_menu == 0 || in_array(2, Auth::user()->access_menu))
           <li class="nav-item dropdown @if($url_menu == "pelanggan") active @endif"><a href="/admin/pelanggan" class="nav-link"><i class="fas fa-user"></i><span>Master Pelanggan</span></a></li>
+          @endif
+          @if (Auth::user()->access_menu == 0 || in_array(3, Auth::user()->access_menu))
           <li class="nav-item dropdown @if($url_menu == "produk") active @endif"><a href="/admin/produk" class="nav-link"><i class="fas fa-shopping-cart"></i><span>Master Produk</span></a></li>
+          @endif
+          @if (Auth::user()->access_menu == 0 || in_array(4, Auth::user()->access_menu))
+          <li class="nav-item dropdown @if($url_menu == "user") active @endif"><a href="/admin/user" class="nav-link"><i class="fas fa-user-lock"></i><span>Master User</span></a></li>  
+          @endif
+          @endif  
+          
+          @if(Auth::user()->access_menu == 0 || !empty(array_intersect([5,6], Auth::user()->access_menu)))
           <li class="menu-header">Master Sales</li>
-          <li class="nav-item dropdown @if($url_menu == "absensi-sales" && $url_submenu == "edit") active @endif"><a href="/admin/absensi-sales/edit" class="nav-link"><i class="fas fa-user-edit"></i><span>Edit Absensi Sales</span></a></li>
-          <li class="nav-item dropdown @if($url_menu == "kunjungan-sales" && $url_submenu == "edit") active @endif"><a href="/admin/kunjungan-sales/edit" class="nav-link"><i class="fas fa-street-view"></i><span>Edit Kunjungan Sales</span></a></li>
+          @if (Auth::user()->access_menu == 0 || in_array(5, Auth::user()->access_menu))
+          <li class="nav-item dropdown @if($url_menu == "edit-absensi-sales") active @endif"><a href="/admin/edit-absensi-sales" class="nav-link"><i class="fas fa-user-edit"></i><span>Edit Absensi Sales</span></a></li>
+          @endif
+          @if (Auth::user()->access_menu == 0 || in_array(6, Auth::user()->access_menu))
+          <li class="nav-item dropdown @if($url_menu == "edit-kunjungan-sales") active @endif"><a href="/admin/edit-kunjungan-sales" class="nav-link"><i class="fas fa-street-view"></i><span>Edit Kunjungan Sales</span></a></li> 
+          @endif
+          @endif
+
+          @if(Auth::user()->access_menu == 0 || !empty(array_intersect([7,8,9], Auth::user()->access_menu)))
           <li class="menu-header">Report Sales</li>
+          @if (Auth::user()->access_menu == 0 || in_array(7, Auth::user()->access_menu))
           <li class="nav-item dropdown @if($url_menu == "absensi-sales" && !isset($url_submenu)) active @endif"><a href="/admin/absensi-sales" class="nav-link"><i class="fas fa-user-clock"></i><span>Absensi Sales</span></a></li>
+          @endif
+          @if (Auth::user()->access_menu == 0 || in_array(8, Auth::user()->access_menu))
           <li class="nav-item dropdown @if($url_menu == "kunjungan-sales" && !isset($url_submenu)) active @endif"><a href="/admin/kunjungan-sales" class="nav-link"><i class="fas fa-running"></i><span>Kunjungan Sales</span></a></li>
+          @endif
+          @if (Auth::user()->access_menu == 0 || in_array(9, Auth::user()->access_menu))
           <li class="nav-item dropdown @if($url_menu == "sales-log") active @endif"><a href="/admin/sales-log" class="nav-link"><i class="fas fa-map"></i><span>Log Sales</span></a></li>
+          @endif
+          @endif
+         
+          @if(Auth::user()->access_menu == 0 || !empty(array_intersect([10,11], Auth::user()->access_menu)))
           <li class="menu-header">Apps</li>
           {{-- <li class="nav-item dropdown @if($url_menu == "kode-voucher") active @endif"><a href="/admin/kode-voucher" class="nav-link"><i class="fas fa-tag"></i><span>Kode Voucher</span></a></li> --}}
+          @if (Auth::user()->access_menu == 0 || in_array(10, Auth::user()->access_menu))
           <li class="nav-item dropdown @if($url_menu == "transaksi") active @endif"><a href="/admin/transaksi" class="nav-link"><i class="fas fa-shopping-cart"></i><span>Transaksi</span></a></li>
+          @endif
+          @if (Auth::user()->access_menu == 0 || in_array(11, Auth::user()->access_menu))
           <li class="nav-item dropdown @if($url_menu == "jasa-pengiriman") active @endif"><a href="/admin/jasa-pengiriman" class="nav-link"><i class="fas fa-truck"></i><span>Jasa Pengiriman</span></a></li>
+          @endif
+          @endif
         </ul>
 
     </aside>
