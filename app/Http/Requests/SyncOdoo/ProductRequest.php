@@ -32,7 +32,7 @@ class ProductRequest extends FormRequest
             'product_tmpl_id' => 'required',
             'product_uom_id' => 'required',
             'product_tag_id' => 'required',
-            'product_tag_id.*' => 'required',
+            'product_tag_id.*' => 'nullable',
             'product_name' => 'required',
             'image' => 'nullable',
             'image_medium' => 'nullable',
