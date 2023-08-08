@@ -77,12 +77,14 @@ class ProductController extends Controller
 
         if($request->product_tag_id){
 
-            if(!is_array($request->product_tag_id)){
+            $product_tag_id = json_decode($request->product_tag_id, true);
+
+            if(!is_array($product_tag_id)){
                 return ApiFormatter::error(400, 'Product Tag ID harus berupa array');
             }
 
             $array = [];
-            foreach($request->product_tag_id as $item){
+            foreach($product_tag_id as $item){
                 $array[] = (int) $item;
             }
 
