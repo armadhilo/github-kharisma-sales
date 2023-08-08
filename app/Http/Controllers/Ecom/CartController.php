@@ -53,22 +53,6 @@ class CartController extends Controller
         return ApiFormatter::success(200, $message, $cart);
     }
 
-    // public function index(Request $request){
-
-    //     $cart = Cart::with('product.product_tag')->active();
-
-    //     if($request->has('type') && $request->type == 'count'){
-    //         $message = 'Data jumlah cart berhasil ditampilkan';
-    //         $cart = $cart->count();
-    //     }else{
-    //         $message = 'Data cart berhasil ditampilkan';
-    //         $cart = $cart->get();
-    //         if(count($cart) == 0) $message = 'Data cart list empty';
-    //     }
-
-    //     return ApiFormatter::success(200, $message, $cart);
-    // }
-
     public function detail($uuid){
 
         $cart = Cart::with('product.product_tag')->active()->where(['uuid' => $uuid])->first();

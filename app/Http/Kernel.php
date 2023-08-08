@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'cek_login' => \App\Http\Middleware\CekLogin::class,
         'validate_login' => \App\Http\Middleware\ValidateLogin::class,
         'cors' => \App\Http\Middleware\Cors::class,
+        'extend_exec_time' => \App\Http\Middleware\ExtendedExecutionTime::class,
     ];
 }

@@ -21,14 +21,14 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function paginate($items, $perPage = 5, $page = null, $options = [])
+    private function paginate($items, $perPage = 5, $page = null, $options = [])
     {
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
         $items = $items instanceof Collection ? $items : Collection::make($items);
         return new CustomPagination(array_values($items->forPage($page, $perPage)->toArray()), $items->count(), $perPage, $page, $options);
     }
 
-    public function check_stock($product_tmpl_id, $product_uom_id, $quantity){
+    private function check_stock($product_tmpl_id, $product_uom_id, $quantity){
 
         $product_uom = OdooProductUom::where(['product_tmpl_id' => $product_tmpl_id, 'product_uom_id' => $product_uom_id])->first();
         $product_uom_stock = $product_uom->stock * $quantity;
@@ -41,7 +41,7 @@ class Controller extends BaseController
         return true;
     }
 
-    public function check_price($product_tmpl_id, $product_uom_id, $quantity){
+    private function check_price($product_tmpl_id, $product_uom_id, $quantity){
         $odoo_pricelist = OdooProductPricelist::where('min_quantity','<=', $quantity)->where(['product_tmpl_id' => $product_tmpl_id, 'product_uom_id' => $product_uom_id])->orderBy('min_quantity', 'desc')->first();
 
         if(empty($odoo_pricelist)){
