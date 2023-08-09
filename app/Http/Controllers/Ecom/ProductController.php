@@ -17,7 +17,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $product = OdooProduct::with('product_tag', 'product_uom.product_pricelist')->orderBy('updated_at','DESC')->limit(10);
+        $product = OdooProduct::with('product_tag', 'product_uom.product_pricelist')->orderBy('updated_at','DESC');
 
         if($request->has('search') && !empty($request->search)){
             $search = str_replace("+"," ",$request->search);
@@ -45,13 +45,12 @@ class ProductController extends Controller
             }
 
             $product = $product->all();
-            $indexedData = array_values($product);
-
-            $product = $indexedData;
         }
 
+        $pagination = $this->paginate($product, 2)->withPath(url()->current());
+
         $message = ' Data product berhasil ditampilkan';
-        return ApiFormatter::success(200, $message, $product);
+        return ApiFormatter::pagination($message, $pagination);
     }
 
     public function detail($slug)
