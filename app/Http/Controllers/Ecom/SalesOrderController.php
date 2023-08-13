@@ -17,7 +17,9 @@ class SalesOrderController extends Controller
 {
     public function index(Request $request){
 
-        $sales_order = SalesOrder::active()->with('sales_order_product.product', 'sales_order_product.product_uom.product_pricelist')->has('sales_order_product.product');
+        $sales_order = SalesOrder::active()->with('sales_order_product.product', 'sales_order_product.product_uom.product_pricelist')
+            ->has('sales_order_product.product')
+            ->has('sales_order_product.product_uom.product_pricelist');
 
         if($request->has('status')){
             $sales_order = $sales_order->where('status', $request->status);
@@ -28,7 +30,10 @@ class SalesOrderController extends Controller
 
     public function detail($sales_order_uuid){
 
-        $sales_order = SalesOrder::with('sales_order_product.product', 'sales_order_product.product_uom.product_pricelist')->has('sales_order_product.product')->where('uuid', $sales_order_uuid)->first();
+        $sales_order = SalesOrder::with('sales_order_product.product', 'sales_order_product.product_uom.product_pricelist')
+            ->has('sales_order_product.product')
+            ->has('sales_order_product.product_uom.product_pricelist')
+            ->where('uuid', $sales_order_uuid)->first();
 
         return ApiFormatter::success(200, 'Data Sales Order detail berhasil ditampilkan', $sales_order);
     }
