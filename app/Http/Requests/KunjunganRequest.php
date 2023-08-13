@@ -27,6 +27,8 @@ class KunjunganRequest extends FormRequest
     {
         return [
             'pelanggan_id' => 'required',
+            'lng' => 'required',
+            'lat' => 'required',
         ];
     }
 
