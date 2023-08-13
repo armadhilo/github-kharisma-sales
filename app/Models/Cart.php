@@ -22,11 +22,11 @@ class Cart extends Model
     }
 
     public function scopeActive($query){
-        $query->where(['user_id' => auth('api')->user()->id, 'status' => 0])->whereHas('product');
+        $query->where(['user_id' => auth('api')->user()->id, 'status' => 0])->has('product');
     }
 
     public function scopeBuyNow($query){
-        $query->where(['user_id' => auth('api')->user()->id, 'status' => 0, 'is_buy_now' => 1])->whereHas('product');
+        $query->where(['user_id' => auth('api')->user()->id, 'status' => 0, 'is_buy_now' => 1])->has('product');
     }
 
     public function getSisaStockAttribute(){
