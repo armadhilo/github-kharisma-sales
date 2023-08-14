@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'sales'], function(){
     Route::post('/login', 'Sales\AuthController@login');
 
-    // Route::group(['middleware' => 'validate_login'], function(){
+    Route::group(['middleware' => 'validate_login'], function(){
         Route::post('/logout', 'Sales\AuthController@logout');
 
         Route::group(['prefix' => 'pelanggan'], function(){
@@ -49,6 +49,6 @@ Route::group(['prefix' => 'sales'], function(){
         Route::group(['prefix' => 'sales-log'], function(){
             Route::post('/', 'Sales\SalesLogController@store');
         });
-    // });
+    });
 });
 
