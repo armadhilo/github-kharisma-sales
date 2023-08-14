@@ -45,7 +45,11 @@ class SalesOrderController extends Controller
         $data['done'] = "0";
         $data['cancel'] = "0";
 
-        $sales_order = SalesOrder::active()->selectRaw('status, count(*) as count')->has('sales_order_product.product')->groupBy('status')->get();
+        $sales_order = SalesOrder::active()->selectRaw('status, count(*) as count')
+            ->has('sales_order_product.product')
+            ->has('sales_order_product.product_uom.product_pricelist')
+            ->groupBy('status')
+            ->get();
         if(count($sales_order)){
             foreach($sales_order as $item){
                 if($item['status'] == 'draft') $data['draft'] = (string)$item['count'];
