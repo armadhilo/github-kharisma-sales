@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 
 use App\Helpers\ApiFormatter;
 use App\Http\Requests\Ecom\OngkosKirimRequest;
+use App\Models\AlamatPengiriman;
 use App\Models\Config;
 use App\Models\JasaPengiriman;
 
@@ -80,22 +81,37 @@ class OngkosKirimController extends Controller
             $kurir_kharisma = JasaPengiriman::active()->where('kode', 'staff')->first();
             if(!empty($kurir_kharisma)){
 
-                //disable karena harusnya sudah tidak ada ongkos
-                // if($request->berat <= 2000){
-                //     $harga = 10000;
-                // }else{
-                //     $berat_kharisma = $request->berat - 2000;
-                //     $berat_kharisma = round($berat_kharisma, -3);
-                //     $berat_kharisma = $berat_kharisma / 1000;
+                //cek ongkos kirim by jarak
+                $lng_pengiriman = Config::where('config', 'LONGITUDE PENGIRIMAN')->first()->value;
+                $lat_pengiriman = Config::where('config', 'LATITUDE PENGIRIMAN')->first()->value;
 
-                //     $harga = 10000 + ($berat_kharisma * 10000);
-                // }
+                if(!empty(auth('api')->user()->lat && auth('api')->user()->lng)){
+                    $distance = $this->calculateDistance($lat_pengiriman, $lng_pengiriman, auth('api')->user()->lat, auth('api')->user()->lng);
 
-                $array[] = [
-                    'nama' => "[STAF KHARISMA] - KHUSUS KOTA KUPANG",
-                    'harga' => 0,
-                    'estimasi' => "1",
-                ];
+                    $ongkos_kharisma = Config::where('config', 'ONGKOS KIRIM')->first()->value;
+                    $estimasi_pengiriman = Config::where('config', 'ESTIMASI PENGIRIMAN')->first()->value;
+                    $harga_pengiriman = (int)$distance * (int)$ongkos_kharisma;
+
+                    $array[] = [
+                        'nama' => "[STAF KHARISMA] - KHUSUS KOTA KUPANG",
+                        'harga' => $harga_pengiriman,
+                        'estimasi' => $estimasi_pengiriman,
+                    ];
+
+                    //disable karena harusnya sudah tidak ada ongkos
+                    // if($request->berat <= 2000){
+                    //     $harga = 10000;
+                    // }else{
+                    //     $berat_kharisma = $request->berat - 2000;
+                    //     $berat_kharisma = round($berat_kharisma, -3);
+                    //     $berat_kharisma = $berat_kharisma / 1000;
+
+                    //     $harga = 10000 + ($berat_kharisma * 10000);
+                    // }
+
+
+                }
+
             }
         }
 

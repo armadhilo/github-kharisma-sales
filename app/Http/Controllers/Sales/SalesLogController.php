@@ -53,18 +53,4 @@ class SalesLogController extends Controller
             }
         }
     }
-
-    private function calculateDistance($lat1, $lon1, $lat2, $lon2, $unit = "km") {
-        $theta = $lon1 - $lon2;
-        $distance = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-        $distance = acos($distance);
-        $distance = rad2deg($distance);
-        $distance = $distance * 60 * 1.1515; // distance in miles
-
-        if ($unit == "km") {
-            $distance = $distance * 1.609344; // convert miles to kilometers
-        }
-
-        return $distance;
-    }
 }
