@@ -21,7 +21,7 @@ class CartController extends Controller
 
     public function index(Request $request){
 
-        $cart = Cart::with('product.product_tag')->active();
+        $cart = Cart::active();
 
         if($request->has('type') && $request->type == 'count'){
             $message = 'Data jumlah cart berhasil ditampilkan';
@@ -31,6 +31,12 @@ class CartController extends Controller
 
             $message = 'Data cart berhasil ditampilkan';
             $cart = $cart->get();
+
+            $cart->load([
+                'product.product_uom' => function($query) use ($cart){
+                    $query->where(['product_tmpl_id' => $cart->pluck('product_tmpl_id'), 'product_uom_id' => $cart->pluck('product_uom_id')]);
+                }, 'product.product_uom.product_pricelist','product.product_tag'
+            ]);
 
             if(count($cart) == 0){
                 $message = 'Data cart list empty';
