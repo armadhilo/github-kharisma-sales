@@ -59,6 +59,10 @@ Route::group(['prefix' => 'sync-odoo'], function(){
         Route::post('/store-update', 'SyncOdoo\ProductPricelistController@store_update');
         Route::delete('/{product_tmpl_id}/{product_uom_id}', 'SyncOdoo\ProductPricelistController@delete');
     });
+
+    Route::group(['prefix' => 'sales-order'], function(){
+        Route::post('/update_status', 'SyncOdoo\SalesOrderController@update');
+    });
 });
 
 Route::group(['prefix' => 'reset-password'], function(){
