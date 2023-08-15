@@ -64,7 +64,7 @@ class CartController extends Controller
         $cart = Cart::active()->where(['uuid' => $uuid])->first();
         $cart->load([
             'product.product_uom' => function($query) use ($cart){
-                $query->where(['product_tmpl_id' => $cart->pluck('product_tmpl_id'), 'product_uom_id' => $cart->pluck('product_uom_id')]);
+                $query->where(['product_tmpl_id' => $cart->product_tmpl_id, 'product_uom_id' => $cart->product_uom_id]);
             }, 'product.product_uom.product_pricelist','product.product_tag'
         ]);
         if(empty($cart)){
