@@ -105,8 +105,12 @@ class CartController extends Controller
 
         Cart::updateOrCreate(['uuid' => $request->uuid], $request->all());
 
+        $data = Cart::where('uuid', $request->uuid)->with(['product.product_uom' => function($query) use ($request){
+            $query->where(['product_tmpl_id' => $request->product_tmpl_id, 'product_uom_id' => $request->product_uom_id]);
+        }, 'product.product_uom.product_pricelist'])->first();
+
         $message = 'Cart created successfully';
-        return ApiFormatter::success(200, $message);
+        return ApiFormatter::success(200, $message, $data);
     }
 
     public function select_cart($uuid = null, $is_checkout = null){
