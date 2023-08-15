@@ -61,7 +61,12 @@ class CartController extends Controller
 
     public function detail($uuid){
 
-        $cart = Cart::with('product.product_tag')->active()->where(['uuid' => $uuid])->first();
+        $cart = Cart::active()->where(['uuid' => $uuid])->first();
+        $cart->load([
+            'product.product_uom' => function($query) use ($cart){
+                $query->where(['product_tmpl_id' => $cart->pluck('product_tmpl_id'), 'product_uom_id' => $cart->pluck('product_uom_id')]);
+            }, 'product.product_uom.product_pricelist','product.product_tag'
+        ]);
         if(empty($cart)){
             $message = 'Cart not found';
             return ApiFormatter::error(404, $message);
