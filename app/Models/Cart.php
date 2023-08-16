@@ -19,7 +19,7 @@ class Cart extends Model
     }
 
     public function product_uom(){
-        return $this->belongsTo(OdooProductUom::class, ['product_tmpl_id', 'product_uom_id'], ['product_tmpl_id', 'product_uom_id']);
+        return $this->hasMany(OdooProductUom::class, ['product_tmpl_id', 'product_uom_id'], ['product_tmpl_id', 'product_uom_id']);
     }
 
     public function user(){
