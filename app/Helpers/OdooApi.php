@@ -49,7 +49,7 @@ class OdooApi
         return $customer;
     }
 
-    public static function updateCustomer($request){
+    public static function updateCustomer($parameter){
 
         $url = 'http://103.215.177.203:8096';
         $db = 'odoo_kharisma_stationery_test5';
@@ -62,14 +62,22 @@ class OdooApi
         $models = ripcord::client("$url/xmlrpc/2/object");
 
         $partnerData = array(
-                'street' => $request->street,
+                'street' => $parameter['street'],
                 'country_id' => 100,
-                'phone' => $request->phone,
-                'zip' => $request->zip
+                'phone' => $parameter['phone'],
+                'zip' => $parameter['zip'],
+                'email' => $parameter['email'],
+                'mobile' => $parameter['telepon'],
+                'npwp' => $parameter['no_npwp'],
+                'npwp_name' => $parameter['nama_npwp'],
+                'id_nik' => $parameter['no_ktp'],
+                'street' => $parameter['street'],
+                'street2' => $parameter['street2'],
+                'city' => $parameter['city'],
         );
 
         $customer = $models->execute_kw($db, $uid, $password,
-        'res.partner', 'write', array(array($request->pelanggan_id), $partnerData));
+        'res.partner', 'write', array(array($parameter['pelanggan_id']), $partnerData));
 
         return $customer;
     }

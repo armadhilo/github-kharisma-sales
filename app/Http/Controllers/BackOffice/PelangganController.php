@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\BackOffice;
 
+use App\Helpers\OdooApi;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PelangganRequest;
 use App\Models\AlamatPengiriman;
@@ -46,14 +47,17 @@ class PelangganController extends Controller
     }
 
     public function store_update(PelangganRequest $request){
-        
+
         if(substr($request->telepon, 0, 2) != '08'){
             return [
                 'status' => 300,
                 'message' => 'Nomer harus dimulai dari 08xxx',
             ];
         }
-        
+
+        //update odoo
+        OdooApi::updateCustomer($request);
+
         $request->request->add(['provinsi_id' => '23']);
         $request->request->add(['provinsi' => 'NUSA TENGGARA TIMUR']);
         $request->request->add(['no_telepon' => $request->telepon]);
@@ -86,6 +90,25 @@ class PelangganController extends Controller
             DB::beginTransaction();
 
             $data = User::updateOrCreate(['id' => $request->id],$request->all() );
+
+            //update data on odoo
+            $user = User::find($request->id);
+            $parameter['pelanggan_id'] = $user->pelanggan_id;
+            $parameter['street'] = $user->street;
+            $parameter['country_id'] = 100;
+            $parameter['phone'] = $request->phone;
+            $parameter['zip'] = $request->zip;
+            $parameter['email'] = $request->email;
+            $parameter['mobile'] = $request->telepon;
+            $parameter['npwp'] = $request->no_npwp;
+            $parameter['npwp_name'] = $request->nama_npwp;
+            $parameter['id_nik'] = $request->no_ktp;
+            $parameter['street'] = $request->street;
+            $parameter['street2'] = $request->street2;
+            $parameter['city'] = $request->city;
+
+            $odoo_api = OdooApi::updateCustomer($parameter);
+
             AlamatPengiriman::updateOrCreate(['user_id' => $data->id],$request->all());
 
             if($request->has(['id', 'sales_pelanggan_id', 'pelanggan_id'])){
@@ -147,7 +170,7 @@ class PelangganController extends Controller
                 ];
 
             }
-            
+
             return [
                 'status' => 200,
                 'message' => 'Data berhasil dihapus'
