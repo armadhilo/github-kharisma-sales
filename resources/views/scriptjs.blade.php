@@ -214,6 +214,7 @@
                    },error: function (jqXHR, textStatus, errorThrown){
                       setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
                       console.log((jqXHR.responseJSON.errors));
+                      swal(jqXHR.responseJSON.message, { icon: 'warning', });
                       Object.keys(jqXHR.responseJSON.errors).forEach(function (key) {
                            // console.log(jqXHR.responseJSON.errors[key]);
                            var responseError = jqXHR.responseJSON.errors[key];

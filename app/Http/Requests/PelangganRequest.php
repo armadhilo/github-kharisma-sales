@@ -52,6 +52,7 @@ class PelangganRequest extends FormRequest
             'zip' => [
                 'required',
             ],
+            'alamat' => 'required',
             'no_ktp' => 'nullable|numeric',
             'nama_npwp' => 'nullable',
             'no_npwp' => 'nullable|numeric',

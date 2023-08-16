@@ -115,28 +115,28 @@
                   <div class="col-12 col-md-6 col-lg-3">
                      <div class="form-group">
                         <label>Nama Toko</label>
-                        <input type="text" name="nama_toko" id="nama_toko" value="@if(isset($data)){{$data->nama_toko}}@endif" class="form-control">
+                        <input type="text" name="nama_toko" id="nama_toko" value="@if(isset($data)){{$data->nama_toko}}@endif" autocomplete="off" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-nama_toko-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-5 col-lg-5">
                     <div class="form-group">
                         <label>Street</label>
-                        <input type="text" name="street" id="street" value="@if(isset($data)){{$data->street}}@endif" class="form-control">
+                        <input type="text" name="street" id="street" value="@if(isset($data)){{$data->street}}@endif" autocomplete="off" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-street-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-5 col-lg-5">
                     <div class="form-group">
                         <label>Street 2</label>
-                        <input type="text" name="street2" id="street2" value="@if(isset($data)){{$data->street2}}@endif" class="form-control">
+                        <input type="text" name="street2" id="street2" value="@if(isset($data)){{$data->street2}}@endif" autocomplete="off" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-street2-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-2 col-lg-2">
                     <div class="form-group">
                         <label>City</label>
-                        <input type="text" name="city" id="city" value="@if(isset($data)){{$data->city}}@endif" class="form-control">
+                        <input type="text" name="city" id="city" value="@if(isset($data)){{$data->city}}@endif" autocomplete="off" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-city-feedback"></span>
                      </div>
                   </div>
@@ -202,7 +202,7 @@
                               <span class="invalid-feedback float-right d-block" style="text-align: end">*Tidak Perlu Diisi Bila Password Tidak Diubah</span>
                                  <label style="white-space: nowrap">Change Password</label>
                            </div>
-                           <input type="password" name="password" id="password" class="form-control" autocomplete="off">
+                           <input type="password" name="password" id="password" class="form-control" autocomplete="new-password">
                            <span class="d-flex text-danger invalid-feedback" id="invalid-password-feedback"></span>
                         </div>
                      </div>
@@ -227,7 +227,7 @@
                      <div class="form-group">
                            <label>Kota</label>
                            <input hidden type="text" id="data_kota" name="kota_id" class="form-control" value="@if(isset($data)){{$data->kota_id}}@endif">
-                           <select class="form-control select2" name="kota" onchange="change_kota()" id="kota">
+                           <select class="form-control select2" name="kota" id="kota" onchange="change_kota()">
                               <option selected disabled>- Pilih -</option>
                            </select>
                            <span class="d-flex text-danger invalid-feedback" id="invalid-kota_id-feedback"></span>
@@ -257,6 +257,13 @@
                            <span class="d-flex text-danger invalid-feedback" id="invalid-zip-feedback"></span>
                      </div>
                   </div>
+                  <div class="col-12 col-md-12 col-lg-12">
+                    <div class="form-group">
+                        <label>Alamat Pengiriman</label>
+                        <textarea class="form-control" style="min-height: 90px" name="alamat" id="alamat">@isset($data->alamat){{$data->alamat}}@endisset</textarea>
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-alamat-feedback"></span>
+                     </div>
+                 </div>
                   <div class="col-12 col-md-5 col-lg-5">
                      <div class="form-group">
                         <label>Latitude</label>
@@ -515,7 +522,7 @@
 
    function get_sales(){
       let sales_pelanggan = {!! json_encode($sales_pelanggan->toArray()) !!};
-      if(sales_pelanggan !== null){
+      if(sales_pelanggan.length > 0){
             $('.sales-container').last().after(`
             @foreach ($sales_pelanggan as $sp)
             <div class="col-12 col-md-3 col-lg-3 sales-container d-flex align-items-center" style="gap: 15px">
