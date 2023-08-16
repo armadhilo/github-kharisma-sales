@@ -93,21 +93,23 @@ class PelangganController extends Controller
 
             //update data on odoo
             $user = User::find($request->id);
-            $parameter['pelanggan_id'] = $user->pelanggan_id;
-            $parameter['street'] = $user->street;
-            $parameter['country_id'] = 100;
-            $parameter['phone'] = $request->phone;
-            $parameter['zip'] = $request->zip;
-            $parameter['email'] = $request->email;
-            $parameter['mobile'] = $request->telepon;
-            $parameter['npwp'] = $request->no_npwp;
-            $parameter['npwp_name'] = $request->nama_npwp;
-            $parameter['id_nik'] = $request->no_ktp;
-            $parameter['street'] = $request->street;
-            $parameter['street2'] = $request->street2;
-            $parameter['city'] = $request->city;
+            if(!empty($user) && $user->type == 'pelanggan'){
+                $parameter['pelanggan_id'] = $user->pelanggan_id;
+                $parameter['street'] = $user->street;
+                $parameter['country_id'] = 100;
+                $parameter['phone'] = $request->phone;
+                $parameter['zip'] = $request->zip;
+                $parameter['email'] = $request->email;
+                $parameter['mobile'] = $request->telepon;
+                $parameter['npwp'] = $request->no_npwp;
+                $parameter['npwp_name'] = $request->nama_npwp;
+                $parameter['id_nik'] = $request->no_ktp;
+                $parameter['street'] = $request->street;
+                $parameter['street2'] = $request->street2;
+                $parameter['city'] = $request->city;
 
-            $odoo_api = OdooApi::updateCustomer($parameter);
+                $odoo_api = OdooApi::updateCustomer($parameter);
+            }
 
             AlamatPengiriman::updateOrCreate(['user_id' => $data->id],$request->all());
 
