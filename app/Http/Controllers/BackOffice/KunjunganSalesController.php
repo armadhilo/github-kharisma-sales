@@ -21,20 +21,20 @@ class KunjunganSalesController extends Controller
     public function detail($id){
         return Kunjungan::with('sales', 'pelanggan')->find($id);
     }
-    
+
     public function datatables(Request $request){
         $data = Kunjungan::with('sales', 'pelanggan');
         if(isset($request->tanggal_mulai)){
             $data->whereBetween('date',[$request->tanggal_mulai, $request->tanggal_selesai]);
         }
 
-        $data->orderBy('date', 'asc')->groupBy('sales_id')->get();
+        $data->orderBy('date', 'desc')->groupBy('sales_id')->get();
 
         return DataTables::of($data)
                     ->addIndexColumn()
                     ->make(true);
     }
-                
+
     public function datatables_edit(){
         $data = Kunjungan::with('sales', 'pelanggan')->orderBy('date', 'asc')->get();
         return DataTables::of($data)

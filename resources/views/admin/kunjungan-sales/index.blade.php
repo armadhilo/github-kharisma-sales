@@ -92,7 +92,7 @@
                                 <th scope="col" class="text-center">Pelanggan</th>
                                 <th scope="col" class="text-center">Waktu Mulai</th>
                                 <th scope="col" class="text-center">Waktu Selesai</th>
-                                <th scope="col" class="text-center" style="width: 5%">Total Kunjungan</th>
+                                <th scope="col" class="text-center" style="width: 5%">Lama Waktu (Menit)</th>
                             </tr>
                         </thead>
                     </table>
