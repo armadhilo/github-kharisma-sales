@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Kunjungan;
 use App\Models\SalesAttendance;
+use App\Models\SalesLog;
 
 class KunjunganController extends Controller
 {
@@ -71,6 +72,13 @@ class KunjunganController extends Controller
             $kunjungan->save();
 
         }else{
+
+            //CREATE SALES LOG
+            SalesLog::create([
+                'sales_id' => auth('api')->user()->id,
+                'lat' => $request->lat,
+                'lng' => $request->lng,
+            ]);
 
             $kunjungan = Kunjungan::create([
                 'sales_id' => auth('api')->user()->id,
