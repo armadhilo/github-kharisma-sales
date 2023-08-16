@@ -44,6 +44,16 @@ class PelangganController extends Controller
 
         return DataTables::of($data)
                     ->addIndexColumn()
+                    ->addColumn('status_badge', function($item) {
+
+                        if(!empty($item->keylog)){
+                            return "<span class='badge badge-success'>active</span>";
+                        }else{
+                            return "<span class='badge badge-danger'>inactive</span>";
+                        }
+
+                    })
+                    ->rawColumns(['status_badge'])
                     ->make(true);
     }
 

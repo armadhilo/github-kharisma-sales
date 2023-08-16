@@ -112,7 +112,7 @@
                                     <th scope="col" class="text-center">Email</th>
                                     <th scope="col" class="text-center">Telepon</th>
                                     <th scope="col" class="text-center">Lokasi</th>
-                                    <th scope="col" class="text-center">Alamat</th>
+                                    <th scope="col" class="text-center">Status</th>
                                     <th scope="col" class="text-center" style="width: 15%">Actions</th>
                                 </tr>
                             </thead>
@@ -149,7 +149,7 @@
             {   data: 'email'    },
             {   data: 'telepon'  },
             {   data: 'kota'     },
-            {   data: 'alamat'     },
+            {   data: 'status_badge'     },
             {   data: 'kota'     },
         ],
         rowCallback: function (row, data) {
