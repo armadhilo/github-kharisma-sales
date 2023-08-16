@@ -16,17 +16,17 @@ class AlamatPengiriman extends Model
     protected $guarded = ['id'];
     protected $appends = ['alamat_lengkap'];
 
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        if(auth('api')->check()){
-            static::addGlobalScope('alamat_pengiriman_user_id', function (Builder $builder) {
-                $builder->where('user_id', '=', auth('api')->user()->id);
-            });
-        }
+    //     if(auth('api')->check()){
+    //         static::addGlobalScope('alamat_pengiriman_user_id', function (Builder $builder) {
+    //             $builder->where('user_id', '=', auth('api')->user()->id);
+    //         });
+    //     }
 
-    }
+    // }
 
     public function scopeActive($query){
         $query->where('user_id', auth('api')->user()->id)->orderBy('alamat_utama','DESC');

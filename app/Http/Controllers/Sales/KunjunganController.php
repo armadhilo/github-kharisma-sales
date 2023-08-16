@@ -39,6 +39,11 @@ class KunjunganController extends Controller
             return ApiFormatter::error(400, $message);
         }
 
+        if(empty($user->lng) || empty($user->lat)){
+            $message = 'Harap update lokasi pelanggan dulu karena lokasi belum di set';
+            return ApiFormatter::error(400, $message);
+        }
+
         $radius = $this->cekRadius($user->lng, $user->lat, $request->lng, $request->lat);
         $max_radius = Config::where('config', 'MAX RADIUS KUNJUNGAN')->first()->value;
         if($radius > $max_radius){

@@ -82,7 +82,7 @@ class User extends Authenticatable
     }
 
     public function scopePelangganActive($query){
-        return $query->where(['type' => 2])->whereNotNull('keylog');
+        return $query->where(['type' => 2])->has('alamat_pengiriman')->whereNotNull('keylog');
     }
 
     public function scopeSalesActive($query){
@@ -91,5 +91,9 @@ class User extends Authenticatable
 
     public function sales_log(){
         return $this->hasMany(SalesLog::class, 'sales_id', 'id');
+    }
+
+    public function alamat_pengiriman(){
+        return $this->hasOne(AlamatPengiriman::class);
     }
 }
