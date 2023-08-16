@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\Kunjungan;
 use App\Models\SalesAttendance;
 use App\Models\SalesLog;
+use App\Models\SalesPelanggan;
 
 class KunjunganController extends Controller
 {
@@ -31,6 +32,13 @@ class KunjunganController extends Controller
             $message = 'Anda sudah checkout absensi hari ini, tidak dapat melakukan kunjungan';
             return ApiFormatter::error(400, $message);
         }
+
+        //cek apakah sales mempunyai hak untuk customer tersebut
+         $sales_pelanggan = SalesPelanggan::where(['user_id' => auth('api')->user()->id, 'pelanggan_id' => $request->pelanggan_id])->first();
+         if(empty($sales_pelanggan)){
+             $message = 'Sales tidak mempunyai akses terhadap pelanggan tersebut';
+             return ApiFormatter::error(400, $message);
+         }
 
         //check apakah ada pelanggan tersebut
         $user = User::find($request->pelanggan_id);
