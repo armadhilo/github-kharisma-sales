@@ -110,7 +110,7 @@
                                     </label>
                                     <label class="selectgroup-item">
                                         <input type="checkbox" name="access_menu[]" value="4" class="selectgroup-input">
-                                        <span class="selectgroup-button">Master User</span>
+                                        <span class="selectgroup-button">Master Administrator</span>
                                     </label>
                                 </div>
                                 <div class="selectgroup selectgroup-pills">
@@ -145,6 +145,10 @@
                                     <label class="selectgroup-item">
                                         <input type="checkbox" name="access_menu[]" value="11" class="selectgroup-input">
                                         <span class="selectgroup-button">Jasa Pengiriman</span>
+                                    </label>
+                                    <label class="selectgroup-item">
+                                        <input type="checkbox" name="access_menu[]" value="12" class="selectgroup-input">
+                                        <span class="selectgroup-button">Config</span>
                                     </label>
                                 </div>
                             </div>
@@ -218,7 +222,7 @@
                     if(element == 1){text_access_menu.push('Master Sales')};                
                     if(element == 2){text_access_menu.push('Master Pelanggan')};                
                     if(element == 3){text_access_menu.push('Master Produk')};                
-                    if(element == 4){text_access_menu.push('Master User')};                
+                    if(element == 4){text_access_menu.push('Master Administrator')};                
                     if(element == 5){text_access_menu.push('Edit Absensi Sales')};                
                     if(element == 6){text_access_menu.push('Edit Kunjungan Sales')};                
                     if(element == 7){text_access_menu.push('Absensi Sales')};                
@@ -226,6 +230,7 @@
                     if(element == 9){text_access_menu.push('Log Sales')};                
                     if(element == 10){text_access_menu.push('Transaksi')};                
                     if(element == 11){text_access_menu.push('Jasa Pengiriman')};                
+                    if(element == 12){text_access_menu.push('Config')};                
                 });
     
                 text_access_menu.forEach(data => {
