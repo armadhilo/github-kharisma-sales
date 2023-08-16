@@ -15,6 +15,7 @@ use App\Helpers\ApiFormatter;
 use App\Http\Requests\Ecom\CartRequest;
 use App\Models\Cart;
 use App\Models\OdooProduct;
+use App\Models\OdooProductUom;
 
 class CartController extends Controller
 {
@@ -30,13 +31,64 @@ class CartController extends Controller
         }else{
 
             $message = 'Data cart berhasil ditampilkan';
-            $cart = $cart->get();
+            $cart = $cart->with('product','product.product_tag','product_uom.product_pricelist')->get();
 
-            $cart->load([
-                'product.product_uom' => function($query) use ($cart){
-                    $query->where(['product_tmpl_id' => $cart->pluck('product_tmpl_id'), 'product_uom_id' => $cart->pluck('product_uom_id')]);
-                }, 'product.product_uom.product_pricelist','product.product_tag'
-            ]);
+            $cart = $cart->map(function($item, $key){
+                $product_uom = [];
+                if(isset($item->product_uom)){
+                    $product_uom = $item->product_uom;
+                }
+
+                $item->product->product_uom = $product_uom;
+                unset($item->product_uom);
+                return $item;
+            });
+
+            // $array = [];
+            // foreach ($cart as $key => $item) {
+            //     $array[] = [
+            //         'id' => $item->id,
+            //         'uuid' => $item->uuid,
+            //         'user_id' => $item->user_id,
+            //         'product_id' => $item->product_id,
+            //         'product_tmpl_id' => $item->product_tmpl_id,
+            //         'product_uom_id' => $item->product_uom_id,
+            //         'satuan' => $item->satuan,
+            //         'satuan_stock' => $item->satuan_stock,
+            //         'quantity' => $item->quantity,
+            //         'price' => $item->price,
+            //         'total_price' => $item->total_price,
+            //         'status' => $item->status,
+            //         'is_buy_now' => $item->is_buy_now,
+            //         'is_checkout' => $item->is_checkout,
+            //         'created_at' => $item->created_at,
+            //         'updated_at' => $item->updated_at,
+            //         'sisa_stock' => $item->sisa_stock,
+            //         'product' => [
+            //             $item->product
+            //         ],
+            //     ];
+            // }
+
+            // return $cart;
+
+            // $cart = $cart->map(function($item){
+            //     $item['product']['product_uom'][] = $item->load([
+            //         'product.product_uom' => function($query) use ($item){
+            //             // $query->whereIn(['product_tmpl_id' => $cart->pluck('product_tmpl_id'), 'product_uom_id' => $cart->pluck('product_uom_id')]);
+            //             $query->whereIn(['product_tmpl_id' => $item->product_tmpl_id, 'product_uom_id' => $item->product_uom_id]);
+            //         }, 'product.product_uom.product_pricelist','product.product_tag'
+            //     ]);
+
+            //     return $item;
+            // });
+
+            // $cart->load([
+            //     'product.product_uom' => function($query) use ($cart){
+            //         // $query->whereIn(['product_tmpl_id' => $cart->pluck('product_tmpl_id'), 'product_uom_id' => $cart->pluck('product_uom_id')]);
+            //         $query->whereIn(['product_tmpl_id' => $this->product_tmpl_id, 'product_uom_id' => $this->product_uom_id]);
+            //     }, 'product.product_uom.product_pricelist','product.product_tag'
+            // ]);
 
             if(count($cart) == 0){
                 $message = 'Data cart list empty';

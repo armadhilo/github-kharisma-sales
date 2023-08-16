@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Awobaz\Compoships\Compoships;
 
 class Cart extends Model
 {
-    use HasFactory;
+    use HasFactory,Compoships;
 
     protected $table = 'cart';
     protected $guarded = ['id'];
@@ -15,6 +16,10 @@ class Cart extends Model
 
     public function product(){
         return $this->belongsTo(OdooProduct::class, 'product_id', 'product_id')->withTrashed();
+    }
+
+    public function product_uom(){
+        return $this->belongsTo(OdooProductUom::class, ['product_tmpl_id', 'product_uom_id'], ['product_tmpl_id', 'product_uom_id']);
     }
 
     public function user(){
