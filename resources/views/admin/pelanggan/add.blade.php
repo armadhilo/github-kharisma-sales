@@ -60,65 +60,87 @@
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                         <label>Nama</label>
-                        <input type="text" name="nama" id="nama" value="@if(isset($data)) {{$data->nama}} @endif" class="form-control">
+                        <input readonly type="text" name="nama" id="nama" value="@if(isset($data)) {{$data->nama}} @endif" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-nama-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                         <label>Email</label>
-                        <input type="text" name="email" id="email" value="@if(isset($data)) {{$data->email}} @endif" class="form-control">
+                        <input readonly type="text" name="email" id="email" value="@if(isset($data)) {{$data->email}} @endif" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-email-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                         <label>Telepon</label>
-                        <input type="text" name="telepon" id="telepon" value="@if(isset($data)) {{$data->telepon}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
+                        <input readonly type="text" name="telepon" id="telepon" value="@if(isset($data)) {{$data->telepon}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-telepon-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-2 col-lg-3">
                      <div class="form-group">
                         <label>Tipe Pelanggan</label>
-                        <select class="form-control select2" name="type_pelanggan" id="type_pelanggan">
+                        <input readonly type="text" name="type_pelanggan" id="type_pelanggan" value="@if(isset($data)) {{$data->type_pelanggan}} @endif" class="form-control">
+                        {{-- <select class="form-control select2" name="type_pelanggan" id="type_pelanggan">
                            <option disabled selected>- Pilih -</option>
                            <option value="flores" @if(isset($data) && $data->type_pelanggan == 'flores') selected @endif>Flores</option>
                            <option value="grosir" @if(isset($data) && $data->type_pelanggan == 'grosir') selected @endif>Grosir</option>
                            <option value="retail" @if(isset($data) && $data->type_pelanggan == 'retail') selected @endif>Retail</option>
-                        </select>
+                        </select> --}}
                         <span class="d-flex text-danger invalid-feedback" id="invalid-type_pelanggan-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                         <label>No KTP</label>
-                        <input type="text" name="no_ktp" id="no_ktp" value="@if(isset($data)) {{$data->no_ktp}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
+                        <input readonly type="text" name="no_ktp" id="no_ktp" value="@if(isset($data)) {{$data->no_ktp}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-no_ktp-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-4 col-lg-3">
                      <div class="form-group">
                         <label>Nama NPWP</label>
-                        <input type="text" name="nama_npwp" id="nama_npwp" value="@if(isset($data)) {{$data->nama_npwp}} @endif" class="form-control" autocomplete="off">
+                        <input readonly type="text" name="nama_npwp" id="nama_npwp" value="@if(isset($data)) {{$data->nama_npwp}} @endif" class="form-control" autocomplete="off">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-nama_npwp-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                         <label>No NPWP</label>
-                        <input type="text" name="no_npwp" id="no_npwp" value="@if(isset($data)) {{$data->no_npwp}} @endif" onkeypress="return hanyaAngka(event,false);" autocomplete="off" class="form-control">
+                        <input readonly type="text" name="no_npwp" id="no_npwp" value="@if(isset($data)) {{$data->no_npwp}} @endif" onkeypress="return hanyaAngka(event,false);" autocomplete="off" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-no_npwp-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-6 col-lg-3">
                      <div class="form-group">
                         <label>Nama Toko</label>
-                        <input type="text" name="nama_toko" id="nama_toko" value="@if(isset($data)) {{$data->nama_toko}} @endif" class="form-control">
+                        <input readonly type="text" name="nama_toko" id="nama_toko" value="@if(isset($data)) {{$data->nama_toko}} @endif" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-nama_toko-feedback"></span>
                      </div>
                   </div>
-                  <div class="col-12 col-md-6 col-lg-6">
+                  <div class="col-12 col-md-5 col-lg-5">
+                    <div class="form-group">
+                        <label>Street</label>
+                        <input readonly type="text" name="street" id="street" value="@if(isset($data)) {{$data->street}} @endif" class="form-control">
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-street-feedback"></span>
+                     </div>
+                  </div>
+                  <div class="col-12 col-md-5 col-lg-5">
+                    <div class="form-group">
+                        <label>Street 2</label>
+                        <input readonly type="text" name="street2" id="street2" value="@if(isset($data)) {{$data->street2}} @endif" class="form-control">
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-street2-feedback"></span>
+                     </div>
+                  </div>
+                  <div class="col-12 col-md-2 col-lg-2">
+                    <div class="form-group">
+                        <label>City</label>
+                        <input readonly type="text" name="city" id="city" value="@if(isset($data)) {{$data->city}} @endif" class="form-control">
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-city-feedback"></span>
+                     </div>
+                  </div>
+                  {{-- <div class="col-12 col-md-6 col-lg-6">
                      <div class="form-group">
                         <label>Alamat</label>
                         <textarea class="form-control" style="min-height: 90px" name="alamat">@isset($data->alamat) {{$data->alamat}} @endisset</textarea>
@@ -131,7 +153,7 @@
                         <textarea class="form-control" style="min-height: 90px" name="alamat_toko">@isset($data->alamat_toko) {{$data->alamat_toko}} @endisset</textarea>
                         <span class="d-flex text-danger invalid-feedback" id="invalid-alamat_toko-feedback"></span>
                      </div>
-                  </div>
+                  </div> --}}
                </div>
             </div>
          </div>
@@ -168,7 +190,7 @@
          </div>
          <div class="card">
             <div class="card-header">
-               <h4>Lokasi Pelanggan</h4>
+               <h4>Alamat Pengiriman</h4>
             </div>
             <div class="card-body pt-3">
                <div class="row">
@@ -299,7 +321,7 @@
       }
       return b;
    }
-  
+
    var basemaps= {
       "Google Satelite":L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
       subdomains:['mt0','mt1','mt2','mt3'],
@@ -341,8 +363,8 @@
       attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       })
     }
-    
-    
+
+
    var map = L.map('myMap', {
       center: [-7.320063,112.7292863],
       zoom: 15,
@@ -359,8 +381,8 @@
       ],
    });
 
-   
-   //disable default scroll 
+
+   //disable default scroll
    map.scrollWheelZoom.disable();
 
    $("#myMap").bind('mousewheel DOMMouseScroll', function (event) {
@@ -381,11 +403,11 @@
    $(window).bind('mousewheel DOMMouseScroll', function (event) {
       $('#myMap').removeClass('map-scroll');
    })
-   
+
    $(document).mousemove(function(e){
       $('#myMap').removeClass('map-scroll');
    });
-   
+
    var searchControl = new L.esri.Controls.Geosearch().addTo(map);
    var results = new L.LayerGroup().addTo(map);
    searchControl.on('results', function(data){
@@ -405,7 +427,7 @@
          }
          marker = new L.Marker(e.latlng, {draggable:true});
          results.addLayer(marker);
-         
+
          // results.addLayer(L.marker(e.latlng));
          $("#lat").val(e.latlng.lat);
          $("#lng").val(e.latlng.lng);
@@ -426,13 +448,13 @@
 
    $(document).ready(function(){
       $('#radius').on('keyup', function(){
-        
+
          if($(this).val() != ''){
             var radius = parseInt($(this).val());
             if (groupCircle !== null) {
                map.removeLayer(groupCircle);
             }
-            
+
             groupCircle = new L.circle([$("#lat").val(), $("#lng").val()], radius)
             map.addLayer(groupCircle);
          }
@@ -467,7 +489,7 @@
          var valUpper = this.value.toUpperCase();
          $("#nama_singkat").val(valUpper);
       });
-      
+
    });
 
    // function get_sales_value(){
@@ -522,7 +544,7 @@
 
    function hapus_sales(element){
       $(element).parent().parent().remove();
-      // let element_value = $(element).parent().siblings().find('select').val(); 
+      // let element_value = $(element).parent().siblings().find('select').val();
       // if(element_value !== null){
       //    $(`.sales_id option[value="${element_value}"]`).prop('disabled', false);
       // }

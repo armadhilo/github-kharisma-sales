@@ -29,7 +29,7 @@ class UserController extends Controller
     }
 
     public function store_update(UserRequest $request){
-        
+
         if(substr($request->telepon, 0, 2) != '08'){
             return [
                 'status' => 300,
@@ -37,18 +37,22 @@ class UserController extends Controller
             ];
         }
 
-        
+
         if($request->access_group == 'all access' || $request->access_menu == ['1', '2', '3', '4', '5', '6','7', '8', '9', '10', '11',]){
             $request->merge([
                 'access_menu' => 0
             ]);
         }
-        
+
         if(is_null($request->id)){
             $request->request->add(['password' =>Hash::make($request->password)]);
             $request->request->add(['type' => 'superadmin']);
         }
-        
+
+        if($request->has('password')){
+            $request->merge(['password' => Hash::make($request->password)]);
+        }
+
         User::updateOrCreate(['id' => $request->id],$request->all() );
 
         if($request->id == Auth::user()->id){
