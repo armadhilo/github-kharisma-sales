@@ -28,18 +28,18 @@ class PelangganRequest extends FormRequest
     {
         return [
             'pelanggan_id' => 'required',
-            'property_product_pricelist' => 'nullable',
-            'npwp' => 'nullable',
-            'npwp_name' => 'nullable',
-            'id_nik' => 'nullable',
-            'email' => 'nullable',
-            'name' => 'nullable',
-            'display_name' => 'nullable',
-            'mobile' => 'nullable',
-            'street' => 'nullable',
-            'street2' => 'nullable',
-            'city' => 'nullable',
-            'zip' => 'nullable',
+            'property_product_pricelist' => 'required',
+            'npwp' => 'required',
+            'npwp_name' => 'required',
+            'id_nik' => 'required',
+            'email' => 'required',
+            'name' => 'required',
+            'display_name' => 'required',
+            'mobile' => 'required',
+            'street' => 'required',
+            'street2' => 'required',
+            'city' => 'required',
+            'zip' => 'required',
         ];
     }
 

@@ -40,7 +40,7 @@ class SalesLogController extends Controller
                 $distance = $this->calculateDistance($sales_log->lat, $sales_log->lng, $request->lat, $request->lng);
 
                 //jika jarak lebih dari 1km dari lat long sebelumnya insert to db
-                if((int) $distance >= 1){
+                // if((int) $distance >= 1){
                     SalesLog::create([
                         'sales_id' => auth('api')->user()->id,
                         'lat' => $request->lat,
@@ -49,22 +49,8 @@ class SalesLogController extends Controller
 
                     $message = 'Sales log created successfully';
                     return ApiFormatter::success(200, $message);
-                }
+                // }
             }
         }
-    }
-
-    private function calculateDistance($lat1, $lon1, $lat2, $lon2, $unit = "km") {
-        $theta = $lon1 - $lon2;
-        $distance = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-        $distance = acos($distance);
-        $distance = rad2deg($distance);
-        $distance = $distance * 60 * 1.1515; // distance in miles
-
-        if ($unit == "km") {
-            $distance = $distance * 1.609344; // convert miles to kilometers
-        }
-
-        return $distance;
     }
 }

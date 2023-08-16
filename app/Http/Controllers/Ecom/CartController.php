@@ -15,13 +15,14 @@ use App\Helpers\ApiFormatter;
 use App\Http\Requests\Ecom\CartRequest;
 use App\Models\Cart;
 use App\Models\OdooProduct;
+use App\Models\OdooProductUom;
 
 class CartController extends Controller
 {
 
     public function index(Request $request){
 
-        $cart = Cart::with('product.product_tag')->active();
+        $cart = Cart::active();
 
         if($request->has('type') && $request->type == 'count'){
             $message = 'Data jumlah cart berhasil ditampilkan';
@@ -30,7 +31,64 @@ class CartController extends Controller
         }else{
 
             $message = 'Data cart berhasil ditampilkan';
-            $cart = $cart->get();
+            $cart = $cart->with('product','product.product_tag','product_uom.product_pricelist')->get();
+
+            $cart = $cart->map(function($item, $key){
+                $product_uom = [];
+                if(isset($item->product_uom)){
+                    $product_uom = $item->product_uom;
+                }
+
+                $item->product->product_uom = $product_uom;
+                unset($item->product_uom);
+                return $item;
+            });
+
+            // $array = [];
+            // foreach ($cart as $key => $item) {
+            //     $array[] = [
+            //         'id' => $item->id,
+            //         'uuid' => $item->uuid,
+            //         'user_id' => $item->user_id,
+            //         'product_id' => $item->product_id,
+            //         'product_tmpl_id' => $item->product_tmpl_id,
+            //         'product_uom_id' => $item->product_uom_id,
+            //         'satuan' => $item->satuan,
+            //         'satuan_stock' => $item->satuan_stock,
+            //         'quantity' => $item->quantity,
+            //         'price' => $item->price,
+            //         'total_price' => $item->total_price,
+            //         'status' => $item->status,
+            //         'is_buy_now' => $item->is_buy_now,
+            //         'is_checkout' => $item->is_checkout,
+            //         'created_at' => $item->created_at,
+            //         'updated_at' => $item->updated_at,
+            //         'sisa_stock' => $item->sisa_stock,
+            //         'product' => [
+            //             $item->product
+            //         ],
+            //     ];
+            // }
+
+            // return $cart;
+
+            // $cart = $cart->map(function($item){
+            //     $item['product']['product_uom'][] = $item->load([
+            //         'product.product_uom' => function($query) use ($item){
+            //             // $query->whereIn(['product_tmpl_id' => $cart->pluck('product_tmpl_id'), 'product_uom_id' => $cart->pluck('product_uom_id')]);
+            //             $query->whereIn(['product_tmpl_id' => $item->product_tmpl_id, 'product_uom_id' => $item->product_uom_id]);
+            //         }, 'product.product_uom.product_pricelist','product.product_tag'
+            //     ]);
+
+            //     return $item;
+            // });
+
+            // $cart->load([
+            //     'product.product_uom' => function($query) use ($cart){
+            //         // $query->whereIn(['product_tmpl_id' => $cart->pluck('product_tmpl_id'), 'product_uom_id' => $cart->pluck('product_uom_id')]);
+            //         $query->whereIn(['product_tmpl_id' => $this->product_tmpl_id, 'product_uom_id' => $this->product_uom_id]);
+            //     }, 'product.product_uom.product_pricelist','product.product_tag'
+            // ]);
 
             if(count($cart) == 0){
                 $message = 'Data cart list empty';
@@ -53,25 +111,14 @@ class CartController extends Controller
         return ApiFormatter::success(200, $message, $cart);
     }
 
-    // public function index(Request $request){
-
-    //     $cart = Cart::with('product.product_tag')->active();
-
-    //     if($request->has('type') && $request->type == 'count'){
-    //         $message = 'Data jumlah cart berhasil ditampilkan';
-    //         $cart = $cart->count();
-    //     }else{
-    //         $message = 'Data cart berhasil ditampilkan';
-    //         $cart = $cart->get();
-    //         if(count($cart) == 0) $message = 'Data cart list empty';
-    //     }
-
-    //     return ApiFormatter::success(200, $message, $cart);
-    // }
-
     public function detail($uuid){
 
-        $cart = Cart::with('product.product_tag')->active()->where(['uuid' => $uuid])->first();
+        $cart = Cart::active()->where(['uuid' => $uuid])->first();
+        $cart->load([
+            'product.product_uom' => function($query) use ($cart){
+                $query->where(['product_tmpl_id' => $cart->product_tmpl_id, 'product_uom_id' => $cart->product_uom_id]);
+            }, 'product.product_uom.product_pricelist','product.product_tag'
+        ]);
         if(empty($cart)){
             $message = 'Cart not found';
             return ApiFormatter::error(404, $message);
@@ -121,8 +168,12 @@ class CartController extends Controller
 
         Cart::updateOrCreate(['uuid' => $request->uuid], $request->all());
 
+        $data = Cart::where('uuid', $request->uuid)->with(['product.product_uom' => function($query) use ($request){
+            $query->where(['product_tmpl_id' => $request->product_tmpl_id, 'product_uom_id' => $request->product_uom_id]);
+        }, 'product.product_uom.product_pricelist'])->first();
+
         $message = 'Cart created successfully';
-        return ApiFormatter::success(200, $message);
+        return ApiFormatter::success(200, $message, $data);
     }
 
     public function select_cart($uuid = null, $is_checkout = null){

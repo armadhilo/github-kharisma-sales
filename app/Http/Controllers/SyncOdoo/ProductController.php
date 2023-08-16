@@ -16,6 +16,8 @@ class ProductController extends Controller
 {
     public function store_update(ProductRequest $request){
 
+        // return ApiFormatter::success(200, 'ini yang dikirim', $request->all());
+
         if($request->has('image')){
             //save image on google drive
             // Base64 encoded string
@@ -77,12 +79,15 @@ class ProductController extends Controller
 
         if($request->product_tag_id){
 
-            if(!is_array($request->product_tag_id)){
+            // $product_tag_id = json_decode($request->product_tag_id, true);
+            $product_tag_id = $request->product_tag_id;
+
+            if(!is_array($product_tag_id)){
                 return ApiFormatter::error(400, 'Product Tag ID harus berupa array');
             }
 
             $array = [];
-            foreach($request->product_tag_id as $item){
+            foreach($product_tag_id as $item){
                 $array[] = (int) $item;
             }
 

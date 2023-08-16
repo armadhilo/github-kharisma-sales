@@ -29,16 +29,16 @@ class ProductRequest extends FormRequest
         return [
             'product_id' => 'required',
             'default_code' => 'required',
-            'product_tmpl_id' => 'nullable',
-            'product_uom_id' => 'nullable',
-            'product_tag_id' => 'nullable',
-            'product_tag_id.*' => 'nullable',
-            'product_name' => 'nullable',
+            'product_tmpl_id' => 'required',
+            'product_uom_id' => 'required',
+            'product_tag_id' => 'required',
+            'product_tag_id.*' => 'required',
+            'product_name' => 'required',
             'image' => 'nullable',
             'image_medium' => 'nullable',
-            'unit' => 'nullable',
-            'weight' => 'nullable',
-            'qty_available' => 'nullable',
+            'unit' => 'required',
+            'weight' => 'required',
+            'qty_available' => 'required',
         ];
     }
 

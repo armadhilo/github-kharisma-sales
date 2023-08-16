@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Awobaz\Compoships\Compoships;
 
 class Cart extends Model
 {
-    use HasFactory;
+    use HasFactory,Compoships;
 
     protected $table = 'cart';
     protected $guarded = ['id'];
@@ -17,16 +18,20 @@ class Cart extends Model
         return $this->belongsTo(OdooProduct::class, 'product_id', 'product_id')->withTrashed();
     }
 
+    public function product_uom(){
+        return $this->belongsTo(OdooProductUom::class, ['product_tmpl_id', 'product_uom_id'], ['product_tmpl_id', 'product_uom_id']);
+    }
+
     public function user(){
         return $this->belongsTo(User::class)->withTrashed();
     }
 
     public function scopeActive($query){
-        $query->where(['user_id' => auth('api')->user()->id, 'status' => 0])->whereHas('product');
+        $query->where(['user_id' => auth('api')->user()->id, 'status' => 0])->has('product');
     }
 
     public function scopeBuyNow($query){
-        $query->where(['user_id' => auth('api')->user()->id, 'status' => 0, 'is_buy_now' => 1])->whereHas('product');
+        $query->where(['user_id' => auth('api')->user()->id, 'status' => 0, 'is_buy_now' => 1])->has('product');
     }
 
     public function getSisaStockAttribute(){

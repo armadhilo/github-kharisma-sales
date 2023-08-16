@@ -66,9 +66,6 @@ class SyncProductJob implements ShouldQueue
 
             $array_product_tmpl_product = [];
 
-            //get list data ODOO_PRODUCT table
-            $odoo_product = OdooProductOriginal::whereIn('product_id', $this->data)->get();
-
             $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
                 'product.product', 'search_read', [[['id', '=', $this->data]]], ['fields' => ['id','product_tmpl_id','uom_id','tag_ids','default_code','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
 

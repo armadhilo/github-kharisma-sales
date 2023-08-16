@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 
 use App\Helpers\ApiFormatter;
 use App\Http\Requests\KunjunganRequest;
-
+use App\Models\Config;
 use Carbon\Carbon;
 
 use App\Models\User;
 use App\Models\Kunjungan;
 use App\Models\SalesAttendance;
+use App\Models\SalesLog;
 
 class KunjunganController extends Controller
 {
@@ -35,6 +36,13 @@ class KunjunganController extends Controller
         $user = User::find($request->pelanggan_id);
         if(empty($user)){
             $message = 'Pelanggan tidak ditemukan atau sudah tidak aktif';
+            return ApiFormatter::error(400, $message);
+        }
+
+        $radius = $this->cekRadius($user->lng, $user->lat, $request->lng, $request->lat);
+        $max_radius = Config::where('config', 'MAX RADIUS KUNJUNGAN')->first()->value;
+        if($radius > $max_radius){
+            $message = "Oops! Radius anda adalah $radius sedangkan radius maksimal adalah $max_radius";
             return ApiFormatter::error(400, $message);
         }
 
@@ -65,6 +73,13 @@ class KunjunganController extends Controller
 
         }else{
 
+            //CREATE SALES LOG
+            SalesLog::create([
+                'sales_id' => auth('api')->user()->id,
+                'lat' => $request->lat,
+                'lng' => $request->lng,
+            ]);
+
             $kunjungan = Kunjungan::create([
                 'sales_id' => auth('api')->user()->id,
                 'pelanggan_id' => $request->pelanggan_id,
@@ -90,6 +105,20 @@ class KunjunganController extends Controller
         $message = "Data kunjungan retrieved successfully";
         $sales_attendance['user_login'] = auth('api')->user();
         return ApiFormatter::success(200, $message, $kunjungan);
+    }
+
+    private function cekRadius($lat1, $lon1, $lat2, $lon2) {
+        $earthRadius = 6371000; // Radius of the Earth in meters
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        $distance = $earthRadius * $c;
+
+        return round($distance);
     }
 
 }
