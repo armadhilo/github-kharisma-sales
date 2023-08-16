@@ -45,6 +45,21 @@
                     <div id="myMap" style="width: 100%; height: 500px;"></div>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="tb" width="100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">No</th>
+                                    <th scope="col" class="text-center">Latitude</th>
+                                    <th scope="col" class="text-center">Longitude</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -59,6 +74,26 @@
 
     $(document).ready(function(){
         list_data();
+    });
+
+    var tb = $('#tb').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "/admin/sales-log/detail-datatables/" + {{ $id }},
+            type: 'GET'
+        },
+        columnDefs: [{
+            className: 'text-center',
+            targets: [0,1,2]
+        }, ],
+        columns: [{
+                data: 'DT_RowIndex',
+                searchable: false,
+                orderable: false},
+            {   data: 'lat'},
+            {   data: 'lng'},
+        ]
     });
     
     var basemaps= {

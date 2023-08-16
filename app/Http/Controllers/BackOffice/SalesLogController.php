@@ -39,4 +39,11 @@ class SalesLogController extends Controller
                     ->addIndexColumn()
                     ->make(true);
     }
+
+    public function detail_datatables($id){
+        $data = SalesLog::where('sales_id', $id)->orderBy('created_at', 'asc')->get();
+        return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->make(true);
+    }
 }

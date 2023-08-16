@@ -76,6 +76,7 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::get('/','BackOffice\SalesLogController@index');
             Route::get('/detail/{id}','BackOffice\SalesLogController@detail');
             Route::get('/detail-data/{id}','BackOffice\SalesLogController@detail_data');
+            Route::get('/detail-datatables/{id}','BackOffice\SalesLogController@detail_datatables');
             Route::get('/datatables','BackOffice\SalesLogController@datatables');
         });
 

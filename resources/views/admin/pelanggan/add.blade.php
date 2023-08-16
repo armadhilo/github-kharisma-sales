@@ -515,7 +515,33 @@
 
    function get_sales(){
       let sales_pelanggan = {!! json_encode($sales_pelanggan->toArray()) !!};
-      console.log(sales_pelanggan)
+      if(sales_pelanggan !== null){
+            $('.sales-container').last().after(`
+            @foreach ($sales_pelanggan as $sp)
+            <div class="col-12 col-md-3 col-lg-3 sales-container d-flex align-items-center" style="gap: 15px">
+               <div class="form-group" style="flex: 6">
+                  <label>Pilih Sales</label>
+                  <select class="form-control select2 sales_id" name="sales_pelanggan_id[]">
+                     <option disabled selected>- Pilih -</option>
+                     @foreach ($sales as $item)
+                        @if(isset($data) && $sp->user_id == $item->id)
+                        <option value="{{ $item->id }}" selected>{{ $item->nama }}</option>
+                        @else
+                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                        @endif
+                     @endforeach
+                  </select>
+                  <span class="d-flex text-danger invalid-feedback" id="invalid-sales_pelanggan_id-feedback"></span>
+               </div>
+               <div style="flex: 1">
+                  <button type="button" class="btn btn-danger hapus-sales-button" onclick="hapus_sales(this)"><i class="fa fa-trash"></i></button>
+               </div>
+            </div>
+            @endforeach
+         `);
+         $('.sales-container').first().remove();
+         $('.select2').select2()
+      }
    }
 
    function tambah_sales(){
