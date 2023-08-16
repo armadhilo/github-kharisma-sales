@@ -5,6 +5,7 @@ namespace App\Http\Controllers\BackOffice;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PelangganRequest;
 use App\Models\AlamatPengiriman;
+use App\Models\SalesPelanggan;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -87,6 +88,17 @@ class PelangganController extends Controller
             $data = User::updateOrCreate(['id' => $request->id],$request->all() );
             AlamatPengiriman::updateOrCreate(['user_id' => $data->id],$request->all());
 
+            if($request->has(['id', 'sales_pelanggan_id', 'pelanggan_id'])){
+                SalesPelanggan::where('pelanggan_id', $request->pelanggan_id)->delete();
+            }
+
+            foreach($request->input('sales_pelanggan_id') as $item){
+                SalesPelanggan::create([
+                    'user_id' => $item,
+                    'pelanggan_id' => $request->pelanggan_id
+                ]);
+            }
+
             DB::commit();
         } catch(\Exception $e){
             DB::rollback();
@@ -123,6 +135,7 @@ class PelangganController extends Controller
 
                 $delete->delete();
                 $alamat->delete();
+                SalesPelanggan::where('pelanggan_id', $delete->pelanggan_id)->delete();
 
                 DB::commit();
             } catch(\Exception $e){

@@ -39,7 +39,15 @@
 <div class="section-body">
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-        <div class="card">
+      <form autocomplete="off" id="form_submit_request" action="/admin/pelanggan/store-update" method="POST">
+         <input hidden type="text" name="provinsi" class="form-control" value="NUSA TENGGARA TIMUR">
+         @if(isset($data))
+         @method('PUT')
+         <input type="hidden" value="update" name="method">
+         <input type="text" hidden class="form-control" value="{{$data->id}}" name="id" id="id">
+         <input type="text" hidden class="form-control" value="{{$data->pelanggan_id}}" name="pelanggan_id" id="pelanggan_id">
+         @endif
+         <div class="card">
             <div class="card-header">
                @if(!isset($data))
                <h4>Tambah Data Pelanggan</h4>
@@ -47,86 +55,124 @@
                <h4>Edit Data Pelanggan</h4>
                @endif
             </div>
-            <form autocomplete="off" id="form_submit_request" action="/admin/pelanggan/store-update" method="POST">
-                <input hidden type="text" name="provinsi" class="form-control" value="NUSA TENGGARA TIMUR">
-                @if(isset($data))
-                @method('PUT')
-                <input type="hidden" value="update" name="method">
-                <input type="text" hidden class="form-control" value="{{$data->id}}" name="id" id="id">
-                @endif
-               <div class="card-body pt-3">
-                  <div class="row">
-                     <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                           <label>Nama</label>
-                           <input type="text" name="nama" id="nama" value="@if(isset($data)) {{$data->nama}} @endif" class="form-control">
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-nama-feedback"></span>
-                        </div>
+            <div class="card-body pt-3">
+               <div class="row">
+                  <div class="col-12 col-md-3 col-lg-3">
+                     <div class="form-group">
+                        <label>Nama</label>
+                        <input type="text" name="nama" id="nama" value="@if(isset($data)) {{$data->nama}} @endif" class="form-control">
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-nama-feedback"></span>
                      </div>
-                     <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                           <label>Email</label>
-                           <input type="text" name="email" id="email" value="@if(isset($data)) {{$data->email}} @endif" class="form-control">
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-email-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-3 col-lg-3">
+                     <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" name="email" id="email" value="@if(isset($data)) {{$data->email}} @endif" class="form-control">
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-email-feedback"></span>
                      </div>
-                     <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                           <label>Pilih Sales</label>
-                           <select class="form-control select2" name="sales_id" id="sales_id">
-                              <option disabled selected>- Pilih -</option>
-                              @foreach ($sales as $item)
-                                 @if(isset($data) && $data->sales_id == $item->id)
-                                 <option value="{{ $item->id }}" selected>{{ $item->nama }}</option>
-                                 <p>testt</p>
-                                 @else
-                                 <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                 @endif
-                              @endforeach
-                           </select>
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-sales_id-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-3 col-lg-3">
+                     <div class="form-group">
+                        <label>Telepon</label>
+                        <input type="text" name="telepon" id="telepon" value="@if(isset($data)) {{$data->telepon}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-telepon-feedback"></span>
                      </div>
-                     <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                           <label>Telepon</label>
-                           <input type="text" name="telepon" id="telepon" value="@if(isset($data)) {{$data->telepon}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-telepon-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-2 col-lg-3">
+                     <div class="form-group">
+                        <label>Tipe Pelanggan</label>
+                        <select class="form-control select2" name="type_pelanggan" id="type_pelanggan">
+                           <option disabled selected>- Pilih -</option>
+                           <option value="flores" @if(isset($data) && $data->type_pelanggan == 'flores') selected @endif>Flores</option>
+                           <option value="grosir" @if(isset($data) && $data->type_pelanggan == 'grosir') selected @endif>Grosir</option>
+                           <option value="retail" @if(isset($data) && $data->type_pelanggan == 'retail') selected @endif>Retail</option>
+                        </select>
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-type_pelanggan-feedback"></span>
                      </div>
-                     <div class="col-12 col-md-2 col-lg-2">
-                        <div class="form-group">
-                           <label>Tipe Pelanggan</label>
-                           <select class="form-control select2" name="type_pelanggan" id="type_pelanggan">
-                              <option disabled selected>- Pilih -</option>
-                              <option value="flores" @if(isset($data) && $data->type_pelanggan == 'flores') selected @endif>Flores</option>
-                              <option value="grosir" @if(isset($data) && $data->type_pelanggan == 'grosir') selected @endif>Grosir</option>
-                              <option value="retail" @if(isset($data) && $data->type_pelanggan == 'retail') selected @endif>Retail</option>
-                           </select>
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-type_pelanggan-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-3 col-lg-3">
+                     <div class="form-group">
+                        <label>No KTP</label>
+                        <input type="text" name="no_ktp" id="no_ktp" value="@if(isset($data)) {{$data->no_ktp}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-no_ktp-feedback"></span>
                      </div>
-                     <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                           <label>No KTP</label>
-                           <input type="text" name="no_ktp" id="no_ktp" value="@if(isset($data)) {{$data->no_ktp}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-no_ktp-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-4 col-lg-3">
+                     <div class="form-group">
+                        <label>Nama NPWP</label>
+                        <input type="text" name="nama_npwp" id="nama_npwp" value="@if(isset($data)) {{$data->nama_npwp}} @endif" class="form-control" autocomplete="off">
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-nama_npwp-feedback"></span>
                      </div>
-                     <div class="col-12 col-md-4 col-lg-4">
-                        <div class="form-group">
-                           <label>Nama NPWP</label>
-                           <input type="text" name="nama_npwp" id="nama_npwp" value="@if(isset($data)) {{$data->nama_npwp}} @endif" class="form-control" autocomplete="off">
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-nama_npwp-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-3 col-lg-3">
+                     <div class="form-group">
+                        <label>No NPWP</label>
+                        <input type="text" name="no_npwp" id="no_npwp" value="@if(isset($data)) {{$data->no_npwp}} @endif" onkeypress="return hanyaAngka(event,false);" autocomplete="off" class="form-control">
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-no_npwp-feedback"></span>
                      </div>
-                     <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                           <label>No NPWP</label>
-                           <input type="text" name="no_npwp" id="no_npwp" value="@if(isset($data)) {{$data->no_npwp}} @endif" onkeypress="return hanyaAngka(event,false);" autocomplete="off" class="form-control">
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-no_npwp-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-3">
+                     <div class="form-group">
+                        <label>Nama Toko</label>
+                        <input type="text" name="nama_toko" id="nama_toko" value="@if(isset($data)) {{$data->nama_toko}} @endif" class="form-control">
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-nama_toko-feedback"></span>
                      </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-6">
+                     <div class="form-group">
+                        <label>Alamat</label>
+                        <textarea class="form-control" style="min-height: 90px" name="alamat">@isset($data->alamat) {{$data->alamat}} @endisset</textarea>
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-alamat-feedback"></span>
+                     </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-6">
+                     <div class="form-group">
+                        <label>Alamat Toko</label>
+                        <textarea class="form-control" style="min-height: 90px" name="alamat_toko">@isset($data->alamat_toko) {{$data->alamat_toko}} @endisset</textarea>
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-alamat_toko-feedback"></span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="card">
+            <div class="card-header">
+               <h4>Sales</h4>
+            </div>
+            <div class="card-body pt-3">
+               <div class="row">
+                  <div class="col-12 col-md-3 col-lg-3 sales-container d-flex align-items-center" style="gap: 15px">
+                     <div class="form-group" style="flex: 6">
+                        <label>Pilih Sales</label>
+                        <select class="form-control select2 sales_id" name="sales_pelanggan_id[]">
+                           <option disabled selected>- Pilih -</option>
+                           @foreach ($sales as $item)
+                              @if(isset($data) && $data->sales_id == $item->id)
+                              <option value="{{ $item->id }}" selected>{{ $item->nama }}</option>
+                              @else
+                              <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                              @endif
+                           @endforeach
+                        </select>
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-sales_pelanggan_id-feedback"></span>
+                     </div>
+                     <div style="flex: 1; display: none">
+                        <button type="button" class="btn btn-danger hapus-sales-button" onclick="hapus_sales(this)"><i class="fa fa-trash"></i></button>
+                     </div>
+                  </div>
+                  <div class="col-12 col-md-3 col-lg-3 d-flex align-items-center">
+                     <button type="button" class="btn btn-success" onclick="tambah_sales()"><i class="fa fa-plus mr-1"></i>Tambah Sales</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="card">
+            <div class="card-header">
+               <h4>Lokasi Pelanggan</h4>
+            </div>
+            <div class="card-body pt-3">
+               <div class="row">
+                  <div class="col-12 row">
                      @if(isset($data))
                      <div class="col-12 col-md-6 col-lg-6">
                         <div class="form-group">
@@ -154,110 +200,88 @@
                         </div>
                      </div>
                      @endif
-                    <div class="col-12 col-md-6 col-lg-6">
-                        <div class="form-group">
-                           <label>Nama Toko</label>
-                           <input type="text" name="nama_toko" id="nama_toko" value="@if(isset($data)) {{$data->nama_toko}} @endif" class="form-control">
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-nama_toko-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-3 col-lg-3">
+                     <div class="form-group">
+                           <label>Kota</label>
+                           <input hidden type="text" id="data_kota" name="kota_id" class="form-control" value="@if(isset($data)){{$data->kota_id}}@endif">
+                           <select class="form-control select2" name="kota" onchange="change_kota()" id="kota">
+                              <option selected disabled>- Pilih -</option>
+                           </select>
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-kota-feedback"></span>
                      </div>
-                    <div class="col-12 col-md-6 col-lg-6">
-                        <div class="form-group">
-                           <label>Alamat</label>
-                           <textarea class="form-control" style="min-height: 90px" name="alamat">@isset($data->alamat) {{$data->alamat}} @endisset</textarea>
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-alamat-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-3 col-lg-3">
+                     <div class="form-group">
+                           <label>Kecamatan</label>
+                           <input hidden type="text" id="data_kecamatan" name="kecamatan_id" class="form-control" value="@if(isset($data)){{$data->kecamatan_id}}@endif">
+                           <select class="form-control select2" name="kecamatan" onchange="change_kecamatan()" id="kecamatan" @if(!isset($data->kecamatan)){{ 'disabled' }}@endif>
+                              <option selected disabled>- Pilih -</option>
+                           </select>
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-kecamatan-feedback"></span>
                      </div>
-                     <div class="col-12 col-md-6 col-lg-6">
-                        <div class="form-group">
-                           <label>Alamat Toko</label>
-                           <textarea class="form-control" style="min-height: 90px" name="alamat_toko">@isset($data->alamat_toko) {{$data->alamat_toko}} @endisset</textarea>
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-alamat_toko-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-3 col-lg-3">
+                     <div class="form-group">
+                           <label>Kelurahan</label>
+                           <input type="text" class="form-control" id="kelurahan" name="kelurahan" @if(!isset($data)){{ "disabled" }}@endif value="@if(isset($data)){{ $data->kelurahan }}@endif">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-kelurahan-feedback"></span>
                      </div>
-                     <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label>Kota</label>
-                            <input hidden type="text" id="data_kota" name="kota_id" class="form-control" value="@if(isset($data)){{$data->kota_id}}@endif">
-                            <select class="form-control select2" name="kota" onchange="change_kota()" id="kota">
-                                <option selected disabled>- Pilih -</option>
-                            </select>
-                            <span class="d-flex text-danger invalid-feedback" id="invalid-kota-feedback"></span>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label>Kecamatan</label>
-                            <input hidden type="text" id="data_kecamatan" name="kecamatan_id" class="form-control" value="@if(isset($data)){{$data->kecamatan_id}}@endif">
-                            <select class="form-control select2" name="kecamatan" onchange="change_kecamatan()" id="kecamatan" @if(!isset($data->kecamatan)){{ 'disabled' }}@endif>
-                                <option selected disabled>- Pilih -</option>
-                            </select>
-                            <span class="d-flex text-danger invalid-feedback" id="invalid-kecamatan-feedback"></span>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label>Kelurahan</label>
-                            <input type="text" class="form-control" id="kelurahan" name="kelurahan" @if(!isset($data)){{ "disabled" }}@endif value="@if(isset($data)){{ $data->kelurahan }}@endif">
-                            <span class="d-flex text-danger invalid-feedback" id="invalid-kelurahan-feedback"></span>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label>Kode Pos</label>
-                            <input type="text" class="form-control" id="zip" name="zip" value="@if(isset($data)){{ $data->zip }}@endif">
-                            <span class="d-flex text-danger invalid-feedback" id="invalid-zip-feedback"></span>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-5 col-lg-5">
-                        <div class="form-group">
-                           <label>Latitude</label>
-                           <input type="text" name="lat_search" id="lat_search" class="form-control">
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-3 col-lg-3">
+                     <div class="form-group">
+                           <label>Kode Pos</label>
+                           <input type="text" class="form-control" id="zip" name="zip" value="@if(isset($data)){{ $data->zip }}@endif">
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-zip-feedback"></span>
                      </div>
-                     <div class="col-12 col-md-5 col-lg-5">
-                        <div class="form-group">
-                           <label>Longitude</label>
-                           <input type="text" name="lng_search" id="lng_search" class="form-control">
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-5 col-lg-5">
+                     <div class="form-group">
+                        <label>Latitude</label>
+                        <input type="text" name="lat_search" id="lat_search" class="form-control">
                      </div>
-                     <div class="col-12 col-md-1 col-lg-1 mt-2">
-                        <label></label>
-                        <button class="btn btn-primary" id="button_search_longlat">Search</button>
+                  </div>
+                  <div class="col-12 col-md-5 col-lg-5">
+                     <div class="form-group">
+                        <label>Longitude</label>
+                        <input type="text" name="lng_search" id="lng_search" class="form-control">
                      </div>
-                     <div class="col-12 col-md-12 col-lg-12">
-                        <div class="form-group">
-                           <label>Koordinat Lokasi</label>
-                           <div id="myMap" style="width: 100%; height: 400px;"></div>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-1 col-lg-1 mt-1 d-flex align-items-center">
+                     <button class="btn btn-primary" id="button_search_longlat">Search</button>
+                  </div>
+                  <div class="col-12 col-md-12 col-lg-12">
+                     <div class="form-group">
+                        <label>Koordinat Lokasi</label>
+                        <div id="myMap" style="width: 100%; height: 400px;"></div>
                      </div>
-                     <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                           <label>Latitude</label>
-                           <input type="text" name="lat" id="lat" value="@if(isset($data)){{$data->lat}}@endif" class="form-control" readonly>
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-lat-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-3 col-lg-3">
+                     <div class="form-group">
+                        <label>Latitude</label>
+                        <input type="text" name="lat" id="lat" value="@if(isset($data)){{$data->lat}}@endif" class="form-control" readonly>
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-lat-feedback"></span>
                      </div>
-                     <div class="col-12 col-md-3 col-lg-3">
-                        <div class="form-group">
-                           <label>Longitude</label>
-                           <input type="text" name="lng" id="lng" value="@if(isset($data)){{$data->lng}}@endif" class="form-control" readonly>
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-lng-feedback"></span>
-                        </div>
+                  </div>
+                  <div class="col-12 col-md-3 col-lg-3">
+                     <div class="form-group">
+                        <label>Longitude</label>
+                        <input type="text" name="lng" id="lng" value="@if(isset($data)){{$data->lng}}@endif" class="form-control" readonly>
+                        <span class="d-flex text-danger invalid-feedback" id="invalid-lng-feedback"></span>
                      </div>
                   </div>
                </div>
-               @if(Auth::user()->role != 4)
-               <div class="card-footer text-right">
-                  @if(!isset($data))
-                  <button type="button" onClick="history.go(-1); return false;" class="btn btn-secondary mr-2">Back</button>
-                  @endif
-                  <button type="submit" class="btn btn-success"><i class="fa fa-save m-1"></i> Save</button>
-               </div>
+            </div>
+            @if(Auth::user()->role != 4)
+            <div class="card-footer text-right">
+               @if(!isset($data))
+               <button type="button" onClick="history.go(-1); return false;" class="btn btn-secondary mr-2">Back</button>
                @endif
-            </form>
+               <button type="submit" class="btn btn-success"><i class="fa fa-save m-1"></i> Save</button>
+            </div>
+            @endif
          </div>
-     </div>
+      </form>
   </div>
 </div>
 @endsection
@@ -446,6 +470,68 @@
       
    });
 
+   // function get_sales_value(){
+   //    var selectedValues = [];
+
+   //      // Iterate through each select element
+   //    $('.sales_id').each(function() {
+   //       // Get the selected value and add it to the array
+   //       var selectedValue = $(this).find('option:selected').val();
+   //       selectedValues.push(selectedValue);
+   //    });
+   //    return selectedValues;
+   // }
+
+   // function sales_change(value){
+   //    let value_element = get_sales_value().filter(function(){
+   //       return $(this) !== value;
+   //    })
+   //    console.log(value_element)
+   // };
+
+   function tambah_sales(){
+      $('.sales-container').last().after(`
+         <div class="col-12 col-md-3 col-lg-3 sales-container d-flex align-items-center" style="gap: 15px">
+            <div class="form-group" style="flex: 6">
+               <label>Pilih Sales</label>
+               <select class="form-control select2 sales_id" name="sales_pelanggan_id[]">
+                  <option disabled selected>- Pilih -</option>
+                  @foreach ($sales as $item)
+                     @if(isset($data) && $data->sales_id == $item->id)
+                     <option value="{{ $item->id }}" selected>{{ $item->nama }}</option>
+                     @else
+                     <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                     @endif
+                  @endforeach
+               </select>
+               <span class="d-flex text-danger invalid-feedback" id="invalid-sales_pelanggan_id-feedback"></span>
+            </div>
+            <div style="flex: 1">
+               <button type="button" class="btn btn-danger hapus-sales-button" onclick="hapus_sales(this)"><i class="fa fa-trash"></i></button>
+            </div>
+         </div>
+      `);
+      if($('.sales-container').length > 1){
+         $('.hapus-sales-button').parent().show();
+         // $.each(get_sales_value(), function(i, value){
+         //    $(`.sales_id option[value="${value}"]`).prop('disabled', true);
+         // });
+      }
+      $('.select2').select2()
+   };
+
+   function hapus_sales(element){
+      $(element).parent().parent().remove();
+      // let element_value = $(element).parent().siblings().find('select').val(); 
+      // if(element_value !== null){
+      //    $(`.sales_id option[value="${element_value}"]`).prop('disabled', false);
+      // }
+      // console.log($(element).parent().siblings().find('select').val());
+      if($('.sales-container').length <= 1){
+         $('.hapus-sales-button').parent().hide();
+      }
+   }
+
    $('#button_search_longlat').click(function(e){
       e.preventDefault();
 
@@ -467,6 +553,37 @@
        $("#modal_loading").modal('show');
         $.ajax({
             url : "/api/city-raja-ongkir/23",
+            type: "GET",
+            dataType: "JSON",
+            success: function(response){
+               var data_kota = $("#data_kota").val();
+               let check_loading = false;
+               $("#kota").empty();
+               $("#kota").append(`<option selected disabled>- Pilih -</option>`);
+               for (var i = 0; i < response.data.length; i++) {
+                  if(data_kota == response.data[i]['city_id']){
+                     $("#kota").append(`<option value="${response.data[i]['city_name']}" data-id="${response.data[i]['city_id']}" postal_code="${response.data[i]['postal_code']}" selected>${response.data[i]['city_name']}</option>`);
+                     check_loading = true;
+                     change_kota();
+                  }else{
+                     $("#kota").append(`<option value="${response.data[i]['city_name']}" data-id="${response.data[i]['city_id']}" postal_code="${response.data[i]['postal_code']}">${response.data[i]['city_name']}</option>`);
+                  }
+               }
+               if (check_loading == false){
+                  setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+               } else {
+                  setTimeout(function () {  $('#modal_loading').modal('hide'); }, 15000);
+               }
+            },error: function (jqXHR, textStatus, errorThrown){
+                swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
+            }
+        });
+    }
+
+    function get_sales_id(id){
+       $("#modal_loading").modal('show');
+        $.ajax({
+            url : "/admin/master/get-data-where-field-id_get/SalesPelanggan/pelanggan_id/" + id,
             type: "GET",
             dataType: "JSON",
             success: function(response){
