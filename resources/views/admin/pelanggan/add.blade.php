@@ -60,28 +60,28 @@
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                         <label>Nama</label>
-                        <input readonly type="text" name="nama" id="nama" value="@if(isset($data)) {{$data->nama}} @endif" class="form-control">
+                        <input type="text" name="nama" id="nama" value="@if(isset($data)){{$data->nama}}@endif" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-nama-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                         <label>Email</label>
-                        <input readonly type="text" name="email" id="email" value="@if(isset($data)) {{$data->email}} @endif" class="form-control">
+                        <input type="text" name="email" id="email" value="@if(isset($data)){{$data->email}}@endif" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-email-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                         <label>Telepon</label>
-                        <input readonly type="text" name="telepon" id="telepon" value="@if(isset($data)) {{$data->telepon}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
+                        <input type="text" name="telepon" id="telepon" value="@if(isset($data)){{$data->telepon}}@endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-telepon-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-2 col-lg-3">
                      <div class="form-group">
                         <label>Tipe Pelanggan</label>
-                        <input readonly type="text" name="type_pelanggan" id="type_pelanggan" value="@if(isset($data)) {{$data->type_pelanggan}} @endif" class="form-control">
+                        <input readonly type="text" name="type_pelanggan" id="type_pelanggan" value="@if(isset($data)){{$data->type_pelanggan}}@endif" class="form-control">
                         {{-- <select class="form-control select2" name="type_pelanggan" id="type_pelanggan">
                            <option disabled selected>- Pilih -</option>
                            <option value="flores" @if(isset($data) && $data->type_pelanggan == 'flores') selected @endif>Flores</option>
@@ -94,49 +94,49 @@
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                         <label>No KTP</label>
-                        <input readonly type="text" name="no_ktp" id="no_ktp" value="@if(isset($data)) {{$data->no_ktp}} @endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
+                        <input type="text" name="no_ktp" id="no_ktp" value="@if(isset($data)){{$data->no_ktp}}@endif" class="form-control" onkeypress="return hanyaAngka(event,false);">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-no_ktp-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-4 col-lg-3">
                      <div class="form-group">
                         <label>Nama NPWP</label>
-                        <input readonly type="text" name="nama_npwp" id="nama_npwp" value="@if(isset($data)) {{$data->nama_npwp}} @endif" class="form-control" autocomplete="off">
+                        <input type="text" name="nama_npwp" id="nama_npwp" value="@if(isset($data)){{$data->nama_npwp}}@endif" class="form-control" autocomplete="off">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-nama_npwp-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                         <label>No NPWP</label>
-                        <input readonly type="text" name="no_npwp" id="no_npwp" value="@if(isset($data)) {{$data->no_npwp}} @endif" onkeypress="return hanyaAngka(event,false);" autocomplete="off" class="form-control">
+                        <input type="text" name="no_npwp" id="no_npwp" value="@if(isset($data)){{$data->no_npwp}}@endif" onkeypress="return hanyaAngka(event,false);" autocomplete="off" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-no_npwp-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-6 col-lg-3">
                      <div class="form-group">
                         <label>Nama Toko</label>
-                        <input readonly type="text" name="nama_toko" id="nama_toko" value="@if(isset($data)) {{$data->nama_toko}} @endif" class="form-control">
+                        <input type="text" name="nama_toko" id="nama_toko" value="@if(isset($data)){{$data->nama_toko}}@endif" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-nama_toko-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-5 col-lg-5">
                     <div class="form-group">
                         <label>Street</label>
-                        <input readonly type="text" name="street" id="street" value="@if(isset($data)) {{$data->street}} @endif" class="form-control">
+                        <input type="text" name="street" id="street" value="@if(isset($data)){{$data->street}}@endif" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-street-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-5 col-lg-5">
                     <div class="form-group">
                         <label>Street 2</label>
-                        <input readonly type="text" name="street2" id="street2" value="@if(isset($data)) {{$data->street2}} @endif" class="form-control">
+                        <input type="text" name="street2" id="street2" value="@if(isset($data)){{$data->street2}}@endif" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-street2-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-2 col-lg-2">
                     <div class="form-group">
                         <label>City</label>
-                        <input readonly type="text" name="city" id="city" value="@if(isset($data)) {{$data->city}} @endif" class="form-control">
+                        <input type="text" name="city" id="city" value="@if(isset($data)){{$data->city}}@endif" class="form-control">
                         <span class="d-flex text-danger invalid-feedback" id="invalid-city-feedback"></span>
                      </div>
                   </div>
@@ -230,7 +230,7 @@
                            <select class="form-control select2" name="kota" onchange="change_kota()" id="kota">
                               <option selected disabled>- Pilih -</option>
                            </select>
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-kota-feedback"></span>
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-kota_id-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-3 col-lg-3">
@@ -240,20 +240,20 @@
                            <select class="form-control select2" name="kecamatan" onchange="change_kecamatan()" id="kecamatan" @if(!isset($data->kecamatan)){{ 'disabled' }}@endif>
                               <option selected disabled>- Pilih -</option>
                            </select>
-                           <span class="d-flex text-danger invalid-feedback" id="invalid-kecamatan-feedback"></span>
+                           <span class="d-flex text-danger invalid-feedback" id="invalid-kecamatan_id-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                            <label>Kelurahan</label>
-                           <input type="text" class="form-control" id="kelurahan" name="kelurahan" @if(!isset($data)){{ "disabled" }}@endif value="@if(isset($data)){{ $data->kelurahan }}@endif">
+                           <input type="text" class="form-control" id="kelurahan" name="kelurahan" @if(!isset($data)){{ "disabled" }}@endif value="@if(isset($data)){{$data->kelurahan}}@endif">
                            <span class="d-flex text-danger invalid-feedback" id="invalid-kelurahan-feedback"></span>
                      </div>
                   </div>
                   <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                            <label>Kode Pos</label>
-                           <input type="text" class="form-control" id="zip" name="zip" value="@if(isset($data)){{ $data->zip }}@endif">
+                           <input type="text" class="form-control" id="zip" name="zip" value="@if(isset($data)){{$data->zip}}@endif">
                            <span class="d-flex text-danger invalid-feedback" id="invalid-zip-feedback"></span>
                      </div>
                   </div>
