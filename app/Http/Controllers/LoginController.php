@@ -40,7 +40,7 @@ class LoginController extends Controller
             'password'  => $request->input('password'),
         ];
 
-        auth::attempt($data);
+        auth::attempt($data, true); // add parameter true to prevent logout when refresh
 
         if (Auth::check()) {
 

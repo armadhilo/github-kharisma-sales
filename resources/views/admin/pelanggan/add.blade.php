@@ -460,6 +460,8 @@
          }
       })
 
+      get_sales();
+
       get_kota();
 
       if($('#lat').val() !== "" && $('#lng').val() !== ""){
@@ -510,6 +512,11 @@
    //    })
    //    console.log(value_element)
    // };
+
+   function get_sales(){
+      let sales_pelanggan = {!! json_encode($sales_pelanggan->toArray()) !!};
+      console.log(sales_pelanggan)
+   }
 
    function tambah_sales(){
       $('.sales-container').last().after(`

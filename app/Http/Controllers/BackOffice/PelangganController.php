@@ -34,6 +34,7 @@ class PelangganController extends Controller
     public function detail($id){
         $data['data'] =  User::where('type', 2)->find($id);
         $data['sales'] = User::where('type', 1)->get();
+        $data['sales_pelanggan'] = SalesPelanggan::where('pelanggan_id', $data['data']->pelanggan_id)->get();
         return view('admin.pelanggan.add',$data);
     }
 
