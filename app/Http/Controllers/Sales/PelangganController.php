@@ -106,7 +106,7 @@ class PelangganController extends Controller
         //create customer odoo
         $request_odoo = new \Illuminate\Http\Request();
         $request_odoo->merge(['name' => $request->nama]);
-        $request_odoo->merge(['street' => $request->alamat]);
+        $request_odoo->merge(['street' => $request->street]);
         $request_odoo->merge(['phone' => $telepon_custom]);
         $request_odoo->merge(['zip' => $request->zip]);
         $pelanggan_id = OdooApi::createCustomer($request_odoo);
