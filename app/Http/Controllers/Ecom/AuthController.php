@@ -62,7 +62,7 @@ class AuthController extends Controller
             ];
 
             //check apakah user dengan email tersebut telah lengkap datanya
-            $user = User::where(['email', $request->email])->pelangganActive()->first();
+            $user = User::where(['email' => $request->email])->pelangganActive()->first();
             if(empty($user)){
                 $message = 'Data anda belum lengkap untuk login.';
                 return ApiFormatter::error(400, $message);
