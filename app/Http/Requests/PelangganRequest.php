@@ -33,7 +33,7 @@ class PelangganRequest extends FormRequest
             'alamat' => 'required',
             'alamat_toko' => 'required',
             'type_pelanggan' => 'required',
-            'sales_id' => 'required',
+            'sales_pelanggan_id' => 'required',
             'email' => [
                 Rule::when(request()->isMethod('POST'), 'required|email|unique:users,email,' . $this->id),
                 Rule::when(request()->isMethod('PUT'), 'nullable|email'),
