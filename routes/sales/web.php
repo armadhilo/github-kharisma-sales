@@ -107,6 +107,14 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::post('/store-update', 'BackOffice\JasaPengirimanController@store_update');
         });
 
+        Route::prefix('config')->group(function () {
+            Route::get('/','BackOffice\ConfigController@index');
+            Route::get('/detail/{id}','BackOffice\ConfigController@detail');
+            Route::get('/datatables','BackOffice\ConfigController@datatables');
+
+            Route::post('/store-update','BackOffice\ConfigController@store_update');
+        });
+
     });
 });
 

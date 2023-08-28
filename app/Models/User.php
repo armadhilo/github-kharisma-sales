@@ -96,4 +96,8 @@ class User extends Authenticatable
     public function alamat_pengiriman(){
         return $this->hasOne(AlamatPengiriman::class);
     }
+
+    public function sales_pelanggan(){
+        return $this->hasMany(SalesPelanggan::class, 'pelanggan_id', 'pelanggan_id');
+    }
 }

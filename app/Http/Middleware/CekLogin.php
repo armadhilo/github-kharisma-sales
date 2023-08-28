@@ -40,6 +40,7 @@ class CekLogin
                 9 => 'admin/sales-log',
                 10 => 'admin/transaksi',
                 11 => 'admin/jasa-pengiriman',
+                12 => 'admin/config',
             ];
 
             $allowedPrefix = array_map(function ($number) use ($mapping) {

@@ -88,6 +88,9 @@
           @if (Auth::user()->access_menu == 0 || in_array(11, Auth::user()->access_menu))
           <li class="nav-item dropdown @if($url_menu == "jasa-pengiriman") active @endif"><a href="/admin/jasa-pengiriman" class="nav-link"><i class="fas fa-truck"></i><span>Jasa Pengiriman</span></a></li>
           @endif
+          @if (Auth::user()->access_menu == 0 || in_array(12, Auth::user()->access_menu))
+          <li class="nav-item dropdown @if($url_menu == "config") active @endif"><a href="/admin/config" class="nav-link"><i class="fas fa-cogs"></i><span>Config</span></a></li>
+          @endif
           @endif
         </ul>
 
