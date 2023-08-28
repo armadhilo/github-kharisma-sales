@@ -25,7 +25,9 @@ class PelangganController extends Controller
         #filter
             # status_pelanggan -> active | all [default all]
 
-        $pelanggan = User::where(['type' => 2])
+        $pelanggan = User::where(['type' => 2])->whereHas('sales_pelanggan', function($query){
+            $query->where('user_id', auth('api')->user()->id);
+        })
             ->where(function($query) use ($request){
                 $query->orWhere('nama', 'LIKE', "%$request->search%")
                 ->orWhere('nama_toko', 'LIKE', "%$request->search%")
