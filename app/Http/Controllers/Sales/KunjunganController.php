@@ -33,19 +33,19 @@ class KunjunganController extends Controller
             return ApiFormatter::error(400, $message);
         }
 
-        //cek apakah sales mempunyai hak untuk customer tersebut
-         $sales_pelanggan = SalesPelanggan::where(['user_id' => auth('api')->user()->id, 'pelanggan_id' => $request->pelanggan_id])->first();
-         if(empty($sales_pelanggan)){
-             $message = 'Sales tidak mempunyai akses terhadap pelanggan tersebut';
-             return ApiFormatter::error(400, $message);
-         }
-
         //check apakah ada pelanggan tersebut
         $user = User::find($request->pelanggan_id);
         if(empty($user)){
             $message = 'Pelanggan tidak ditemukan atau sudah tidak aktif';
             return ApiFormatter::error(400, $message);
         }
+
+        //cek apakah sales mempunyai hak untuk customer tersebut
+         $sales_pelanggan = SalesPelanggan::where(['user_id' => auth('api')->user()->id, 'pelanggan_id' => $user->pelanggan_id])->first();
+         if(empty($sales_pelanggan)){
+             $message = 'Sales tidak mempunyai akses terhadap pelanggan tersebut';
+             return ApiFormatter::error(400, $message);
+         }
 
         if(empty($user->lng) || empty($user->lat)){
             $message = 'Harap update lokasi pelanggan dulu karena lokasi belum di set';
