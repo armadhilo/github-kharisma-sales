@@ -74,9 +74,7 @@ class SyncProductJob implements ShouldQueue
                 $this->fail(new \Exception($product['faultString']));
             }
 
-            $is_array = is_array($product) && is_object($product);
-
-            if($is_array || count($product)){
+            if(is_array($product) && count($product)){
                 foreach($product as $item){
 
                     $array_insert_product = [
@@ -170,8 +168,7 @@ class SyncProductJob implements ShouldQueue
                     $product_pricelist = $this->models->execute_kw($this->db, $this->uid, $this->password,
                     'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => []]);
 
-                    $is_array = is_array($product_pricelist) && is_object($product_pricelist);
-                    if($is_array || count($product_pricelist)){
+                    if(is_array($product_pricelist) && count($product_pricelist)){
 
                         //delete pricelist yang akan diupdate harganya
                         DB::table('odoo_product_uom')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
