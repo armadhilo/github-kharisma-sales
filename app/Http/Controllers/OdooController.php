@@ -54,11 +54,13 @@ class OdooController extends Controller
         // $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
         // 'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 1]);
 
-        // dd($pelanggan);
+        // TOTAL PRODUCT
+        return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        'product.product', 'search', [[['active','=', True]]]);
 
         //GET CUSTOMER
-        // return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        // 'res.partner', 'search_read', [[['active','=', True]]], ['fields' => ['id','email','name','mobile','display_name','street','street2','city','zip'], 'limit'=> 100]);
+        return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        'res.partner', 'search_read', [[['active','=', True]]], ['fields' => ['property_product_pricelist','id','email','name','mobile','display_name','npwp','npwp_name','id_nik','street','street2','city','zip'], 'limit'=> 1]);
 
         //GET PRODUCT
         return $this->models->execute_kw($this->db, $this->uid, $this->password,
@@ -308,7 +310,6 @@ class OdooController extends Controller
 
     public function sync_product(Request $request){
 
-        $content = request()->file('file');
 
         DB::table('jobs')->truncate();
         DB::table('failed_jobs')->truncate();
@@ -329,10 +330,15 @@ class OdooController extends Controller
 
         #=========PRODUCT===========#
 
-        // $product_id = "37234, 36228, 37235, 37236, 38716, 37232";
-        $product_id = file_get_contents($content);
-        $product_id = explode(", ",$product_id);
-        $chunk = array_chunk($product_id, 10);
+        //WITH FILE
+        // $content = request()->file('file');
+        // $product_id = file_get_contents($content);
+        // $product_id = explode(", ",$product_id);
+        // $chunk = array_chunk($product_id, 10);
+
+        //WITH ODOO GET ID
+        $product_id = $this->models->execute_kw($this->db, $this->uid, $this->password,'product.product', 'search', [[['active','=', True]]]);
+        $chunk = array_chunk($product_id, 20);
 
         foreach($chunk as $item){
             dispatch(new SyncProductJob($item));
@@ -541,8 +547,11 @@ class OdooController extends Controller
 
     public function sync_pelanggan(){
 
+        DB::table('jobs')->truncate();
+        DB::table('failed_jobs')->truncate();
+
         $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'res.partner', 'search', [[['active','=', True]]], ['limit'=> 100]);
+        'res.partner', 'search', [[['active','=', True]]]);
 
         $chunk = array_chunk($pelanggan, 20);
 

@@ -59,7 +59,8 @@
             <div class="card-header">
                <h4>Data Produk</h4>
                <div class="card-header-action">
-                  <button type="button" class="btn btn-success" onclick="show_modal_sync()"><i class="fa fa-sync mr-1"></i> Sync Produk</button>
+                  <button hidden type="button" class="btn btn-success" onclick="show_modal_sync()"><i class="fa fa-sync mr-1"></i> Sync Produk</button>
+                  <button type="button" class="btn btn-success mr-2" onclick="sync_product()"><i class="fa fa-sync mr-1"></i>Sync Product</button>
                </div>
             </div>
             <div class="card-body">
@@ -268,24 +269,35 @@
         $('.progress').addClass('d-none');
     }
 
-    // function sync_produk(){
-    //     $("#modal_loading").modal('show');
-    //     $.ajax({
-    //         url : "/api/odoo/sync-product",
-    //         type: "GET",
-    //         dataType: "JSON",
-    //         success: function(response){
-    //             setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
-    //             if(response.status === 200){
-    //                 swal(response.message, {  icon: 'success', });
-    //             }else{
-    //                 swal(response.message, {  icon: 'error', });
-    //             }
-    //         },error: function (jqXHR, textStatus, errorThrown){
-    //             setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
-    //             swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
-    //         }
-    //     });
-    // }
+    function sync_product(){
+        swal({
+             title: 'Yakin?',
+             text: 'Apakah anda yakin akan sync data product?',
+             icon: 'warning',
+             buttons: true,
+             dangerMode: true,
+       })
+       .then((willDelete) => {
+             if (willDelete) {
+                $("#modal_loading").modal('show');
+                    $.ajax({
+                        url : "/api/odoo/sync-product",
+                        type: "GET",
+                        dataType: "JSON",
+                        success: function(response){
+                            setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                            if(response.status === 200){
+                                swal(response.message, {  icon: 'success', });
+                            }else{
+                                swal(response.message, {  icon: 'error', });
+                            }
+                        },error: function (jqXHR, textStatus, errorThrown){
+                            setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                            swal("Oops! Terjadi kesalahan segera hubungi tim IT (" + errorThrown + ")", {  icon: 'error', });
+                        }
+                    });
+             }
+        })
+    }
 </script>
 @endsection
