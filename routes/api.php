@@ -29,6 +29,7 @@ Route::get('/sales-email', 'DataMasterController@get_sales_email');
 Route::group(['prefix' => 'odoo'], function(){
     Route::get('/try', 'OdooController@try_code');
     Route::post('/sync-product', 'OdooController@sync_product');
+    Route::post('/sync-product-dummy', 'OdooController@sync_product_dummy');
     Route::get('/sync-pelanggan', 'OdooController@sync_pelanggan');
     Route::get('/sync-status', 'OdooController@sync_status');
 });
