@@ -66,10 +66,9 @@ class SyncPelangganJob implements ShouldQueue
 
         try{
             $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                'res.partner', 'search_read', [[['id', '=', $this->data], ['active','=', True]]], ['fields' => ['property_product_pricelist','id','email','name','mobile','display_name','street','street2','city','zip']]);
+                'res.partner', 'search_read', [[['id', '=', $this->data], ['active','=', True]]], ['fields' => ['property_product_pricelist','id','email','name','mobile','display_name','npwp','npwp_name','id_nik','street','street2','city','zip']]);
 
-            $is_array = is_array($pelanggan) && is_object($pelanggan);
-            if($is_array || count($pelanggan)){
+            if(is_array($pelanggan) || count($pelanggan)){
                 foreach($pelanggan as $item){
 
                     //jika pelannggan punya nama
