@@ -169,10 +169,10 @@
                         <select class="form-control select2 sales_id" name="sales_pelanggan_id[]">
                            <option disabled selected>- Pilih -</option>
                            @foreach ($sales as $item)
-                              @if(isset($data) && $data->sales_id == $item->id)
-                              <option value="{{ $item->id }}" selected>{{ $item->nama }}</option>
+                              @if(isset($data) && $data->sales_id == $item->pelanggan_id)
+                              <option value="{{ $item->pelanggan_id }}" selected>{{ $item->nama }}</option>
                               @else
-                              <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                              <option value="{{ $item->pelanggan_id }}">{{ $item->nama }}</option>
                               @endif
                            @endforeach
                         </select>
@@ -531,10 +531,10 @@
                   <select class="form-control select2 sales_id" name="sales_pelanggan_id[]">
                      <option disabled selected>- Pilih -</option>
                      @foreach ($sales as $item)
-                        @if(isset($data) && $sp->user_id == $item->id)
-                        <option value="{{ $item->id }}" selected>{{ $item->nama }}</option>
+                        @if(isset($data) && $sp->sales_id == $item->pelanggan_id)
+                        <option value="{{ $item->pelanggan_id }}" selected>{{ $item->nama }}</option>
                         @else
-                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                        <option value="{{ $item->pelanggan_id }}">{{ $item->nama }}</option>
                         @endif
                      @endforeach
                   </select>

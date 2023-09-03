@@ -55,12 +55,12 @@ class OdooController extends Controller
         // 'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 1]);
 
         // TOTAL PRODUCT
-        return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'product.product', 'search', [[['active','=', True]]]);
+        // return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        // 'product.product', 'search', [[['active','=', True]]]);
 
         //GET CUSTOMER
         return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'res.partner', 'search_read', [[['active','=', True]]], ['fields' => ['property_product_pricelist','id','email','name','mobile','display_name','npwp','npwp_name','id_nik','street','street2','city','zip'], 'limit'=> 1]);
+        'res.partner', 'search_read', [[['id', '=', [80512]]]], ['fields' => [], 'limit'=> 1]);
 
         //GET PRODUCT
         return $this->models->execute_kw($this->db, $this->uid, $this->password,

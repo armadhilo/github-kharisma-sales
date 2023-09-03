@@ -55,7 +55,7 @@ class PelangganRequest extends FormRequest
             'alamat' => 'required',
             'no_ktp' => 'nullable|numeric',
             'nama_npwp' => 'nullable',
-            'no_npwp' => 'nullable|numeric',
+            'no_npwp' => 'nullable',
             'lat' => 'nullable',
             'lng' => 'nullable',
         ];

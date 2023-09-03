@@ -86,7 +86,7 @@ class User extends Authenticatable
     }
 
     public function scopeSalesActive($query){
-        return $query->where(['type' => 1]);
+        return $query->where(['type' => 1])->whereNotNull('email');
     }
 
     public function sales_log(){
