@@ -27,7 +27,7 @@ class Notification extends Model
     }
 
     public function sales_order(){
-        return $this->belongsTo(SalesOrder::class, 'user_id', 'pelanggan_id');
+        return $this->belongsTo(SalesOrder::class);
     }
 
     public function getCustomDatetimeAttribute(){
