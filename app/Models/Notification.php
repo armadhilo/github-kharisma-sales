@@ -16,18 +16,18 @@ class Notification extends Model
 
     public function scopeActive($query){
         $query->select('id','notification_type', 'is_new','judul','pengumuman','sales_order_id','created_at')->where(function($where){
-            $where->where('notification_type', '!=', 'pengumuman')->where('user_id', auth('api')->user()->id)->where('status', 1);
+            $where->where('notification_type', '!=', 'pengumuman')->where('user_id', auth('api')->user()->pelanggan_id)->where('status', 1);
         })->orWhere(function($where2){
             $where2->where('notification_type', 'pengumuman')->where('status', 1);
         })->orderBy('is_new', 'desc')->orderBy('created_at', 'desc');
     }
 
     public function user(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'pelanggan_id');
     }
 
     public function sales_order(){
-        return $this->belongsTo(SalesOrder::class);
+        return $this->belongsTo(SalesOrder::class, 'user_id', 'pelanggan_id');
     }
 
     public function getCustomDatetimeAttribute(){

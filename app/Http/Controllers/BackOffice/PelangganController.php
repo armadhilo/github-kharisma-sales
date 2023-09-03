@@ -133,15 +133,17 @@ class PelangganController extends Controller
                 }
             }
 
-            AlamatPengiriman::updateOrCreate(['user_id' => $data->id],$request->all());
+            //change user_id to pelanggan_id
+            $request->merge(['user_id' => $request->pelanggan_id]);
+            AlamatPengiriman::updateOrCreate(['user_id' => $request->user_id],$request->all());
 
             if($request->has(['id', 'sales_pelanggan_id', 'pelanggan_id'])){
                 SalesPelanggan::where('pelanggan_id', $request->pelanggan_id)->delete();
             }
 
-            foreach($request->input('sales_pelanggan_id') as $item){
+            foreach($request->sales_pelanggan_id as $item){
                 SalesPelanggan::create([
-                    'user_id' => $item,
+                    'sales_id' => $item,
                     'pelanggan_id' => $request->pelanggan_id
                 ]);
             }

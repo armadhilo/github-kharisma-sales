@@ -42,14 +42,14 @@ class SalesOrder extends Model
     }
 
     public function scopeActive($query){
-        return $query->where('user_id', auth('api')->user()->id)->has('sales_order_product');
+        return $query->where('user_id', auth('api')->user()->pelanggan_id)->has('sales_order_product');
     }
 
     public function user(){
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'pelanggan_id');
     }
 
     public function sales(){
-        return $this->belongsTo(Sales::class, 'sales_id');
+        return $this->belongsTo(Sales::class, 'sales_id', 'pelanggan_id');
     }
 }

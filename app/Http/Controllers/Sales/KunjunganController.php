@@ -20,19 +20,6 @@ class KunjunganController extends Controller
 
     public function store(KunjunganRequest $request){
 
-        //check apakah absensi masih berjalan
-        $sales_attendance = SalesAttendance::where('sales_id', auth('api')->user()->id)->whereDate('date_start', Carbon::now())->first();
-        if(empty($sales_attendance)){
-            $message = 'Tidak ada absensi yang aktif harap lakukan absensi terlebih dahulu';
-            return ApiFormatter::error(400, $message);
-        }
-
-        $sales_attendance = SalesAttendance::where('sales_id', auth('api')->user()->id)->whereDate('date_start', Carbon::now())->whereNotNull('date_end')->first();
-        if(!empty($sales_attendance)){
-            $message = 'Anda sudah checkout absensi hari ini, tidak dapat melakukan kunjungan';
-            return ApiFormatter::error(400, $message);
-        }
-
         //check apakah ada pelanggan tersebut
         $user = User::find($request->pelanggan_id);
         if(empty($user)){
@@ -40,8 +27,24 @@ class KunjunganController extends Controller
             return ApiFormatter::error(400, $message);
         }
 
+        //change pelanggan_id dari user_id ke pelanggan_id
+        $request->merge(['pelanggan_id' => $user->pelanggan_id]);
+
+        //check apakah absensi masih berjalan
+        $sales_attendance = SalesAttendance::where('sales_id', auth('api')->user()->pelanggan_id)->whereDate('date_start', Carbon::now())->first();
+        if(empty($sales_attendance)){
+            $message = 'Tidak ada absensi yang aktif harap lakukan absensi terlebih dahulu';
+            return ApiFormatter::error(400, $message);
+        }
+
+        $sales_attendance = SalesAttendance::where('sales_id', auth('api')->user()->pelanggan_id)->whereDate('date_start', Carbon::now())->whereNotNull('date_end')->first();
+        if(!empty($sales_attendance)){
+            $message = 'Anda sudah checkout absensi hari ini, tidak dapat melakukan kunjungan';
+            return ApiFormatter::error(400, $message);
+        }
+
         //cek apakah sales mempunyai hak untuk customer tersebut
-         $sales_pelanggan = SalesPelanggan::where(['user_id' => auth('api')->user()->id, 'pelanggan_id' => $user->pelanggan_id])->first();
+         $sales_pelanggan = SalesPelanggan::where(['sales_id' => auth('api')->user()->pelanggan_id, 'pelanggan_id' => $user->pelanggan_id])->first();
          if(empty($sales_pelanggan)){
              $message = 'Sales tidak mempunyai akses terhadap pelanggan tersebut';
              return ApiFormatter::error(400, $message);
@@ -60,7 +63,7 @@ class KunjunganController extends Controller
         }
 
         //check apakah ada kunjungan yang masih aktif
-        $kunjungan = Kunjungan::where(['sales_id' => auth('api')->user()->id])->whereNull('total_time')->first();
+        $kunjungan = Kunjungan::where(['sales_id' => auth('api')->user()->pelanggan_id])->whereNull('total_time')->first();
         if(!empty($kunjungan)){
 
             if($kunjungan->pelanggan_id != $request->pelanggan_id){
@@ -69,7 +72,7 @@ class KunjunganController extends Controller
             }
         }
 
-        $kunjungan = Kunjungan::with('pelanggan')->where(['sales_id' => auth('api')->user()->id, 'pelanggan_id' => $request->pelanggan_id])->whereNull('time_end')->first();
+        $kunjungan = Kunjungan::with('pelanggan')->where(['sales_id' => auth('api')->user()->pelanggan_id, 'pelanggan_id' => $request->pelanggan_id])->whereNull('time_end')->first();
         $status = 'Start Kunjungan';
         if(!empty($kunjungan)){
 
@@ -88,13 +91,13 @@ class KunjunganController extends Controller
 
             //CREATE SALES LOG
             SalesLog::create([
-                'sales_id' => auth('api')->user()->id,
+                'sales_id' => auth('api')->user()->pelanggan_id,
                 'lat' => $request->lat,
                 'lng' => $request->lng,
             ]);
 
             $kunjungan = Kunjungan::create([
-                'sales_id' => auth('api')->user()->id,
+                'sales_id' => auth('api')->user()->pelanggan_id,
                 'pelanggan_id' => $request->pelanggan_id,
                 'date' => Carbon::now(),
                 'time_start' => Carbon::now()->format('H:i'),
@@ -109,7 +112,7 @@ class KunjunganController extends Controller
 
     public function check_today(){
 
-        $kunjungan = Kunjungan::with('pelanggan')->where(['sales_id' => auth('api')->user()->id])->whereNull('time_end')->whereDate('date', Carbon::now())->first();
+        $kunjungan = Kunjungan::with('pelanggan')->where(['sales_id' => auth('api')->user()->pelanggan_id])->whereNull('time_end')->whereDate('date', Carbon::now())->first();
         if(empty($kunjungan)){
             $message = 'You dont have active kunjungan today';
             return ApiFormatter::error(400, $message);

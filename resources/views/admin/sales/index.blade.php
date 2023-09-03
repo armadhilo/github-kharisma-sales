@@ -9,7 +9,7 @@
             <div class="card-header">
                <h4>Data Sales</h4>
                <div class="card-header-action">
-                  <button type="button" class="btn btn-warning" onclick="add();"><i class="fa fa-plus mr-1"></i> Tambah Sales</button>
+                  <button type="button" hidden class="btn btn-warning" onclick="add();"><i class="fa fa-plus mr-1"></i> Tambah Sales</button>
                </div>
             </div>
             <div class="card-body">
@@ -52,14 +52,14 @@
                             <label>Nama</label>
                               <input type="text" hidden class="form-control" name="type" id="type">
                               <input type="text" hidden class="form-control" name="id" id="id">
-                              <input class="form-control" type="text" id="nama" name="nama" >
+                              <input class="form-control" type="text" id="nama" name="nama" readonly>
                               <span class="d-flex text-danger invalid-feedback" id="invalid-nama-feedback"></span>
                         </div>
                     </div>
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="form-group">
                             <label>Email</label>
-                            <input class="form-control" type="text" id="email" name="email" >
+                            <input class="form-control" type="text" id="email" name="email" readonly>
                             <span class="d-flex text-danger invalid-feedback" id="invalid-email-feedback"></span>
                         </div>
                     </div>

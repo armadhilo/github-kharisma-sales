@@ -131,7 +131,7 @@ class CartController extends Controller
     public function store(CartRequest $request){
 
         $request->merge(['uuid' => Str::uuid() ]);
-        $request->merge(['user_id' => auth('api')->user()->id ]);
+        $request->merge(['user_id' => auth('api')->user()->pelanggan_id ]);
 
         //recheck price
         $odoo_product = OdooProduct::where('product_id', $request->product_id)->first();
@@ -232,7 +232,7 @@ class CartController extends Controller
 
     public function delete($uuid){
 
-        $cart = Cart::where(['user_id' => auth('api')->user()->id, 'uuid' => $uuid])->first();
+        $cart = Cart::where(['user_id' => auth('api')->user()->pelanggan_id, 'uuid' => $uuid])->first();
 
         if(empty($cart)){
             $message = 'Cart not found';

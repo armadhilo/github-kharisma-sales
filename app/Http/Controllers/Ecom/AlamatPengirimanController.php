@@ -48,13 +48,13 @@ class AlamatPengirimanController extends Controller
 
         //jika bukan update cek karena alamat pengiriman cuma boleh ada 1
         if(!$request->has('id')){
-            $alamat_pengiriman = AlamatPengiriman::where('user_id', auth('api')->user()->id)->count();
+            $alamat_pengiriman = AlamatPengiriman::where('user_id', auth('api')->user()->pelanggan_id)->count();
             if($alamat_pengiriman > 0){
                 return ApiFormatter::error(400, 'Oops! anda tidak dapat menambahkan alamat pengiriman baru');
             }
         }
 
-        $request->request->add(['user_id' => auth('api')->user()->id]);
+        $request->request->add(['user_id' => auth('api')->user()->pelanggan_id]);
 
         $count_alamat_pengiriman = AlamatPengiriman::where('user_id', $request->user_id)->count();
         if($count_alamat_pengiriman == 0){
@@ -91,7 +91,7 @@ class AlamatPengirimanController extends Controller
         $alamat_pengiriman = AlamatPengiriman::find($id);
 
         //delete alamat utama
-        AlamatPengiriman::where(['alamat_utama' => 1, 'user_id' => auth('api')->user()->id])->update(['alamat_utama' => 0]);
+        AlamatPengiriman::where(['alamat_utama' => 1, 'user_id' => auth('api')->user()->pelanggan_id])->update(['alamat_utama' => 0]);
 
         $alamat_pengiriman->alamat_utama = 1;
         $alamat_pengiriman->save();

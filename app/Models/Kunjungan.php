@@ -19,10 +19,10 @@ class Kunjungan extends Model
     protected $appends = [];
 
     public function sales(){
-        return $this->belongsTo(User::class, 'sales_id')->withTrashed();
+        return $this->belongsTo(User::class, 'sales_id', 'pelanggan_id')->withTrashed();
     }
 
     public function pelanggan(){
-        return $this->belongsTo(User::class, 'pelanggan_id')->withTrashed();
+        return $this->belongsTo(User::class, 'pelanggan_id', 'pelanggan_id')->withTrashed();
     }
 }

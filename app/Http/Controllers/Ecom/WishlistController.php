@@ -21,7 +21,7 @@ class WishlistController extends Controller
     public function index(Request $request){
 
         $product = OdooProduct::has('product_uom.product_pricelist')->with('product_tag', 'product_uom.product_pricelist')->whereHas('wishlist', function($query){
-            $query->where('user_id', auth('api')->user()->id);
+            $query->where('user_id', auth('api')->user()->pelanggan_id);
         })->where('stock', '>', '0');
 
         $message = 'Data wishlist berhasil ditampilkan';
@@ -39,7 +39,7 @@ class WishlistController extends Controller
 
     public function store(WishlistRequest $request){
 
-        $user_id = auth('api')->user()->id;
+        $user_id = auth('api')->user()->pelanggan_id;
         $wishlist = Wishlist::where([
             'product_id' => $request->product_id,
             'user_id' => $user_id,
@@ -63,7 +63,7 @@ class WishlistController extends Controller
 
         Wishlist::where([
             'product_id' => $request->product_id,
-            'user_id' => auth('api')->user()->id,
+            'user_id' => auth('api')->user()->pelanggan_id,
         ])->delete();
 
         $message = 'Wishlist berhasil dihapus';

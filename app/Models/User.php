@@ -90,11 +90,11 @@ class User extends Authenticatable
     }
 
     public function sales_log(){
-        return $this->hasMany(SalesLog::class, 'sales_id', 'id');
+        return $this->hasMany(SalesLog::class, 'sales_id', 'pelanggan_id');
     }
 
     public function alamat_pengiriman(){
-        return $this->hasOne(AlamatPengiriman::class);
+        return $this->hasOne(AlamatPengiriman::class, 'user_id', 'pelanggan_id');
     }
 
     public function sales_pelanggan(){

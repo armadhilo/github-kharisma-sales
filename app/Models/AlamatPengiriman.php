@@ -29,11 +29,11 @@ class AlamatPengiriman extends Model
     // }
 
     public function scopeActive($query){
-        $query->where('user_id', auth('api')->user()->id)->orderBy('alamat_utama','DESC');
+        $query->where('user_id', auth('api')->user()->pelanggan_id)->orderBy('alamat_utama','DESC');
     }
 
     public function user(){
-        return $this->belongsTo(User::class)->withTrashed();
+        return $this->belongsTo(User::class, 'user_id', 'pelanggan_id')->withTrashed();
     }
 
     public function getAlamatLengkapAttribute(){

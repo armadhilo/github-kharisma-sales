@@ -16,25 +16,25 @@ class AttendanceController extends Controller
 
     public function store(){
 
-        $sales_attendance = SalesAttendance::where(['sales_id' => auth('api')->user()->id])->whereDate('date_start', Carbon::now())->whereNotNull('date_end')->first();
+        $sales_attendance = SalesAttendance::where(['sales_id' => auth('api')->user()->pelanggan_id])->whereDate('date_start', Carbon::now())->whereNotNull('date_end')->first();
         if(!empty($sales_attendance)){
             $message = 'sales have finish attendance today';
             return ApiFormatter::error(400, $message);
         }
 
-        $attendance_today = SalesAttendance::where(['sales_id' => auth('api')->user()->id])->whereNull('date_end')->first();
+        $attendance_today = SalesAttendance::where(['sales_id' => auth('api')->user()->pelanggan_id])->whereNull('date_end')->first();
         $status = 'check Out';
         if(empty($attendance_today)){
             $status = 'check In';
             SalesAttendance::create([
-                'sales_id' => auth('api')->user()->id,
+                'sales_id' => auth('api')->user()->pelanggan_id,
                 'date_start' => Carbon::now(),
                 'time_start' => Carbon::now()->format('H:i')
             ]);
         }else{
 
             //check kunjungan yang masih aktif jika ingin checkout
-            $kunjungan = Kunjungan::where('sales_id', auth('api')->user()->id)->whereNull('time_end')->first();
+            $kunjungan = Kunjungan::where('sales_id', auth('api')->user()->pelanggan_id)->whereNull('time_end')->first();
             if(!empty($kunjungan)){
                 $message = 'Masih ada kunjungan yang aktif, harap selesaikan kunjungan terlebih dahulu sebelum checkout absensi';
                 return ApiFormatter::error(400, $message);
@@ -51,7 +51,7 @@ class AttendanceController extends Controller
 
     public function check_today(){
 
-        $sales_attendance = SalesAttendance::where(['sales_id' => auth('api')->user()->id])->whereDate('date_start', Carbon::now())->first();
+        $sales_attendance = SalesAttendance::where(['sales_id' => auth('api')->user()->pelanggan_id])->whereDate('date_start', Carbon::now())->first();
         if(empty($sales_attendance)){
             $message = 'You dont have active attendance today';
             return ApiFormatter::error(400, $message);

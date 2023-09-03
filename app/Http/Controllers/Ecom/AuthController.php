@@ -68,12 +68,15 @@ class AuthController extends Controller
                 return ApiFormatter::error(400, $message);
             }
 
-            Auth::attempt($data);
+            $check_login = Auth::attempt($data);
+            if(!$check_login){
+                $message = 'Username atau password anda salah.';
+                return ApiFormatter::error(400, $message);
+            }
 
         }
 
         if (Auth::check()) {
-
             if(empty(auth()->user()->keylog)){
                 $message = 'Account anda tidak aktif silahkan hubungi sales kami.';
                 return ApiFormatter::error(400, $message);

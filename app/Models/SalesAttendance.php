@@ -23,6 +23,6 @@ class SalesAttendance extends Model
     }
 
     public function sales(){
-        return $this->belongsTo(User::class, 'sales_id');
+        return $this->belongsTo(User::class, 'sales_id', 'pelanggan_id');
     }
 }

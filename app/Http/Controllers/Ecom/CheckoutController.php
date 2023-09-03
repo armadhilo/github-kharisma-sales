@@ -18,7 +18,7 @@ use App\Models\Cart;
 class CheckoutController extends Controller
 {
     public function index(){
-        $checkout = Cart::with('product.product_tag')->where(['user_id' => auth('api')->user()->id, 'is_checkout' => 1])->get();
+        $checkout = Cart::with('product.product_tag')->where(['user_id' => auth('api')->user()->pelanggan_id, 'is_checkout' => 1])->get();
 
         $message = 'Data checkout berhasil ditampilkan';
         if(count($checkout) == 0) $message = 'Data checkout list empty';
