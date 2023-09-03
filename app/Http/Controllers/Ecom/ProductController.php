@@ -47,7 +47,7 @@ class ProductController extends Controller
             $product = $product->all();
         }
 
-        $pagination = $this->paginate($product, 7)->withPath(url()->current());
+        $pagination = $this->paginate($product, 50)->withPath(url()->current());
 
         $message = ' Data product berhasil ditampilkan';
         return ApiFormatter::pagination($message, $pagination);

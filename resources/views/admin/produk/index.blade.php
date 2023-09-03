@@ -145,7 +145,7 @@
     $(document).ready(function(){
         var tb = $('#tb').DataTable({
             processing: true,
-            serverSide: false,
+            serverSide: true,
             ajax: {
                 url: '/admin/produk/datatables',
                 type: 'GET'
