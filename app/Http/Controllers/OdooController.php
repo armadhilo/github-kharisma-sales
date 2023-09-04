@@ -177,7 +177,7 @@ class OdooController extends Controller
             //create SALES_ORDER table
             $sales_order = SalesOrder::create([
                 'uuid' => Str::uuid(),
-                'user_id' => auth('api')->user()->id,
+                'user_id' => auth('api')->user()->pelanggan_id,
                 'sales_id' => session('sales_id'),
                 'no_invoice' => $this->generate_no_invoice(),
                 'total_berat' => $request->total_berat,
@@ -290,7 +290,7 @@ class OdooController extends Controller
 
             //simpan notification untuk order
             Notification::create([
-                'user_id' => auth('api')->user()->id,
+                'user_id' => auth('api')->user()->pelanggan_id,
                 'sales_order_id' => $sales_order->id,
                 'notification_type' => 'draft',
             ]);

@@ -23,7 +23,7 @@ class Cart extends Model
     }
 
     public function user(){
-        return $this->belongsTo(User::class)->withTrashed();
+        return $this->belongsTo(User::class, 'user_id', 'pelanggan_id')->withTrashed();
     }
 
     public function scopeActive($query){

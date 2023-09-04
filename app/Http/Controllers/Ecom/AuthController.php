@@ -39,15 +39,15 @@ class AuthController extends Controller
             }
 
             //cek apakah sales mempunyai hak untuk customer tersebut
-            $sales_pelanggan = SalesPelanggan::where(['user_id' => $sales->id, 'pelanggan_id' => $pelanggan->pelanggan_id])->first();
+            $sales_pelanggan = SalesPelanggan::where(['sales_id' => $sales->pelanggan_id, 'pelanggan_id' => $pelanggan->pelanggan_id])->first();
             if(empty($sales_pelanggan)){
                 $message = 'Sales tidak mempunyai akses terhadap pelanggan tersebut';
                 return ApiFormatter::error(400, $message);
             }
 
-            session(['sales_id' => $sales->id]);
+            session(['sales_id' => $sales->pelanggan_id]);
             $sales = [
-                'id' => $sales->id,
+                'id' => $sales->pelanggan_id,
                 'nama' => $sales->nama,
                 'email' => $sales->email,
             ];
