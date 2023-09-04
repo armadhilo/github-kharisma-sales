@@ -52,9 +52,9 @@ class OdooApi
     public static function updateCustomer($parameter){
 
         $url = 'http://103.215.177.203:8096';
-        $db = 'odoo_kharisma_stationery_test5';
+        $db = 'odoo_kharisma_stationery_test6';
         $username = "kevin_kevin";
-        $password = "kevin123";
+        $password = "kevin234";
 
         $common = ripcord::client("$url/xmlrpc/2/common");
         $uid = $common->authenticate($db, $username, $password, []);

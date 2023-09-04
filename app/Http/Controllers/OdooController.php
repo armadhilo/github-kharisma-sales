@@ -60,15 +60,15 @@ class OdooController extends Controller
 
         //GET CUSTOMER
         return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'res.partner', 'search_read', [[['id', '=', [80512]]]], ['fields' => [], 'limit'=> 1]);
+        'res.partner', 'search_read', [[['id', '=', [68776]]]], ['fields' => [], 'limit'=> 1]);
 
-        //GET PRODUCT
-        return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'product.product', 'search_read', [[['product_tmpl_id', '=', [36368]]]], ['fields' => [], 'limit'=> 1]);
+        // //GET PRODUCT
+        // return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        // 'product.product', 'search_read', [[['product_tmpl_id', '=', [36368]]]], ['fields' => [], 'limit'=> 1]);
 
-        //PRICELIST
-        return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', [37374]]]], ['fields' => ['product_tmpl_id', 'min_quantity', 'pricelist_id', 'fixed_price', 'uom_id'], 'limit'=> 10]);
+        // //PRICELIST
+        // return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        // 'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', [37374]]]], ['fields' => ['product_tmpl_id', 'min_quantity', 'pricelist_id', 'fixed_price', 'uom_id'], 'limit'=> 10]);
 
         //GET PRODUCT TAG
         // $array_product_tmpl_product = ['37374'];
