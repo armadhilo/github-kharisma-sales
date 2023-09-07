@@ -52,20 +52,20 @@
                             <label>Nama</label>
                               <input type="text" hidden class="form-control" name="type" id="type">
                               <input type="text" hidden class="form-control" name="id" id="id">
-                              <input class="form-control" type="text" id="nama" name="nama" readonly>
+                              <input class="form-control" type="text" id="nama" name="nama">
                               <span class="d-flex text-danger invalid-feedback" id="invalid-nama-feedback"></span>
                         </div>
                     </div>
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="form-group">
                             <label>Email</label>
-                            <input class="form-control" type="text" id="email" name="email" readonly>
+                            <input class="form-control" type="text" id="email" name="email">
                             <span class="d-flex text-danger invalid-feedback" id="invalid-email-feedback"></span>
                         </div>
                     </div>
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="form-group">
-                            <label>Password</label>
+                            <label>Password <span class="text-danger">Di isi apabila password sales ingin dirubah</span></label>
                             <input class="form-control" type="password" id="password" name="password" >
                             <span class="d-flex text-danger invalid-feedback" id="invalid-password-feedback"></span>
                         </div>

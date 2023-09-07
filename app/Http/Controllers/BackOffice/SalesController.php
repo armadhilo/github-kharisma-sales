@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\BackOffice;
 
+use App\Helpers\OdooApi;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SalesRequest;
 use Illuminate\Http\Request;
@@ -44,6 +45,24 @@ class SalesController extends Controller
         if($request->type != 'update'){
             $request->request->add(['password' =>Hash::make($request->password)]);
             $request->request->add(['type' => 'sales']);
+        }
+
+        if(!empty($request->password)){
+            $request->merge(['password' =>Hash::make($request->password)]);
+        }
+
+        $user = User::find($request->id);
+        $parameter['pelanggan_id'] = $user->pelanggan_id;
+        $parameter['name'] = $request->nama;
+        $parameter['email'] = $request->email;
+        $parameter['mobile'] = $request->telepon;
+
+        $odoo_api = OdooApi::updateEmailSales($parameter);
+        if(!$odoo_api){
+            return [
+                'status' => 300,
+                'message' => 'Terjadi kesalahan saat syncronize dengan Odoo',
+            ];
         }
 
         User::updateOrCreate(['id' => $request->id],$request->all() );

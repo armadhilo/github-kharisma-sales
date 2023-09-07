@@ -18,9 +18,9 @@ class OdooApi
     public static function createCustomer($request){
 
         $url = 'http://103.215.177.203:8096';
-        $db = 'odoo_kharisma_stationery_test5';
+        $db = 'odoo_kharisma_stationery_test6';
         $username = "kevin_kevin";
-        $password = "kevin123";
+        $password = "kevin234";
 
         $common = ripcord::client("$url/xmlrpc/2/common");
         $uid = $common->authenticate($db, $username, $password, []);
@@ -74,6 +74,30 @@ class OdooApi
                 'street' => $parameter['street'],
                 'street2' => $parameter['street2'],
                 'city' => $parameter['city'],
+        );
+
+        $customer = $models->execute_kw($db, $uid, $password,
+        'res.partner', 'write', array(array($parameter['pelanggan_id']), $partnerData));
+
+        return $customer;
+    }
+
+    public static function updateEmailSales($parameter){
+
+        $url = 'http://103.215.177.203:8096';
+        $db = 'odoo_kharisma_stationery_test6';
+        $username = "kevin_kevin";
+        $password = "kevin234";
+
+        $common = ripcord::client("$url/xmlrpc/2/common");
+        $uid = $common->authenticate($db, $username, $password, []);
+
+        $models = ripcord::client("$url/xmlrpc/2/object");
+
+        $partnerData = array(
+                'name' => $parameter['name'],
+                'email' => $parameter['email'],
+                'mobile' => $parameter['mobile'],
         );
 
         $customer = $models->execute_kw($db, $uid, $password,

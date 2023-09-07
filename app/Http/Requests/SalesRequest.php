@@ -32,7 +32,7 @@ class SalesRequest extends FormRequest
             'telepon' => 'required|min:10|max:12',
             'alamat' => 'required',
             'password' => [
-                Rule::when(request()->isMethod('POST'), 'required'),
+                Rule::when(request()->isMethod('POST'), 'nullable'),
                 Rule::when(request()->isMethod('PUT'), 'nullable'),
                 'min:6',
             ],

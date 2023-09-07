@@ -60,7 +60,7 @@ class OdooController extends Controller
 
         //GET CUSTOMER
         return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'res.partner', 'search_read', [[['id', '=', [68776]]]], ['fields' => [], 'limit'=> 1]);
+        'res.partner', 'search_read', [[['id', '=', [82218]]]], ['fields' => [], 'limit'=> 1]);
 
         // //GET PRODUCT
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
