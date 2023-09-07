@@ -29,6 +29,12 @@ Route::view('/reset-password-success', 'auth.reset-password-berhasil');
 
 
 Route::middleware(['cors','cek_login'])->group(function () {
+
+    Route::prefix('change-password')->group(function () {
+        Route::get('/','LoginController@change_password');
+        Route::post('/action-change-password','LoginController@action_change_password');
+    });
+
     Route::prefix('admin')->group(function () {
         Route::get('/', function () {
             return Redirect::to('/admin/dashboard');
