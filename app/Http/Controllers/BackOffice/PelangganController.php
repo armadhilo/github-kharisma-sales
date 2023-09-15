@@ -110,7 +110,7 @@ class PelangganController extends Controller
             //update data on odoo
             $user = User::find($request->id);
             if(!empty($user) && $user->type == 'pelanggan'){
-                $parameter['pelanggan_id'] = $user->pelanggan_id;
+                $parameter['pelanggan_id'] = (int)$user->pelanggan_id;
                 $parameter['street'] = $user->street;
                 $parameter['country_id'] = 100;
                 $parameter['phone'] = $request->phone;

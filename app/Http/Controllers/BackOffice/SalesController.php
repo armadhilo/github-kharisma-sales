@@ -52,7 +52,7 @@ class SalesController extends Controller
         }
 
         $user = User::find($request->id);
-        $parameter['pelanggan_id'] = $user->pelanggan_id;
+        $parameter['pelanggan_id'] = (int)$user->pelanggan_id;
         $parameter['name'] = $request->nama;
         $parameter['email'] = $request->email;
         $parameter['mobile'] = $request->telepon;
@@ -65,7 +65,11 @@ class SalesController extends Controller
             ];
         }
 
-        User::updateOrCreate(['id' => $request->id],$request->all() );
+        User::updateOrCreate(['id' => $request->id],[
+            'email' => $request->email,
+            'nama' => $request->nama,
+            'telepon' => $request->telepon
+        ] );
 
         return [
             'status' => 200, // SUCCESS
