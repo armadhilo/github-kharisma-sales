@@ -40,18 +40,18 @@ class PelangganRequest extends FormRequest
                 'nullable',
                 'min:6',
             ],
-            'kota_id' => [
-                'required',
-            ],
-            'kecamatan_id' => [
-                'required',
-            ],
-            'kelurahan' => [
-                'required',
-            ],
-            'zip' => [
-                'required',
-            ],
+            // 'kota_id' => [
+            //     'required',
+            // ],
+            // 'kecamatan_id' => [
+            //     'required',
+            // ],
+            // 'kelurahan' => [
+            //     'required',
+            // ],
+            // 'zip' => [
+            //     'required',
+            // ],
             'alamat' => 'required',
             'no_ktp' => 'nullable|numeric',
             'nama_npwp' => 'nullable',

@@ -27,46 +27,46 @@ class OngkosKirimController extends Controller
         }
 
         $array = [];
-        foreach($jasa_pengiriman as $item){
-            $curl = curl_init();
+        // foreach($jasa_pengiriman as $item){
+        //     $curl = curl_init();
 
-            curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://pro.rajaongkir.com/api/cost",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => "origin=$asal_id&originType=subdistrict&destination=$request->kecamatan_id&destinationType=subdistrict&weight=$request->berat&courier=$item->kode",
-            CURLOPT_HTTPHEADER => array(
-                "content-type: application/x-www-form-urlencoded",
-                "key:7021b582cede2d3c37dbe64f18d6c29b"
-            ),
-            ));
+        //     curl_setopt_array($curl, array(
+        //     CURLOPT_URL => "https://pro.rajaongkir.com/api/cost",
+        //     CURLOPT_RETURNTRANSFER => true,
+        //     CURLOPT_ENCODING => "",
+        //     CURLOPT_MAXREDIRS => 10,
+        //     CURLOPT_TIMEOUT => 30,
+        //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        //     CURLOPT_CUSTOMREQUEST => "POST",
+        //     CURLOPT_POSTFIELDS => "origin=$asal_id&originType=subdistrict&destination=$request->kecamatan_id&destinationType=subdistrict&weight=$request->berat&courier=$item->kode",
+        //     CURLOPT_HTTPHEADER => array(
+        //         "content-type: application/x-www-form-urlencoded",
+        //         "key:7021b582cede2d3c37dbe64f18d6c29b"
+        //     ),
+        //     ));
 
-            $response = curl_exec($curl);
-            $err = curl_error($curl);
-            if(!empty($err)){
-                $message = 'Terjadi masalah pada server pengiriman, coba lagi nanti';
-                return ApiFormatter::error(404, $message);
-            }
+        //     $response = curl_exec($curl);
+        //     $err = curl_error($curl);
+        //     if(!empty($err)){
+        //         $message = 'Terjadi masalah pada server pengiriman, coba lagi nanti';
+        //         return ApiFormatter::error(404, $message);
+        //     }
 
-            curl_close($curl);
+        //     curl_close($curl);
 
-            $response = json_decode($response, true);
-            $data = collect($response['rajaongkir']['results']);
+        //     $response = json_decode($response, true);
+        //     $data = collect($response['rajaongkir']['results']);
 
-            if(count($data)){
-                foreach($data[0]['costs'] as $value){
-                    $array[] = [
-                        'nama' => "[".strtoupper($data[0]['code']) ."] ". $value['service'],
-                        'harga' => $value['cost'][0]['value'],
-                        'estimasi' => $value['cost'][0]['etd'],
-                    ];
-                }
-            }
-        }
+        //     if(count($data)){
+        //         foreach($data[0]['costs'] as $value){
+        //             $array[] = [
+        //                 'nama' => "[".strtoupper($data[0]['code']) ."] ". $value['service'],
+        //                 'harga' => $value['cost'][0]['value'],
+        //                 'estimasi' => $value['cost'][0]['etd'],
+        //             ];
+        //         }
+        //     }
+        // }
 
         //KURIR KHARISMA
         // kecamatan dalam kota kupang 2998, 2999, 3000, 3001, 3002, 3003
@@ -74,9 +74,9 @@ class OngkosKirimController extends Controller
         // kecamatan Kefamenanu [480] = 6643
         // kecamatan attambua [58] = 773, 774, 775
 
-        if($request->kecamatan_id == '2998' || $request->kecamatan_id == '2999' || $request->kecamatan_id == '3000' || $request->kecamatan_id == '3001' ||
-            $request->kecamatan_id == '3002' || $request->kecamatan_id == '3003' || $request->kecamatan_id == '6611' || $request->kecamatan_id == '6643' ||
-            $request->kecamatan_id == '773' || $request->kecamatan_id == '774' || $request->kecamatan_id == '775'){
+        // if($request->kecamatan_id == '2998' || $request->kecamatan_id == '2999' || $request->kecamatan_id == '3000' || $request->kecamatan_id == '3001' ||
+        //     $request->kecamatan_id == '3002' || $request->kecamatan_id == '3003' || $request->kecamatan_id == '6611' || $request->kecamatan_id == '6643' ||
+        //     $request->kecamatan_id == '773' || $request->kecamatan_id == '774' || $request->kecamatan_id == '775'){
 
             $kurir_kharisma = JasaPengiriman::active()->where('kode', 'staff')->first();
             if(!empty($kurir_kharisma)){
@@ -113,7 +113,7 @@ class OngkosKirimController extends Controller
                 }
 
             }
-        }
+        // }
 
         // AMBIL SENDIRI
         // kecamatan dalam kota kupang 2998, 2999, 3000, 3001, 3002, 3003

@@ -26,7 +26,7 @@ class OngkosKirimRequest extends FormRequest
     public function rules()
     {
         return [
-            'kecamatan_id' => 'required',
+            // 'kecamatan_id' => 'required',
             'berat' => 'required|integer|min:0',
         ];
     }
