@@ -52,12 +52,12 @@ class PelangganRequest extends FormRequest
             // 'zip' => [
             //     'required',
             // ],
-            'alamat' => 'required',
+            'alamat_toko' => 'required',
             'no_ktp' => 'nullable|numeric',
             'nama_npwp' => 'nullable',
             'no_npwp' => 'nullable',
-            'lat' => 'nullable',
-            'lng' => 'nullable',
+            'lat' => 'required',
+            'lng' => 'required',
         ];
     }
 

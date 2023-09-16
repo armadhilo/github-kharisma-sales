@@ -66,31 +66,35 @@ class PelangganController extends Controller
             ];
         }
 
-        $request->request->add(['provinsi_id' => '23']);
-        $request->request->add(['provinsi' => 'NUSA TENGGARA TIMUR']);
-        $request->request->add(['no_telepon' => $request->telepon]);
-        $request->request->add(['penerima' => $request->nama]);
-        $request->request->add(['kode_pos' => $request->zip]);
-
-        if($request->has('id')){
-            $user = User::find($request->id);
-
-            //jika password masih kosong wajib isi
-            if(empty($user->password)){
-                return [
-                    'status' => 300,
-                    'message' => 'Pelanggan belum memiliki password harap setting terlebih dahulu',
-                ];
-            }
-
-            //append keylog jika user_keylog masih kosong
-            if(empty($user->keylog)) $request->request->add(['keylog' => Str::random(40)]);
+        if(!isset($request->email)){
+            return [
+                'status' => 300,
+                'message' => 'Email wajib di isi',
+            ];
         }
 
-        if(!request()->has('id') || request()->has('keylog')){
-            $request->request->add(['type' => 'pelanggan']);
-            $request->request->add(['keylog' => Str::random(40)]);
-        }
+        // if($request->has('id')){
+        //     $user = User::find($request->id);
+
+        //     //jika password masih kosong wajib isi
+        //     if(empty($user->password)){
+        //         return [
+        //             'status' => 300,
+        //             'message' => 'Pelanggan belum memiliki password harap setting terlebih dahulu',
+        //         ];
+        //     }
+
+        //     //append keylog jika user_keylog masih kosong
+        //     if(empty($user->keylog)) $request->request->add(['keylog' => Str::random(40)]);
+        // }
+
+
+
+        // STORE
+        // if(!request()->has('id') || request()->has('keylog')){
+        //     $request->request->add(['type' => 'pelanggan']);
+        //     $request->request->add(['keylog' => Str::random(40)]);
+        // }
 
         //get kabupaten name
         // $request = Request::create('/api/kabkota/53', 'GET');
@@ -102,13 +106,32 @@ class PelangganController extends Controller
             $request->request->add(['password' =>Hash::make($request->password)]);
         }
 
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
 
-            $data = User::updateOrCreate(['id' => $request->id],$request->all() );
+            User::updateOrCreate(['id' => $request->id],$request->all() );
+
+            $user = User::where('id', $request->id)->first();
+
+            //check if has password
+            if(!isset($user->password)){
+                $user->password = Hash::make('pelanggan');
+                $user->save();
+            }
+
+            if((!isset($user->keylog))){
+                $user->keylog = Str::random(40);
+                $user->save();
+            }
+
+            AlamatPengiriman::updateOrCreate(['user_id' => $user->pelanggan_id],[
+                'user_id' => $user->pelanggan_id,
+                'penerima' => $user->nama_toko,
+                'no_telepon' => $user->telepon,
+                'alamat' => $user->alamat_toko,
+            ]);
 
             //update data on odoo
-            $user = User::find($request->id);
             if(!empty($user) && $user->type == 'pelanggan'){
                 $parameter['pelanggan_id'] = (int)$user->pelanggan_id;
                 $parameter['street'] = $user->street;
@@ -134,21 +157,33 @@ class PelangganController extends Controller
             }
 
             //change user_id to pelanggan_id
-            $request->merge(['user_id' => $request->pelanggan_id]);
-            AlamatPengiriman::updateOrCreate(['user_id' => $request->user_id],$request->all());
+            // $request->request->add(['provinsi_id' => '23']);
+            // $request->request->add(['provinsi' => 'NUSA TENGGARA TIMUR']);
+            // $request->request->add(['no_telepon' => $request->telepon]);
+            // $request->request->add(['penerima' => $request->nama]);
+            // $request->request->add(['kode_pos' => $request->zip]);
+            // $request->merge(['user_id' => $request->pelanggan_id]);
+            // AlamatPengiriman::updateOrCreate(['user_id' => $request->user_id],$request->all());
 
             if($request->has(['id', 'sales_pelanggan_id', 'pelanggan_id'])){
                 SalesPelanggan::where('pelanggan_id', $request->pelanggan_id)->delete();
-            }
 
-            foreach($request->sales_pelanggan_id as $item){
-                SalesPelanggan::create([
-                    'sales_id' => $item,
-                    'pelanggan_id' => $request->pelanggan_id
-                ]);
+                foreach($request->sales_pelanggan_id as $item){
+                    SalesPelanggan::create([
+                        'sales_id' => $item,
+                        'pelanggan_id' => $request->pelanggan_id
+                    ]);
+                }
             }
 
             DB::commit();
+
+            return [
+                'status' => 201, // SUCCESS
+                'message' => 'Data berhasil disimpan',
+                'link' => '/admin/pelanggan',
+            ];
+
         } catch(\Exception $e){
             DB::rollback();
 
@@ -158,13 +193,6 @@ class PelangganController extends Controller
 			];
 
 		}
-
-
-        return [
-            'status' => 201, // SUCCESS
-            'message' => 'Data berhasil disimpan',
-            'link' => '/admin/pelanggan',
-        ];
     }
 
     public function delete($id){

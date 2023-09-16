@@ -223,7 +223,7 @@
                      </div>
                      @endif
                   </div>
-                  <div class="col-12 col-md-3 col-lg-3">
+                  {{-- <div class="col-12 col-md-3 col-lg-3">
                      <div class="form-group">
                            <label>Kota</label>
                            <input hidden type="text" id="data_kota" name="kota_id" class="form-control" value="@if(isset($data)){{$data->kota_id}}@endif">
@@ -256,11 +256,11 @@
                            <input type="text" class="form-control" id="zip" name="zip" value="@if(isset($data)){{$data->zip}}@endif">
                            <span class="d-flex text-danger invalid-feedback" id="invalid-zip-feedback"></span>
                      </div>
-                  </div>
+                  </div> --}}
                   <div class="col-12 col-md-12 col-lg-12">
                     <div class="form-group">
                         <label>Alamat Pengiriman</label>
-                        <textarea class="form-control" style="min-height: 90px" name="alamat" id="alamat">@isset($data->alamat){{$data->alamat}}@endisset</textarea>
+                        <textarea class="form-control" style="min-height: 90px" name="alamat_toko" id="alamat_toko">@isset($data->alamat_toko){{$data->alamat_toko}}@endisset</textarea>
                         <span class="d-flex text-danger invalid-feedback" id="invalid-alamat-feedback"></span>
                      </div>
                  </div>
