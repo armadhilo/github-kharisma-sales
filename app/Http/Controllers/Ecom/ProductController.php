@@ -17,35 +17,37 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $product = OdooProduct::getByTipePelanggan()->with('product_tag', 'product_uom.product_pricelist')->orderBy('updated_at','DESC');
+        // $product = OdooProduct::has('product_uom')->getByTipePelanggan()->with('product_tag', 'product_uom.product_pricelist')->limit(1)->get();
+        // return $product;
+        $product = OdooProduct::getByTipePelanggan()->has('product_uom')->with('product_tag', 'product_uom.product_pricelist')->orderBy('updated_at','DESC')->limit(1000);
 
-        if($request->has('search') && !empty($request->search)){
+        if(isset($request->search)){
             $search = str_replace("+"," ",$request->search);
             $product->where('product_name','like',"%$search%");
         }
 
-        if($request->has('kategori') && !empty($request->kategori) && $request->kategori != 'All Category'){
+        if(isset($request->kategori) && $request->kategori != 'All Category'){
             $product->where('array_product_tag_id', 'like', '%' . $request->kategori . '%');
         }
 
         $product = $product->get();
 
-        if($request->has('filter') && !empty($request->filter)){
-            $filter = $request->filter;
-            if($filter == 'termurah'){
-                $product = $product->sortBy(function($product){
-                    return $product->price_utama;
-                });
-            }elseif($filter == 'termahal'){
-                $product = $product->sortByDesc(function($product){
-                    return $product->price_utama;
-                });
-            }else{
-                $product = $product->sortByDesc('updated_at');
-            }
+        // if($request->has('filter') && !empty($request->filter)){
+        //     $filter = $request->filter;
+        //     if($filter == 'termurah'){
+        //         $product = $product->sortBy(function($product){
+        //             return $product->price_utama;
+        //         });
+        //     }elseif($filter == 'termahal'){
+        //         $product = $product->sortByDesc(function($product){
+        //             return $product->price_utama;
+        //         });
+        //     }else{
+        //         $product = $product->sortByDesc('updated_at');
+        //     }
 
-            $product = $product->all();
-        }
+        //     $product = $product->all();
+        // }
 
         $pagination = $this->paginate($product, 50)->withPath(url()->current());
 

@@ -18,12 +18,7 @@ class LongLatController extends Controller
         DB::beginTransaction();
         try{
 
-            User::where('id', $id)->update([
-                'lat' => $request->lat,
-                'lng' => $request->lng,
-            ]);
-
-            $user = User::find('id', $id);
+            $user = User::where('id', $id)->first();
 
             //check if has password
             if(!isset($user->password)){
@@ -43,6 +38,11 @@ class LongLatController extends Controller
                 'alamat' => $user->alamat_toko,
             ]);
 
+            User::where('id', $id)->update([
+                'lat' => $request->lat,
+                'lng' => $request->lng,
+            ]);
+
             DB::commit();
 
             $message = 'Pelanggan location updated Successfully';
@@ -50,6 +50,8 @@ class LongLatController extends Controller
         }
 
         catch(\Exception $e){
+
+            dd($e);
 
             DB::rollback();
 
