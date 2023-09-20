@@ -55,13 +55,6 @@ class KunjunganController extends Controller
             return ApiFormatter::error(400, $message);
         }
 
-        $radius = $this->cekRadius($user->lng, $user->lat, $request->lng, $request->lat);
-        $max_radius = Config::where('config', 'MAX RADIUS KUNJUNGAN')->first()->value;
-        if($radius > $max_radius){
-            $message = "Oops! Radius anda adalah $radius sedangkan radius maksimal adalah $max_radius";
-            return ApiFormatter::error(400, $message);
-        }
-
         //check apakah ada kunjungan yang masih aktif
         $kunjungan = Kunjungan::where(['sales_id' => auth('api')->user()->pelanggan_id])->whereNull('total_time')->first();
         if(!empty($kunjungan)){
@@ -88,6 +81,14 @@ class KunjunganController extends Controller
             $kunjungan->save();
 
         }else{
+
+            //CHECK RADIUS KUNJUNGAN
+            $radius = $this->cekRadius($user->lng, $user->lat, $request->lng, $request->lat);
+            $max_radius = Config::where('config', 'MAX RADIUS KUNJUNGAN')->first()->value;
+            if($radius > $max_radius){
+                $message = "Oops! Radius anda adalah $radius sedangkan radius maksimal adalah $max_radius";
+                return ApiFormatter::error(400, $message);
+            }
 
             //CREATE SALES LOG
             SalesLog::create([

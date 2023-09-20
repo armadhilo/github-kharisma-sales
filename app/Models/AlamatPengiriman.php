@@ -37,6 +37,7 @@ class AlamatPengiriman extends Model
     }
 
     public function getAlamatLengkapAttribute(){
-        return $this->attributes['alamat'] . ", " . $this->attributes['provinsi'] ." - ". $this->attributes['kota']  . " [" . $this->attributes['kode_pos'] . "]";
+        // return $this->attributes['alamat'] . ", " . $this->attributes['provinsi'] ." - ". $this->attributes['kota']  . " [" . $this->attributes['kode_pos'] . "]";
+        return $this->attributes['alamat'];
     }
 }

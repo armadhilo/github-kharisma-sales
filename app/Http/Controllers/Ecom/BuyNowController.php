@@ -58,7 +58,7 @@ class BuyNowController extends Controller
             //merge is_buy_now = 1
             $request->merge(['is_buy_now' => 1 ]);
             $request->merge(['uuid' => Str::uuid() ]);
-            $request->merge(['user_id' => auth('api')->user()->id ]);
+            $request->merge(['user_id' => auth('api')->user()->pelanggan_id ]);
             $request->merge(['total_price' => $request->price * $request->quantity ]);
 
             Cart::create($request->all());

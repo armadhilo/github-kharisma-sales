@@ -102,28 +102,21 @@ class PelangganController extends Controller
         // $collection = collect(collect($response)['original']);
         // dd($collection->where('nama', 'KAB. KUPANG')->first()['id']);
 
-        if(request()->has('password')){
-            $request->request->add(['password' =>Hash::make($request->password)]);
-        }
+        // DB::beginTransaction();
+        try{
+    
+           //check if has password
+           if(isset($user->password)){
+                $request->merge(['password' => Hash::make('pelanggan')]);
+            }
 
-        DB::beginTransaction();
-        try {
+            if((!isset($user->keylog))){
+                $request->merge(['keylog' => Str::random(40)]);
+            }
 
             User::updateOrCreate(['id' => $request->id],$request->all() );
 
             $user = User::where('id', $request->id)->first();
-
-            //check if has password
-            if(!isset($user->password)){
-                $user->password = Hash::make('pelanggan');
-                $user->save();
-            }
-
-            if((!isset($user->keylog))){
-                $user->keylog = Str::random(40);
-                $user->save();
-            }
-
             AlamatPengiriman::updateOrCreate(['user_id' => $user->pelanggan_id],[
                 'user_id' => $user->pelanggan_id,
                 'penerima' => $user->nama_toko,
@@ -176,23 +169,27 @@ class PelangganController extends Controller
                 }
             }
 
-            DB::commit();
+            // DB::commit();
 
             return [
                 'status' => 201, // SUCCESS
                 'message' => 'Data berhasil disimpan',
                 'link' => '/admin/pelanggan',
+            ]; 
+    
+    
+        }
+    
+        catch(\Exception $e){
+    
+            // DB::rollback();
+    
+            return [
+                'status'     => 300, // GAGAL
+                'message'       => (env('APP_DEBUG', 'true') == 'true')? $e->getMessage() : 'Operation error'
             ];
-
-        } catch(\Exception $e){
-            DB::rollback();
-
-			return [
-				'status' 	=> 300, // GAGAL
-				'message'       => (env('APP_DEBUG', 'true') == 'true')? $e->getMessage() : 'Operation error'
-			];
-
-		}
+    
+        }
     }
 
     public function delete($id){

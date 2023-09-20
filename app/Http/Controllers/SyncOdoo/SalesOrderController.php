@@ -19,7 +19,7 @@ class SalesOrderController extends Controller
 
         $sales_order = DB::table('sales_order')->where('odoo_order_id', $request->odoo_order_id)->first();
         if(empty($sales_order)){
-            return ApiFormatter::success(404, 'Sales Order tidak ditemukan pada sistem');
+            return ApiFormatter::error(404, 'Sales Order tidak ditemukan pada sistem');
         }
 
         DB::table('sales_order')->where('odoo_order_id', $request->odoo_order_id)->update(['status' => $request->status]);

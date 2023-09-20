@@ -23,7 +23,7 @@ use App\Models\SalesOrder;
 use App\Models\SalesOrderProduct;
 use App\Models\Notification;
 use App\Models\OdooProduct;
-use App\Models\OdooProductOriginal;
+use App\Models\SalesPelanggan;
 use ripcord;
 use Storage;
 
@@ -174,11 +174,16 @@ class OdooController extends Controller
                 return ApiFormatter::error(400, $message);
             }
 
+            //get sales_id
+            $sales = null;
+            $sales_pelanggan = SalesPelanggan::where('pelanggan_id', auth('api')->user()->pelanggan_id)->select('sales_id')->first();
+            if(!empty($sales_pelanggan)) $sales = $sales_pelanggan->sales_id;
+
             //create SALES_ORDER table
             $sales_order = SalesOrder::create([
                 'uuid' => Str::uuid(),
                 'user_id' => auth('api')->user()->pelanggan_id,
-                'sales_id' => session('sales_id'),
+                'sales_id' => $sales,
                 'no_invoice' => $this->generate_no_invoice(),
                 'total_berat' => $request->total_berat,
                 'ongkos_kirim' => $request->ongkos_kirim,
@@ -253,14 +258,14 @@ class OdooController extends Controller
 
             $salesOrderData = [
                 'partner_id' => (int) $cart[0]->user->pelanggan_id,
-                'order_line' => [
-                    $array_order_line
-                ],
+                'odoo_sales_user_id' => (int) $sales,
+                'order_line' => $array_order_line,
             ];
 
+            
             $sales_order_odoo = $this->models->execute_kw($this->db, $this->uid, $this->password,
             'sale.order', 'create', [[$salesOrderData]]);
-
+            
             if(isset($sales_order_odoo['faultCode'])){
                 $message = 'Oops! terjadi kesalahan waktu membuat sales order odoo';
                 return ApiFormatter::error(400, $message);

@@ -14,7 +14,7 @@ use DataTables;
 class TransaksiController extends Controller
 {
     public function index(){
-        $transaksi = SalesOrder::has('user')->all();
+        $transaksi = SalesOrder::has('user')->get();
         $data['count_semua'] = $transaksi->count();
         $data['count_konfirmasi_admin'] = $transaksi->where('status', 'draft')->count();
         $data['count_sale'] = $transaksi->where('status', 'sale')->count();

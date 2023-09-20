@@ -44,7 +44,7 @@ class SyncPelangganJob implements ShouldQueue
     public function __construct($data)
     {
         $url = 'http://103.215.177.203:8096';
-        $this->db = 'odoo_kharisma_stationery_test5';
+        $this->db = 'odoo_kharisma_stationery_test6';
         $this->username = "kevin_kevin";
         $this->password = "kevin123";
 
@@ -76,6 +76,7 @@ class SyncPelangganJob implements ShouldQueue
                         $user = User::updateOrCreate([
                             'pelanggan_id' => $item['id'],
                         ],[
+                            'id' => $item['id'],
                             'type' => 'pelanggan',
                             'type_pelanggan' => $item['property_product_pricelist'][1],
                             'pelanggan_id' => $item['id'],
