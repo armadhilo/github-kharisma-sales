@@ -30,7 +30,7 @@ class SalesRequest extends FormRequest
             'nama' => 'required',
             'email' => 'required|email:rfc,dns',
             'telepon' => 'required|min:10|max:12',
-            'alamat' => 'required',
+            'alamat' => 'nullable',
             'password' => [
                 Rule::when(request()->isMethod('POST'), 'nullable'),
                 Rule::when(request()->isMethod('PUT'), 'nullable'),

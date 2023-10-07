@@ -21,7 +21,6 @@
                           <th scope="col" class="text-center">Nama</th>
                           <th scope="col" class="text-center">Email</th>
                           <th scope="col" class="text-center">Telepon</th>
-                          <th scope="col" class="text-center">Alamat</th>
                           <th scope="col" class="text-center" style="width: 25%">Actions</th>
                        </tr>
                     </thead>
@@ -77,7 +76,7 @@
                             <span class="d-flex text-danger invalid-feedback" id="invalid-telepon-feedback"></span>
                         </div>
                     </div>
-                    <div class="col-12 col-md-12 col-lg-12">
+                    <div class="col-12 col-md-12 col-lg-12" hidden>
                         <div class="form-group">
                             <label>Alamat</label>
                             <textarea class="form-control" type="text" style="height:100px" id="alamat" name="alamat" ></textarea>
@@ -107,20 +106,19 @@
             type: 'GET'
         },
         columnDefs: [
-            { className: 'text-center', targets: [0,1,2,3,4,5] },
+            { className: 'text-center', targets: [0,1,2,3,4] },
         ],
         columns: [
             { data: 'DT_RowIndex',searchable: false, orderable: false},
             { data: 'nama' },
             { data: 'email' },
             { data: 'telepon' },
-            { data: 'alamat' },
-            { data: 'alamat' },
+            { data: 'telepon' },
         ],
         rowCallback : function(row, data){
             var url_edit   = "/admin/sales/detail/" + data.id;
             var url_delete = "/admin/sales/delete/" + data.id;
-            $('td:eq(5)', row).html(`
+            $('td:eq(4)', row).html(`
                 <button class="btn btn-info btn-sm mr-1" onclick="edit('${url_edit}')"><i class="fa fa-edit"></i></button>
                 <button class="btn btn-danger btn-sm" onclick="delete_action('${url_delete}','${data.nama}')"><i class="fa fa-trash"> </i></button>
             `);

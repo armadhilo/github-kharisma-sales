@@ -33,7 +33,7 @@ class SalesController extends Controller
                     ->make(true);
     }
 
-    public function store_update(SalesRequest $request){
+    public function store_update(SalesRequest $request){ 
 
         if(substr($request->telepon, 0, 2) != '08'){
             return [
@@ -42,13 +42,13 @@ class SalesController extends Controller
             ];
         }
 
-        if($request->type != 'update'){
-            $request->request->add(['password' =>Hash::make($request->password)]);
-            $request->request->add(['type' => 'sales']);
-        }
+        // if($request->type != 'update'){
+        //     $request->request->add(['password' =>Hash::make($request->password)]);
+        //     $request->request->add(['type' => 'sales']);
+        // }
 
-        if(!empty($request->password)){
-            $request->merge(['password' =>Hash::make($request->password)]);
+        if(isset($request->password)){
+            $request->merge(['password' => Hash::make($request->password)]);
         }
 
         $user = User::find($request->id);
@@ -65,11 +65,7 @@ class SalesController extends Controller
             ];
         }
 
-        User::updateOrCreate(['id' => $request->id],[
-            'email' => $request->email,
-            'nama' => $request->nama,
-            'telepon' => $request->telepon
-        ] );
+        User::updateOrCreate(['id' => $request->id], $request->all());
 
         return [
             'status' => 200, // SUCCESS

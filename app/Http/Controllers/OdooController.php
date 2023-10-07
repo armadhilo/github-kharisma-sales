@@ -235,17 +235,17 @@ class OdooController extends Controller
             }
 
             //add ongkos kirim ke dalam order line
-            $array_order_line[] = [
-                0,
-                0,
-                [
-                    'product_id' => 38839, //ONGKOS PENGIRIMAN
-                    'product_uom' => 1,
-                    'product_uom_qty' => 1,
-                    'price_unit' => $request->ongkos_kirim, //custom
-                    'name' => $request->jasa_pengiriman, //custom
-                ],
-            ];
+            // $array_order_line[] = [
+            //     0,
+            //     0,
+            //     [
+            //         'product_id' => 38839, //ONGKOS PENGIRIMAN
+            //         'product_uom' => 1,
+            //         'product_uom_qty' => 1,
+            //         'price_unit' => $request->ongkos_kirim, //custom
+            //         'name' => $request->jasa_pengiriman, //custom
+            //     ],
+            // ];
 
             //jika ada product yang tidak punya stock dihapus dari cart
             if(count($array_product_no_stock)){

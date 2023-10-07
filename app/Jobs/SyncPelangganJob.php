@@ -76,7 +76,6 @@ class SyncPelangganJob implements ShouldQueue
                         $user = User::updateOrCreate([
                             'pelanggan_id' => $item['id'],
                         ],[
-                            'id' => $item['id'],
                             'type' => 'pelanggan',
                             'type_pelanggan' => $item['property_product_pricelist'][1],
                             'pelanggan_id' => $item['id'],
