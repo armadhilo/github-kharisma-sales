@@ -33,6 +33,8 @@ Route::group(['prefix' => 'odoo'], function(){
     Route::get('/sync-pelanggan', 'OdooController@sync_pelanggan');
     Route::post('/sync-pelanggan-by-id', 'OdooController@sync_pelanggan_by_id');
     Route::get('/sync-status', 'OdooController@sync_status');
+
+    Route::get('/seeder-pelanggan-sales', 'OdooController@seederPelangganSales');
 });
 
 Route::group(['prefix' => 'sync-odoo'], function(){

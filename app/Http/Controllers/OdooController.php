@@ -63,7 +63,7 @@ class OdooController extends Controller
 
         //GET CUSTOMER
         return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'res.partner', 'search_read', [[['id', '=', [80575]]]], ['fields' => [], 'limit'=> 1]);
+        'res.partner', 'search_read', [[['id', '=', [76651]]]], ['fields' => [], 'limit'=> 1]);
 
         // //GET PRODUCT
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
@@ -652,16 +652,16 @@ class OdooController extends Controller
 
                 try{
 
-                    // SalesPelanggan::truncate();
+                    SalesPelanggan::truncate();
 
                     $array_sales_id = [];
                     $array_pelanggan_id = [];
 
                     foreach ($data as $key => $value) {
-                        // SalesPelanggan::create([
-                        //     "sales_id" => $value['salespartner_id'],
-                        //     "pelanggan_id" => $value['customer_id']
-                        // ]);
+                        SalesPelanggan::create([
+                            "sales_id" => $value['salespartner_id'],
+                            "pelanggan_id" => $value['customer_id']
+                        ]);
 
                         $array_sales_id[] = $value['salespartner_id'];
                         $array_pelanggan_id[] = $value['customer_id'];
