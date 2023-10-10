@@ -17,10 +17,10 @@ class OdooApi
 
     public static function createCustomer($request){
 
-        $url = 'http://103.215.177.203:8096';
-        $db = 'odoo_kharisma_stationery_test6';
-        $username = "kevin_kevin";
-        $password = "kevin234";
+        $url = config('services.odoo.odoo_url');
+        $db = config('services.odoo.odoo_db');
+        $username = config('services.odoo.odoo_username');
+        $password = config('services.odoo.odoo_password');
 
         $common = ripcord::client("$url/xmlrpc/2/common");
         $uid = $common->authenticate($db, $username, $password, []);
@@ -51,10 +51,10 @@ class OdooApi
 
     public static function updateCustomer($parameter){
 
-        $url = 'http://103.215.177.203:8096';
-        $db = 'odoo_kharisma_stationery_test6';
-        $username = "kevin_kevin";
-        $password = "kevin234";
+        $url = config('services.odoo.odoo_url');
+        $db = config('services.odoo.odoo_db');
+        $username = config('services.odoo.odoo_username');
+        $password = config('services.odoo.odoo_password');
 
         $common = ripcord::client("$url/xmlrpc/2/common");
         $uid = $common->authenticate($db, $username, $password, []);
@@ -84,10 +84,10 @@ class OdooApi
 
     public static function updateEmailSales($parameter){
 
-        $url = 'http://103.215.177.203:8096';
-        $db = 'odoo_kharisma_stationery_test6';
-        $username = "kevin_kevin";
-        $password = "kevin234";
+        $url = config('services.odoo.odoo_url');
+        $db = config('services.odoo.odoo_db');
+        $username = config('services.odoo.odoo_username');
+        $password = config('services.odoo.odoo_password');
 
         $common = ripcord::client("$url/xmlrpc/2/common");
         $uid = $common->authenticate($db, $username, $password, []);

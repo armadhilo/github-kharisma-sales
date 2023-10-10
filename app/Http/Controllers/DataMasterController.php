@@ -27,10 +27,10 @@ class DataMasterCOntroller extends Controller
     #============== TRY CODE ====================#
 
     public function try_code(){
-        $url = 'http://103.215.177.203:8096';
-        $db = 'odoo_kharisma_stationery_test4';
-        $username = "kevin_kevin";
-        $password = "kevin123";
+        $url = config('services.odoo.odoo_url');
+        $db = config('services.odoo.odoo_db');
+        $username = config('services.odoo.odoo_username');
+        $password = config('services.odoo.odoo_password');
 
         $common = ripcord::client("$url/xmlrpc/2/common");
         $uid = $common->authenticate($db, $username, $password, []);

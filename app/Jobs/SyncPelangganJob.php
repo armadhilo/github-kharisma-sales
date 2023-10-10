@@ -43,10 +43,10 @@ class SyncPelangganJob implements ShouldQueue
 
     public function __construct($data, $uid)
     {
-        $url = 'http://103.215.177.203:8096';
-        $this->db = 'odoo_kharisma_stationery_test6';
-        $this->username = "kevin_kevin";
-        $this->password = "kevin123";
+        $url = config('services.odoo.odoo_url');
+        $this->db = config('services.odoo.odoo_db');
+        $this->username = config('services.odoo.odoo_username');
+        $this->password = config('services.odoo.odoo_password');
 
         $common = ripcord::client("$url/xmlrpc/2/common");
         // $this->uid = $common->authenticate($this->db, $this->username, $this->password, []);
