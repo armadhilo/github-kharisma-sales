@@ -26,6 +26,9 @@ use App\Models\OdooProduct;
 use App\Models\SalesPelanggan;
 use ripcord;
 use Storage;
+use Validator;
+use App\Imports\CsvDataImport;
+use Excel;
 
 class OdooController extends Controller
 {
@@ -262,10 +265,10 @@ class OdooController extends Controller
                 'order_line' => $array_order_line,
             ];
 
-            
+
             $sales_order_odoo = $this->models->execute_kw($this->db, $this->uid, $this->password,
             'sale.order', 'create', [[$salesOrderData]]);
-            
+
             if(isset($sales_order_odoo['faultCode'])){
                 $message = 'Oops! terjadi kesalahan waktu membuat sales order odoo';
                 return ApiFormatter::error(400, $message);
@@ -346,7 +349,7 @@ class OdooController extends Controller
         $chunk = array_chunk($product_id, 20);
 
         foreach($chunk as $item){
-            dispatch(new SyncProductJob($item));
+            dispatch(new SyncProductJob($item, $this->uid));
             // dispatch(new SyncProductJob($item))->delay(now()->addSeconds(30));
         }
 
@@ -561,13 +564,145 @@ class OdooController extends Controller
         $chunk = array_chunk($pelanggan, 20);
 
         foreach($chunk as $item){
-            dispatch(new SyncPelangganJob($item));
+            dispatch(new SyncPelangganJob($item, $this->uid));
         }
 
         return [
             'status' => 200, // SUCCESS
             'message' => 'Sync Pelanggan Successfully'
         ];
+    }
+
+    public function sync_pelanggan_by_id(Request $request){
+        $validator = Validator::make($request->all(), [
+            'partner_id' => 'required',
+        ]);
+
+        if($validator->fails()) {
+            return [
+                'status' => 300,
+                'message' => $validator->errors()->first()
+            ];
+        }
+
+        $explode = explode("|", $request->partner_id . '|');
+        $array = [];
+        foreach($explode as $item){
+           if(!empty($item)) $array[] = (int)$item;
+        }
+
+        $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
+                'res.partner', 'search_read', [[['id', '=', $array], ['active','=', True]]], ['fields' => ['property_product_pricelist','id','email','name','mobile','display_name','npwp','npwp_name','id_nik','street','street2','city','zip']]);
+
+        if(!count($pelanggan)){
+            return [
+                'status' => 300, // SUCCESS
+                'message' => 'Oops koneksi Odoo sedang error atau ID Partner tidak ditemukan di database ODOO'
+            ];
+        }
+
+        if(is_array($pelanggan) || count($pelanggan)){
+            foreach($pelanggan as $item){
+
+                //jika pelannggan punya nama
+                if(!empty($item['name'])){
+                    $user = User::updateOrCreate([
+                        'pelanggan_id' => $item['id'],
+                    ],[
+                        'type' => 'pelanggan',
+                        'type_pelanggan' => $item['property_product_pricelist'][1],
+                        'pelanggan_id' => $item['id'],
+                        'email' => $item['email'] == false ? null : $item['email'],
+                        'nama' => trim($item['name']),
+                        'telepon' => $item['mobile'],
+                        'nama_toko' => trim($item['display_name']),
+                        'no_npwp' => $item['npwp'],
+                        'nama_npwp' => $item['npwp_name'],
+                        'no_ktp' => $item['id_nik'],
+                        'street' => $item['street'],
+                        'street2' => $item['street2'],
+                        'city' => $item['city'],
+                        'zip' => $item['zip'],
+                        'alamat_toko' => $item['street'] . ($item['street2'] != false ? ' - ' . $item['street2'] : '') . ($item['city'] != false ? ' - ' . $item['city'] : '') . ($item['zip'] != false ? ' - ' . $item['zip'] : ''),
+                    ]);
+
+                    if($user->wasRecentlyCreated){
+                        User::where('id', $user->id)->update([
+                            'password' => Hash::make('pelanggan')
+                        ]);
+                    }
+                }
+            }
+        }
+
+        return [
+            'status' => 200, // SUCCESS
+            'message' => 'Sync ID Partner berhasil'
+        ];
+    }
+
+    public function uploadExcelPelanggan(Request $request){
+        if($request->hasFile('file_excel')){
+
+			$data = Excel::toCollection(new CsvDataImport,request()->file('file_excel'))[0];
+
+			if($data->count()){
+
+                DB::beginTransaction();
+
+                try{
+
+                    // SalesPelanggan::truncate();
+
+                    $array_sales_id = [];
+                    $array_pelanggan_id = [];
+
+                    foreach ($data as $key => $value) {
+                        // SalesPelanggan::create([
+                        //     "sales_id" => $value['salespartner_id'],
+                        //     "pelanggan_id" => $value['customer_id']
+                        // ]);
+
+                        $array_sales_id[] = $value['salespartner_id'];
+                        $array_pelanggan_id[] = $value['customer_id'];
+                    }
+
+                    $array = array_merge($array_sales_id, $array_pelanggan_id);
+                    $array = array_unique($array);
+
+                    $users_id = User::pluck('pelanggan_id')->toArray();
+                    $missingData = array_diff($array, $users_id);
+
+                    if(count($missingData)){
+                        DB::table('jobs')->truncate();
+                        DB::table('failed_jobs')->truncate();
+
+                        $chunk = array_chunk($missingData, 20);
+                        foreach($chunk as $item){
+                            dispatch(new SyncPelangganJob($item, $this->uid));
+                        }
+                    }
+
+                    DB::commit();
+
+                    return [
+                        'status' => 200, // SUCCESS
+                        'message' => 'Upload Excel dan Sync Pelanggan Successfully'
+                    ];
+                }
+
+                catch(\Exception $e){
+
+                    DB::rollback();
+
+                    return [
+                        'status' 	=> 300, // GAGAL
+                        'message'       => (env('APP_DEBUG', 'true') == 'true')? $e->getMessage() : 'Operation error'
+                    ];
+
+                }
+            }
+        }
     }
 
     public function sync_status(){

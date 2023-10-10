@@ -16,6 +16,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "league/flysystem-aws-s3-v3": "~1.0",
+        "maatwebsite/excel": "^3.1",
         "nao-pon/flysystem-google-drive": "~1.1",
         "rap2hpoutre/laravel-log-viewer": "2.2.0",
         "spatie/laravel-activitylog": "^3.17",

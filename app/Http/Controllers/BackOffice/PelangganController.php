@@ -13,9 +13,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use DataTables;
 use DB;
-use Google\Service\CloudBuild\RetryBuildRequest;
-use Illuminate\Support\Facades\Route;
-
 
 class PelangganController extends Controller
 {
@@ -104,7 +101,7 @@ class PelangganController extends Controller
 
         // DB::beginTransaction();
         try{
-    
+
            //check if has password
            if(isset($user->password)){
                 $request->merge(['password' => Hash::make('pelanggan')]);
@@ -175,20 +172,20 @@ class PelangganController extends Controller
                 'status' => 201, // SUCCESS
                 'message' => 'Data berhasil disimpan',
                 'link' => '/admin/pelanggan',
-            ]; 
-    
-    
+            ];
+
+
         }
-    
+
         catch(\Exception $e){
-    
+
             // DB::rollback();
-    
+
             return [
                 'status'     => 300, // GAGAL
                 'message'       => (env('APP_DEBUG', 'true') == 'true')? $e->getMessage() : 'Operation error'
             ];
-    
+
         }
     }
 
@@ -231,6 +228,19 @@ class PelangganController extends Controller
         return [
             'status' => 300,
             'message' => 'Data tidak ditemukan'
+        ];
+    }
+
+    public function jadikanSales($id){
+        $password = Hash::make('sales123');
+        User::where('id', $id)->update([
+            'type' => '1',
+            'password' => $password
+        ]);
+
+        return [
+            'status' => 200, // SUCCESS
+            'message' => 'Partner berhasil dirubah menjadi sales'
         ];
     }
 }

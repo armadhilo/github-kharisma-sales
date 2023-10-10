@@ -39,7 +39,7 @@ class SyncProductJob implements ShouldQueue
     public $timeout = 120;
     public $tries = 3;
 
-    public function __construct($data)
+    public function __construct($data, $uid)
     {
         $url = 'http://103.215.177.203:8096';
         $this->db = 'odoo_kharisma_stationery_test6';
@@ -47,11 +47,12 @@ class SyncProductJob implements ShouldQueue
         $this->password = "kevin234";
 
         $common = ripcord::client("$url/xmlrpc/2/common");
-        $this->uid = $common->authenticate($this->db, $this->username, $this->password, []);
+        // $this->uid = $common->authenticate($this->db, $this->username, $this->password, []);
 
         $this->models = ripcord::client("$url/xmlrpc/2/object");
 
         $this->data = $data;
+        $this->uid = $uid;
     }
 
     /**

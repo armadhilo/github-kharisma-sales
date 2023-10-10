@@ -97,6 +97,8 @@
                 <div class="card-header">
                     <h4>Data Pelanggan</h4>
                     <div class="card-header-action">
+                        <button type="button" class="btn btn-info mr-2" onclick="add()"><i class="fa fa-sync mr-1"></i>Sync pelanggan by ID Partner</button>
+                        <button type="button" class="btn btn-warning mr-2" onclick="upload_excel_modal()"><i class="fa fa-sync mr-1"></i>Excel Relational Sales - Pelanggan</button>
                         <button type="button" class="btn btn-success mr-2" onclick="sync_pelanggan()"><i class="fa fa-sync mr-1"></i>Sync Pelanggan</button>
                         <button type="button" hidden class="btn btn-warning" onclick="window.location.href = '/admin/pelanggan/add';"><i class="fa fa-plus mr-1"></i>Tambah Pelanggan</button>
                     </div>
@@ -125,10 +127,114 @@
 </div>
 @endsection
 
+@section('modal')
+<div class="modal fade" role="dialog" id="modal" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+       <div class="modal-content">
+          <div class="modal-header br">
+             <h5 class="modal-title"></h5>
+             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+             <span aria-hidden="true">&times;</span>
+             </button>
+          </div>
+          <form id="form_submit_request" action="/api/odoo/sync-pelanggan-by-id" method="POST" autocomplete="off">
+             <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 col-md-12 col-lg-12">
+                        <div class="form-group">
+                            <label>Partner ID</label>
+                              <input class="form-control" type="text" id="partner_id" name="partner_id">
+                              <small>Partner ID harus dipisahkan dengan sparator "|"</small>
+                              <br>
+                              <small>contoh -> 83376|46103</small>
+                        </div>
+                    </div>
+                </div>
+             </div>
+             <div class="modal-footer bg-whitesmoke br">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-warning">Simpan</button>
+             </div>
+          </form>
+       </div>
+    </div>
+</div>
+
+<!-- Modal Upload -->
+<form id="form_upload" action="/admin/pelanggan/upload-excel" method="post" enctype="multipart/form-data">
+    <div class="modal fade" role="dialog" id="modal_upload" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header br">
+            <h5 class="modal-title"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 style="color:black">Petunjuk</h6>
+                    <p>Format susunan file excel, sebagai berikut :</p>
+
+                    <ul>
+                    <li>Ketentuan 1</li>
+                    <li>Ketentuan 2</li>
+                    <li>Ketentuan 3</li>
+                    </ul>
+
+                    <a href="{{asset('/berkas/template-excel/relational_sales_pelanggan.xlsx')}}" class="btn btn-success"><i class="fas fa-download"></i> Download Template Excel</a>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="text-center">
+                        <span>
+                            <i  style="font-size: 30px; padding-bottom: 20px;" class="fa fa-upload"></i>
+                        </span>
+                        <p style="line-height: 10px;">Silahkan pilih file excel yang akan diupload</p>
+                        <label class="label-upload" for="file_excel">
+                            <input class="input-upload" type="file" name="file_excel" id="file_excel" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .xls" required="" onchange="get_path_file();">Upload File
+                        </label>
+                        <small id="path_file_text"></small>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal-footer bg-whitesmoke br">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+        </div>
+    </div>
+    </div>
+</form>
+<!-- Modal Upload -->
+@endsection
+
 @section('js')
 <script src="{{ asset('assets/vendors/leaflet/leaflet.js') }}"></script>
 <script src="{{ asset('assets/vendors/leaflet/leaflet.markercluster.js') }}"></script>
 <script>
+
+function upload_excel_modal(){
+        $("#modal_upload").modal('show');
+        $(".modal-title").text('Upload Excel');
+    }
+
+    function add(){
+        $("#modal").modal('show');
+        $(".modal-title").text('Tambah Partner by ID');
+        $("#form_submit_request")[0].reset();
+        reset_all_select();
+    }
+
+    function edit(url){
+        edit_action(url, 'Edit Partner by ID');
+        $("#type").val('update');
+    }
+
     var tb = $('#tb').DataTable({
         processing: true,
         serverSide: true,
@@ -162,13 +268,64 @@
 
             var url_edit = "/admin/pelanggan/detail/" + data.id;
             var url_delete = "/admin/pelanggan/delete/" + data.id;
-            $('td:eq(7)', row).html(`
-                <button class="btn btn-info btn-sm mr-1" onclick="window.open('${url_edit}', '_blank');"><i class="fa fa-edit"></i></button>
-                <button class="btn btn-danger btn-sm" onclick="delete_action('${url_delete}','${data.nama}')"><i class="fa fa-trash"> </i></button>
-            `);
+
+            if(data.status_badge == `<span class='badge badge-danger'>inactive</span>`){
+                $('td:eq(7)', row).html(`
+                    <button class="btn btn-info btn-sm mr-1" onclick="window.open('${url_edit}', '_blank');"><i class="fa fa-edit"></i></button>
+                    <button class="btn btn-danger btn-sm mr-1" onclick="delete_action('${url_delete}','${data.nama}')"><i class="fa fa-trash"> </i></button>
+                    <button class="btn btn-warning btn-sm" onclick="action('${data.id}')"><i class="fa fa-user mr-2"></i>Jadikan Sales</button>
+                `);
+            }else{
+                $('td:eq(7)', row).html(`
+                    <button class="btn btn-info btn-sm mr-1" onclick="window.open('${url_edit}', '_blank');"><i class="fa fa-edit"></i></button>
+                    <button class="btn btn-danger btn-sm mr-1" onclick="delete_action('${url_delete}','${data.nama}')"><i class="fa fa-trash"> </i></button>
+                `);
+            }
+
         }
     });
 
+    function action(id){
+        swal({
+             title: 'Yakin?',
+             text: 'Apakah anda yakin akan menjadikan partner ini sales?',
+             icon: 'warning',
+             buttons: true,
+             dangerMode: true,
+       })
+       .then((willDelete) => {
+             if (willDelete) {
+                $("#modal_loading").modal('show');
+                $.ajax({
+                    url: '/admin/pelanggan/jadikan-sales/' + id,
+                    type: "GET",
+                    dataType: 'JSON',
+                    success: function( response, textStatus, jQxhr ){
+                        setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                        if(response.status == 200){
+                            iziToast.success({
+                                title: 'Success!',
+                                message: response.message,
+                                position: 'topRight'
+                                });
+                            tb.ajax.reload(null, false);
+                        }else{
+                            iziToast.error({
+                                title: 'Error!',
+                                message: response.message,
+                                position: 'topRight'
+                            });
+                        }
+                    },
+                    error: function( jqXhr, textStatus, errorThrown ){
+                        setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                        console.log( errorThrown );
+                        console.warn(jqXhr.responseText);
+                    },
+                });
+            }action
+        });
+    }
 
     var basemaps= {
             "Google Satelite":L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
@@ -216,22 +373,22 @@
       list_pelanggan();
    });
 
-   var map = L.map('myMap', {
-            // center: [-7.320063,112.7292863],
-            center: [-5.1114857,119.3325868],
-            zoom: 2,
-            preferCanvas:true,
-            bounceAtZoomLimits:false,
-            minZoom: 5,
-                  // maxBounds:[
-                  //    [-9.319,110.868],
-                  //    [-5.713,116.103]
-                  // ],
-            zoomControl:false,
-            layers: [
-                  basemaps["Google Satelite"]
-            ],
-         });
+    var map = L.map('myMap', {
+        // center: [-7.320063,112.7292863],
+        center: [-5.1114857,119.3325868],
+        zoom: 2,
+        preferCanvas:true,
+        bounceAtZoomLimits:false,
+        minZoom: 5,
+                // maxBounds:[
+                //    [-9.319,110.868],
+                //    [-5.713,116.103]
+                // ],
+        zoomControl:false,
+        layers: [
+                basemaps["Google Satelite"]
+        ],
+    });
 
       //disable default scroll
       map.scrollWheelZoom.disable();

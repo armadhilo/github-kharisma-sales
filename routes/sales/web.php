@@ -31,6 +31,9 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::post('/store-update','BackOffice\PelangganController@store_update');
             Route::put('/store-update','BackOffice\PelangganController@store_update');
             Route::delete('/delete/{id}','BackOffice\PelangganController@delete');
+
+            Route::get('/jadikan-sales/{id}','BackOffice\PelangganController@jadikanSales');
+            Route::post('/upload-excel','OdooController@uploadExcelPelanggan');
         });
 
         Route::prefix('produk')->group(function () {
@@ -53,7 +56,7 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::get('/detail/{id}','BackOffice\SalesAttendanceController@detail');
             Route::get('/datatables','BackOffice\SalesAttendanceController@datatables');
         });
-        
+
         Route::prefix('edit-kunjungan-sales')->group(function () {
             Route::get('/','BackOffice\KunjunganSalesController@edit');
             Route::get('/datatables','BackOffice\KunjunganSalesController@datatables_edit');
