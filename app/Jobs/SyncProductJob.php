@@ -46,7 +46,7 @@ class SyncProductJob implements ShouldQueue
         $this->username = config('services.odoo.odoo_username');
         $this->password = config('services.odoo.odoo_password');
 
-        $common = ripcord::client("$url/xmlrpc/2/common");
+        // $common = ripcord::client("$url/xmlrpc/2/common");
         // $this->uid = $common->authenticate($this->db, $this->username, $this->password, []);
 
         $this->models = ripcord::client("$url/xmlrpc/2/object");

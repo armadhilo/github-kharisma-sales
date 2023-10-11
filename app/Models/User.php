@@ -18,7 +18,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $guarded = ['type_pelanggan'];
+    protected $guarded = ['id'];
     protected $append = ['sales'];
 
     /**

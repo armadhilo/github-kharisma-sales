@@ -642,65 +642,86 @@ class OdooController extends Controller
     }
 
     public function uploadExcelPelanggan(Request $request){
+       
+
         if($request->hasFile('file_excel')){
 
-			$data = Excel::toCollection(new CsvDataImport,request()->file('file_excel'))[0];
+            $data = Excel::toCollection(new CsvDataImport,request()->file('file_excel'))[0];
 
-			if($data->count()){
+            if(!$data->count()){
 
-                DB::beginTransaction();
+                return [
+                    'status' => 300, // GAGAL
+                    'message' => 'Tidak ada data pada excel'
+                ];
+            }
 
-                try{
+            // DB::beginTransaction();
 
-                    SalesPelanggan::truncate();
+            try{
 
-                    $array_sales_id = [];
-                    $array_pelanggan_id = [];
+                SalesPelanggan::truncate();
 
-                    foreach ($data as $key => $value) {
-                        SalesPelanggan::create([
-                            "sales_id" => $value['salespartner_id'],
-                            "pelanggan_id" => $value['customer_id']
+                $array_sales_id = [];
+                $array_pelanggan_id = [];
+
+                foreach ($data as $key => $value) {
+                    SalesPelanggan::create([
+                        "sales_id" => $value['salespartner_id'],
+                        "pelanggan_id" => $value['customer_id']
+                    ]);
+
+                    $array_sales_id[] = $value['salespartner_id'];
+                    $array_pelanggan_id[] = $value['customer_id'];
+                }
+
+                $array = array_merge($array_sales_id, $array_pelanggan_id);
+                $array = array_unique($array);
+
+                $users_id = User::pluck('pelanggan_id')->toArray();
+                $missingData = array_diff($array, $users_id);
+
+                if(count($missingData)){
+                    DB::table('jobs')->truncate();
+                    DB::table('failed_jobs')->truncate();
+
+                    $chunk = array_chunk($missingData, 20);
+                    foreach($chunk as $item){
+                        dispatch(new SyncPelangganJob($item, $this->uid));
+                    }
+                }
+
+                if(count($array_sales_id)){
+                    $data = DB::select("
+                        SELECT pelanggan_id FROM users WHERE pelanggan_id IN (SELECT DISTINCT sales_id FROM sales_pelanggan) and type != '1'
+                    ");
+
+                    foreach($data as $item){
+                        $password = Hash::make('sales123');
+                        User::where('pelanggan_id', $item->pelanggan_id)->update([
+                            'type' => '1',
+                            'password' => $password
                         ]);
-
-                        $array_sales_id[] = $value['salespartner_id'];
-                        $array_pelanggan_id[] = $value['customer_id'];
                     }
-
-                    $array = array_merge($array_sales_id, $array_pelanggan_id);
-                    $array = array_unique($array);
-
-                    $users_id = User::pluck('pelanggan_id')->toArray();
-                    $missingData = array_diff($array, $users_id);
-
-                    if(count($missingData)){
-                        DB::table('jobs')->truncate();
-                        DB::table('failed_jobs')->truncate();
-
-                        $chunk = array_chunk($missingData, 20);
-                        foreach($chunk as $item){
-                            dispatch(new SyncPelangganJob($item, $this->uid));
-                        }
-                    }
-
-                    DB::commit();
-
-                    return [
-                        'status' => 200, // SUCCESS
-                        'message' => 'Upload Excel dan Sync Pelanggan Successfully'
-                    ];
                 }
 
-                catch(\Exception $e){
-
-                    DB::rollback();
-
-                    return [
-                        'status' 	=> 300, // GAGAL
-                        'message'       => (env('APP_DEBUG', 'true') == 'true')? $e->getMessage() : 'Operation error'
-                    ];
-
-                }
+                // DB::commit();
+    
+                return [
+                    'status' => 200, // SUCCESS
+                    'message' => 'Upload Excel dan Sync Pelanggan Successfully'
+                ];
+            }
+    
+            catch(\Exception $e){
+    
+                // DB::rollback();
+    
+                return [
+                    'status' 	=> 300, // GAGAL
+                    'message'       => (env('APP_DEBUG', 'true') == 'true')? $e->getMessage() : 'Operation error'
+                ];
+    
             }
         }
     }

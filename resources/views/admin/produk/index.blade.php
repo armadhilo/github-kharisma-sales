@@ -282,7 +282,7 @@
                 $("#modal_loading").modal('show');
                     $.ajax({
                         url : "/api/odoo/sync-product",
-                        type: "GET",
+                        type: "POST",
                         dataType: "JSON",
                         success: function(response){
                             setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
