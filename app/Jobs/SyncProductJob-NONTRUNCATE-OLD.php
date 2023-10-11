@@ -18,7 +18,7 @@ use Str;
 use DB;
 use Log;
 
-class SyncProductJob implements ShouldQueue
+class SyncProductJobNONTRUNCATEOLD implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

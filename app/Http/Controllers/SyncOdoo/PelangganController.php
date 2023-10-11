@@ -11,10 +11,17 @@ use Storage;
 
 use App\Http\Requests\SyncOdoo\PelangganRequest;
 use App\Models\User;
+use Hash;
 
 class PelangganController extends Controller
 {
     public function store_update(PelangganRequest $request){
+
+        $user = User::where('pelanggan_id', $request->pelanggan_id)->first();
+        if(empty($user)){
+            $request->merge(['password' => Hash::make('pelanggan')]);
+        }
+
         User::updateOrInsert(['pelanggan_id' => $request->pelanggan_id], $request->all());
         return ApiFormatter::success(200, 'Sync Pelanggan Berhasil');
     }

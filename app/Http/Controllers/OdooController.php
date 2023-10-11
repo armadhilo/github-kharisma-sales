@@ -24,6 +24,7 @@ use App\Models\SalesOrderProduct;
 use App\Models\Notification;
 use App\Models\OdooProduct;
 use App\Models\SalesPelanggan;
+use App\Models\OdooProductOriginal;
 use ripcord;
 use Storage;
 use Validator;
@@ -346,7 +347,10 @@ class OdooController extends Controller
 
         //WITH ODOO GET ID
         $product_id = $this->models->execute_kw($this->db, $this->uid, $this->password,'product.product', 'search', [[['active','=', True]]]);
-        $chunk = array_chunk($product_id, 20);
+        $odoo_product = OdooProductOriginal::has('product_uom')->select('product_id')->pluck('product_id');
+
+        $difference = array_diff($product_id, $odoo_product);
+        $chunk = array_chunk($difference, 20);
 
         foreach($chunk as $item){
             dispatch(new SyncProductJob($item, $this->uid));
@@ -642,7 +646,7 @@ class OdooController extends Controller
     }
 
     public function uploadExcelPelanggan(Request $request){
-       
+
 
         if($request->hasFile('file_excel')){
 
@@ -706,22 +710,22 @@ class OdooController extends Controller
                 }
 
                 // DB::commit();
-    
+
                 return [
                     'status' => 200, // SUCCESS
                     'message' => 'Upload Excel dan Sync Pelanggan Successfully'
                 ];
             }
-    
+
             catch(\Exception $e){
-    
+
                 // DB::rollback();
-    
+
                 return [
                     'status' 	=> 300, // GAGAL
                     'message'       => (env('APP_DEBUG', 'true') == 'true')? $e->getMessage() : 'Operation error'
                 ];
-    
+
             }
         }
     }
