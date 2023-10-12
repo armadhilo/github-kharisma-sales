@@ -25,12 +25,11 @@ class PelangganController extends Controller
         }
 
         if(isset($request->sales_id)){
+            SalesPelanggan::where(['pelanggan_id' => $request->pelanggan_id])->where('sales_id', '!=', $request->sales_id)->delete();
             SalesPelanggan::updateOrInsert(['pelanggan_id' => $request->pelanggan_id], [
                 'pelanggan_id' => $request->pelanggan_id,
                 'sales_id' => $request->sales_id
             ]);
-
-            SalesPelanggan::where(['pelanggan_id' => $request->pelanggan_id])->where('sales_id', '!=', $request->sales_id)->delete();
         }
 
         User::updateOrInsert(['pelanggan_id' => $request->pelanggan_id], $request->all());
