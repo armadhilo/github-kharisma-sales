@@ -54,10 +54,8 @@ class User extends Authenticatable
     public function setTypeAttribute($value){
         if($value == 'sales'){
             $this->attributes['type'] = 1;
-        }elseif($value == 'pelanggan'){
-            $this->attributes['type'] = 2;
         }else{
-            $this->attributes['type'] = 0;
+            $this->attributes['type'] = 2;
         }
     }
 

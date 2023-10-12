@@ -19,7 +19,7 @@ class ProductController extends Controller
     {
         // $product = OdooProduct::has('product_uom')->getByTipePelanggan()->with('product_tag', 'product_uom.product_pricelist')->limit(1)->get();
         // return $product;
-        $product = OdooProduct::getByTipePelanggan()->has('product_uom')->with('product_tag', 'product_uom.product_pricelist')->orderBy('updated_at','DESC')->limit(1000);
+        $product = OdooProduct::getByTipePelanggan()->has('product_uom')->with('product_tag', 'product_uom.product_pricelist')->has('product_tag')->orderBy('updated_at','DESC')->limit(1000);
 
         if(isset($request->search)){
             $search = str_replace("+"," ",$request->search);

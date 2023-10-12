@@ -10,6 +10,7 @@ use DB;
 use Storage;
 
 use App\Http\Requests\SyncOdoo\PelangganRequest;
+use App\Models\SalesPelanggan;
 use App\Models\User;
 use Hash;
 
@@ -19,7 +20,15 @@ class PelangganController extends Controller
 
         $user = User::where('pelanggan_id', $request->pelanggan_id)->first();
         if(empty($user)){
+            $request->merge(['type' => 'pelanggan']);
             $request->merge(['password' => Hash::make('pelanggan')]);
+        }
+
+        if(isset($request->sales_id)){
+            SalesPelanggan::updateOrInsert(['pelanggan_id' => $request->pelanggan_id], [
+                'pelanggan_id' => $request->pelanggan_id,
+                'sales_id' => $request->sales_id
+            ]);
         }
 
         User::updateOrInsert(['pelanggan_id' => $request->pelanggan_id], $request->all());
