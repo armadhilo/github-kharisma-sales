@@ -28,6 +28,7 @@ class PelangganRequest extends FormRequest
     {
         return [
             'pelanggan_id' => 'required',
+            'sales_id' => 'required',
             'property_product_pricelist' => 'required',
             'npwp' => 'required',
             'npwp_name' => 'required',

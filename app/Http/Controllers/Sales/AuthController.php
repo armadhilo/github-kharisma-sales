@@ -32,7 +32,7 @@ class AuthController extends Controller
             }
 
             $user = Auth::user();
-            $token = $user->createToken($user->name)->accessToken;
+            $token = $user->createToken(Auth::user()->email)->accessToken;
 
             $message = 'Successfully login.';
             $data = [

@@ -664,13 +664,13 @@ class OdooController extends Controller
 
             try{
 
-                SalesPelanggan::truncate();
-
                 $array_sales_id = [];
                 $array_pelanggan_id = [];
 
                 foreach ($data as $key => $value) {
-                    SalesPelanggan::create([
+                    SalesPelanggan::updateOrCreate([
+                        'pelanggan_id' => $value['customer_id'] 
+                    ],[
                         "sales_id" => $value['salespartner_id'],
                         "pelanggan_id" => $value['customer_id']
                     ]);

@@ -95,6 +95,7 @@ class ProductController extends Controller
             $request->merge(['product_tag_id' => $request->product_tag_id[0]]);
         }
 
+        $request->merge(['created_at' => Carbon::now()]);
         OdooProductOriginal::updateOrInsert([
             'product_id' => $request->product_id,
             'sku' => $request->sku,

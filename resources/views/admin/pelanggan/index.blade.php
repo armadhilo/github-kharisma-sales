@@ -99,7 +99,7 @@
                     <div class="card-header-action">
                         <button type="button" class="btn btn-info mr-2" onclick="add()"><i class="fa fa-sync mr-1"></i>Sync pelanggan by ID Partner</button>
                         <button type="button" class="btn btn-warning mr-2" onclick="upload_excel_modal()"><i class="fa fa-sync mr-1"></i>Excel Relational Sales - Pelanggan</button>
-                        <button type="button" class="btn btn-success mr-2" onclick="sync_pelanggan()"><i class="fa fa-sync mr-1"></i>Sync Pelanggan</button>
+                        {{-- <button type="button" class="btn btn-success mr-2" onclick="sync_pelanggan()"><i class="fa fa-sync mr-1"></i>Sync Pelanggan</button> --}}
                         <button type="button" hidden class="btn btn-warning" onclick="window.location.href = '/admin/pelanggan/add';"><i class="fa fa-plus mr-1"></i>Tambah Pelanggan</button>
                     </div>
                 </div>

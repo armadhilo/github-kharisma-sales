@@ -20,18 +20,20 @@ class PelangganController extends Controller
 
         $user = User::where('pelanggan_id', $request->pelanggan_id)->first();
         if(empty($user)){
-            $request->merge(['type' => 'pelanggan']);
+            $request->merge(['type' => '2']);
             $request->merge(['password' => Hash::make('pelanggan')]);
         }
 
         if(isset($request->sales_id)){
-            SalesPelanggan::where(['pelanggan_id' => $request->pelanggan_id])->where('sales_id', '!=', $request->sales_id)->delete();
+            SalesPelanggan::where(['pelanggan_id' => $request->pelanggan_id])->where('sales_id', '!=', (int)$request->sales_id)->delete();
             SalesPelanggan::updateOrInsert(['pelanggan_id' => $request->pelanggan_id], [
                 'pelanggan_id' => $request->pelanggan_id,
-                'sales_id' => $request->sales_id
+                'sales_id' => (int)$request->sales_id,
+                'created_at' => Carbon::now(),
             ]);
         }
 
+        $request->merge(['created_at' => Carbon::now()]);
         User::updateOrInsert(['pelanggan_id' => $request->pelanggan_id], $request->all());
         return ApiFormatter::success(200, 'Sync Pelanggan Berhasil');
     }
