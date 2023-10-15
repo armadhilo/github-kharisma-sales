@@ -20,6 +20,12 @@ class LongLatController extends Controller
 
             $user = User::where('id', $id)->first();
 
+            //check is lock user
+            if($user->is_lock_location == 1){
+                $message = 'Anda tidak dapat merubah lokasi pelanggan ini, hubungi admin untuk memberikan akses';
+                return ApiFormatter::error(400, $message);
+            }
+
             //check if has password
             if(!isset($user->password)){
                 $user->password = Hash::make('pelanggan');
@@ -39,6 +45,7 @@ class LongLatController extends Controller
             ]);
 
             User::where('id', $id)->update([
+                'is_lock_location' => 1,
                 'lat' => $request->lat,
                 'lng' => $request->lng,
             ]);

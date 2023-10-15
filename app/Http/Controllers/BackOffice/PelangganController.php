@@ -243,4 +243,16 @@ class PelangganController extends Controller
             'message' => 'Partner berhasil dirubah menjadi sales'
         ];
     }
+
+    public function lockLokasi($id){
+        $user = User::find($id);
+
+        $user->is_lock_location = $user->is_lock_location == 0 ? 1 : 0;
+        $user->save();
+
+        return [
+            'status' => 200, // SUCCESS
+            'message' => 'Success, Partner dapat dirubah lokasi oleh sales'
+        ];
+    }
 }

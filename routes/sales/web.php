@@ -33,6 +33,7 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::delete('/delete/{id}','BackOffice\PelangganController@delete');
 
             Route::get('/jadikan-sales/{id}','BackOffice\PelangganController@jadikanSales');
+            Route::get('/lock-lokasi/{id}','BackOffice\PelangganController@lockLokasi');
             Route::post('/upload-excel','OdooController@uploadExcelPelanggan');
         });
 

@@ -269,21 +269,69 @@ function upload_excel_modal(){
             var url_edit = "/admin/pelanggan/detail/" + data.id;
             var url_delete = "/admin/pelanggan/delete/" + data.id;
 
-            if(data.status_badge == `<span class='badge badge-danger'>inactive</span>`){
-                $('td:eq(7)', row).html(`
-                    <button class="btn btn-info btn-sm mr-1" onclick="window.open('${url_edit}', '_blank');"><i class="fa fa-edit"></i></button>
-                    <button class="btn btn-danger btn-sm mr-1" onclick="delete_action('${url_delete}','${data.nama}')"><i class="fa fa-trash"> </i></button>
-                    <button class="btn btn-warning btn-sm" onclick="action('${data.id}')"><i class="fa fa-user mr-2"></i>Jadikan Sales</button>
-                `);
+            let action = `
+                <button class="btn btn-info btn-sm mr-1" onclick="window.open('${url_edit}', '_blank');"><i class="fa fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm mr-1" onclick="delete_action('${url_delete}','${data.nama}')"><i class="fa fa-trash"> </i></button>
+            `;
+
+            if(data.is_lock_location == 1){
+                action += `<button class="btn btn-success btn-sm mr-1" onclick="action_lock('${data.id}','0')"><i class="fa fa-lock-open mr-2"></i>Unlock</button>`;
             }else{
-                $('td:eq(7)', row).html(`
-                    <button class="btn btn-info btn-sm mr-1" onclick="window.open('${url_edit}', '_blank');"><i class="fa fa-edit"></i></button>
-                    <button class="btn btn-danger btn-sm mr-1" onclick="delete_action('${url_delete}','${data.nama}')"><i class="fa fa-trash"> </i></button>
-                `);
+                action += `<button class="btn btn-warning btn-sm mr-1" onclick="action_lock('${data.id}','1')"><i class="fa fa-lock mr-2"></i>lock</button>`;
             }
 
+            if(data.status_badge == `<span class='badge badge-danger'>inactive</span>`){
+                action += `<button class="btn btn-primary btn-sm" onclick="action('${data.id}')"><i class="fa fa-user mr-2"></i>Jadikan Sales</button>`;
+            }
+
+            $('td:eq(7)', row).html(action);
         }
     });
+
+    function action_lock(id, status){
+
+        let text = (status == 0) ? 'unlock' : 'lock';
+
+        swal({
+             title: 'Yakin?',
+             text: 'Apakah anda yakin akan melakukan ' + text + ' edit lokasi pelanggan ini?',
+             icon: 'warning',
+             buttons: true,
+             dangerMode: true,
+       })
+       .then((willDelete) => {
+             if (willDelete) {
+                $("#modal_loading").modal('show');
+                $.ajax({
+                    url: '/admin/pelanggan/lock-lokasi/' + id,
+                    type: "GET",
+                    dataType: 'JSON',
+                    success: function( response, textStatus, jQxhr ){
+                        setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                        if(response.status == 200){
+                            iziToast.success({
+                                title: 'Success!',
+                                message: response.message,
+                                position: 'topRight'
+                                });
+                            tb.ajax.reload(null, false);
+                        }else{
+                            iziToast.error({
+                                title: 'Error!',
+                                message: response.message,
+                                position: 'topRight'
+                            });
+                        }
+                    },
+                    error: function( jqXhr, textStatus, errorThrown ){
+                        setTimeout(function () {  $('#modal_loading').modal('hide'); }, 500);
+                        console.log( errorThrown );
+                        console.warn(jqXhr.responseText);
+                    },
+                });
+            }action
+        });
+    }
 
     function action(id){
         swal({
