@@ -23,7 +23,8 @@ class ProductController extends Controller
 
         if(isset($request->search)){
             $search = str_replace("+"," ",$request->search);
-            $product->where('product_name','like',"%$search%");
+            $product->where('product_name','like',"%$search%")
+                ->orWhere('sku', 'like', "%$search%");
         }
 
         if(isset($request->kategori) && $request->kategori != 'All Category'){
@@ -32,22 +33,20 @@ class ProductController extends Controller
 
         $product = $product->get();
 
-        // if($request->has('filter') && !empty($request->filter)){
-        //     $filter = $request->filter;
-        //     if($filter == 'termurah'){
-        //         $product = $product->sortBy(function($product){
-        //             return $product->price_utama;
-        //         });
-        //     }elseif($filter == 'termahal'){
-        //         $product = $product->sortByDesc(function($product){
-        //             return $product->price_utama;
-        //         });
-        //     }else{
-        //         $product = $product->sortByDesc('updated_at');
-        //     }
-
-        //     $product = $product->all();
-        // }
+        if($request->has('filter') && !empty($request->filter)){
+            $filter = $request->filter;
+            if($filter == 'termurah'){
+                $product = $product->sortBy(function($product){
+                    return $product->price_utama;
+                });
+            }elseif($filter == 'termahal'){
+                $product = $product->sortByDesc(function($product){
+                    return $product->price_utama;
+                });
+            }else{
+                $product = $product->sortByDesc('updated_at');
+            }
+        }
 
         $pagination = $this->paginate($product, 50)->withPath(url()->current());
 

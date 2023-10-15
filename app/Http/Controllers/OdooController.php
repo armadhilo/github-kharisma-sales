@@ -266,15 +266,6 @@ class OdooController extends Controller
                 'order_line' => $array_order_line,
             ];
 
-
-            $sales_order_odoo = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'sale.order', 'create', [[$salesOrderData]]);
-
-            if(isset($sales_order_odoo['faultCode'])){
-                $message = 'Oops! terjadi kesalahan waktu membuat sales order odoo';
-                return ApiFormatter::error(400, $message);
-            }
-
             //kurangi stock pada ODOO PRODUCT TABLE
             foreach($array_product as $key => $item){
                 $odoo_product = OdooProduct::find($key);
@@ -287,7 +278,6 @@ class OdooController extends Controller
 
             //update data SALES_ORDER TABLE
             SalesOrder::where('id', $sales_order->id)->update([
-                'odoo_order_id' => $sales_order_odoo[0],
                 'total_harga_produk' => $total_harga_produk,
                 'total_harga' => $total_harga_produk + $request->ongkos_kirim,
             ]);
@@ -302,6 +292,19 @@ class OdooController extends Controller
                 'user_id' => auth('api')->user()->pelanggan_id,
                 'sales_order_id' => $sales_order->id,
                 'notification_type' => 'draft',
+            ]);
+
+            $sales_order_odoo = $this->models->execute_kw($this->db, $this->uid, $this->password,
+            'sale.order', 'create', [[$salesOrderData]]);
+
+            if(isset($sales_order_odoo['faultCode'])){
+                $message = 'Oops! terjadi kesalahan waktu membuat sales order odoo';
+                return ApiFormatter::error(400, $message);
+            }
+
+            //update data SALES_ORDER TABLE
+            SalesOrder::where('id', $sales_order->id)->update([
+                'odoo_order_id' => $sales_order_odoo[0],
             ]);
 
             DB::commit();

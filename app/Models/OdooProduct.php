@@ -42,6 +42,10 @@ class OdooProduct extends Model
     //     }
     // }
 
+    public function getProductNameAttribute(){
+        return $this->attributes['product_name'] . ' [' . $this->attributes['sku'] . ']';
+    }
+
     public function scopeGetByTipePelanggan($scope){
 
         if(auth('api')->check()){
