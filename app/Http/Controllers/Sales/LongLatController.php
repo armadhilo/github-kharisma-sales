@@ -23,7 +23,7 @@ class LongLatController extends Controller
             //check is lock user
             if($user->is_lock_location == 1){
                 $message = 'Anda tidak dapat merubah lokasi pelanggan ini, hubungi admin untuk memberikan akses';
-                return ApiFormatter::error(400, $message);
+                return ApiFormatter::success(200, $message);
             }
 
             //check if has password

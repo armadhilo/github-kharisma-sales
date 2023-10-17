@@ -235,6 +235,29 @@ function upload_excel_modal(){
         $("#type").val('update');
     }
 
+    function copyToClipboard(text) {
+        // Create a temporary textarea element to hold the text
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+
+        // Select the text in the textarea
+        textarea.select();
+
+        // Execute the "copy" command to copy the selected text to the clipboard
+        document.execCommand('copy');
+
+        // Remove the temporary textarea
+        document.body.removeChild(textarea);
+
+        iziToast.success({
+        title: 'Success!',
+        message: 'Token berhasil dicopy',
+        position: 'topRight'
+        });
+    }
+
+
     var tb = $('#tb').DataTable({
         processing: true,
         serverSide: true,
@@ -282,6 +305,8 @@ function upload_excel_modal(){
 
             if(data.status_badge == `<span class='badge badge-danger'>inactive</span>`){
                 action += `<button class="btn btn-primary btn-sm" onclick="action('${data.id}')"><i class="fa fa-user mr-2"></i>Jadikan Sales</button>`;
+            }else{
+                action += `<button class="btn btn-secondary btn-sm" onclick="copyToClipboard('${data.keylog}')"><i class="fa fa-copy mr-2"></i>Copy Token</button>`;
             }
 
             $('td:eq(7)', row).html(action);

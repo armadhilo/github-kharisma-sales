@@ -13,7 +13,7 @@ class OdooProduct extends Model
 
     protected $table = 'odoo_product';
     protected $guarded = ['id'];
-    protected $appends = ['is_wishlist','price_utama', 'label_utama'];
+    protected $appends = ['is_wishlist','price_utama', 'label_utama', 'product_name_sales_order'];
     protected $hidden = ['created_at', 'updated_at'];
 
 
@@ -44,6 +44,10 @@ class OdooProduct extends Model
 
     public function getProductNameAttribute(){
         return $this->attributes['product_name'] . ' [' . $this->attributes['sku'] . ']';
+    }
+
+    public function getProductNameSalesOrderAttribute(){
+        return  '[' . $this->attributes['sku'] . '] ' . $this->attributes['product_name'];
     }
 
     public function scopeGetByTipePelanggan($scope){

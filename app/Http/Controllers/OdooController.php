@@ -222,7 +222,7 @@ class OdooController extends Controller
                         'product_uom_qty' => $item->quantity,
                         'price_unit' => $recheck_price['price'],
                         'tax_id' => [[4,9]],
-                        'name' => $item->product->product_name,
+                        'name' => $item->product->product_name_sales_order,
                     ],
                 ];
 
@@ -314,6 +314,18 @@ class OdooController extends Controller
         }
 
         catch(\Exception $e){
+
+            $sales = null;
+            $sales_pelanggan = SalesPelanggan::where('pelanggan_id', auth('api')->user()->pelanggan_id)->select('sales_id')->first();
+
+            //save error log to db
+            DB::table('error_log')->create([
+                'user_id' => auth('api')->user()->pelanggan_id,
+                'sales_id' => $sales,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'log' => $e->getMessage(),
+            ]);
 
             DB::rollback();
             return ApiFormatter::error(500, $e->getMessage());

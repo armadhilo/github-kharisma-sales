@@ -31,7 +31,7 @@ class ProductPricelistRequest extends FormRequest
             'product_uom_id' => 'required',
             'price' => 'required',
             'min_quantity' => 'required',
-            'pricelist_desc' => 'required',
+            'pricelist_desc' => 'nullable',
         ];
     }
 
