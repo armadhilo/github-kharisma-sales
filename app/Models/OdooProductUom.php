@@ -19,21 +19,14 @@ class OdooProductUom extends Model
     {
         parent::boot();
 
-        if(auth('api')->check()){
+        $type_pelanggan = 'RETAIL (IDR)';
+        if(isset(auth('api')->user()->type_pelanggan)) $type_pelanggan = auth('api')->user()->type_pelanggan;
+        elseif(isset(auth()->user()->type_pelanggan)) $type_pelanggan = auth()->user()->type_pelanggan;
 
-            //kalo login mengikuti tipe pelanggan
-            static::addGlobalScope('type_pelanggan', function (Builder $builder) {
-                $builder->where('type', auth('api')->user()->type_pelanggan);
-            });
-
-        }else{
-
-             //kalo login mengikuti tipe pelanggan
-             static::addGlobalScope('type_pelanggan', function (Builder $builder) {
-                $builder->where('type', 'RETAIL (IDR)');
-            });
-
-        }
+        //kalo login mengikuti tipe pelanggan
+        static::addGlobalScope('type_pelanggan', function (Builder $builder) use ($type_pelanggan) {
+            $builder->where('type', $type_pelanggan);
+        });
     }
 
     public function product(){

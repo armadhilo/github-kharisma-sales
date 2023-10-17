@@ -52,19 +52,13 @@ class OdooProduct extends Model
 
     public function scopeGetByTipePelanggan($scope){
 
-        if(auth('api')->check()){
-            // return $scope->has('product_uom.product_pricelist')->whereHas('product_uom', function($query){
+        $type_pelanggan = 'RETAIL (IDR)';
+        if(isset(auth('api')->user()->type_pelanggan)) $type_pelanggan = auth('api')->user()->type_pelanggan;
+        elseif(isset(auth()->user()->type_pelanggan)) $type_pelanggan = auth()->user()->type_pelanggan;
 
-            return $scope->whereHas('product_uom', function($query){
-                $query->where('type', auth('api')->user()->type_pelanggan);
-            })->where('stock', '>', '0');
-        }else{
-            // return $scope->has('product_uom.product_pricelist')->whereHas('product_uom', function($query){
-
-            return $scope->whereHas('product_uom', function($query){
-                $query->where('type','RETAIL (IDR)');
-            })->where('stock', '>', '0');
-        }
+        return $scope->whereHas('product_uom', function($query) use ($type_pelanggan){
+            $query->where('type', $type_pelanggan);
+        })->where('stock', '>', '0');
     }
 
     public function product_uom(){

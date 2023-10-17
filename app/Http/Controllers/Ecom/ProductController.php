@@ -21,11 +21,11 @@ class ProductController extends Controller
         // return $product;
         $product = OdooProduct::getByTipePelanggan()->has('product_uom')->with('product_tag', 'product_uom.product_pricelist')->has('product_tag')->orderBy('updated_at','DESC')->limit(1000);
 
-        // if(isset($request->search)){
-        //     $search = str_replace("+"," ",$request->search);
-        //     $product->where('product_name','like',"%$search%");
-        //     $product->where('sku','like',"%$search%");
-        // }
+        if(isset($request->search)){
+            $search = str_replace("+"," ",$request->search);
+            $product->where('product_name','like',"%$search%");
+            $product->orWhere('sku','like',"%$search%");
+        }
 
         if(isset($request->kategori) && $request->kategori != 'All Category'){
             $product->where('array_product_tag_id', 'like', '%' . $request->kategori . '%');
@@ -33,13 +33,13 @@ class ProductController extends Controller
 
         $product = $product->get();
 
-        if(isset($request->search)){
-            $search = $request->search;
-            $product = $product->filter(function ($item) use ($search) {
-                // Use stripos for a case-insensitive search or strpos for a case-sensitive search
-                return stripos($item['product_name'], $search) !== false;
-            });
-        }
+        // if(isset($request->search)){
+        //     $search = $request->search;
+        //     $product = $product->filter(function ($item) use ($search) {
+        //         // Use stripos for a case-insensitive search or strpos for a case-sensitive search
+        //         return stripos($item['product_name'], $search) !== false;
+        //     });
+        // }
 
         if($request->has('filter') && !empty($request->filter)){
             $filter = $request->filter;
