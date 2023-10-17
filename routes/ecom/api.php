@@ -27,7 +27,7 @@ Route::group(['middleware' => 'extend_exec_time'], function(){
 
         Route::group(['prefix' => 'product'], function(){
             #UNTUK CHECK ANTARA PRODUK DAN HARGANYA
-            Route::get('/coba', 'Ecom\ProductController@coba');
+            Route::get('/check-harga-produk/{sku}', 'Ecom\ProductController@checkHargaProduk');
 
             Route::get('/', 'Ecom\ProductController@index');
             Route::get('/{id}', 'Ecom\ProductController@detail');

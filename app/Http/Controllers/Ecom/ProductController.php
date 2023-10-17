@@ -16,8 +16,8 @@ use App\Models\User;
 class ProductController extends Controller
 {
 
-    public function coba(){
-        $product = OdooProduct::has('product_uom')->with('product_tag', 'product_uom_original.product_pricelist')->has('product_tag')->where('sku', '5020343')->first();
+    public function checkHargaProduk($sku){
+        $product = OdooProduct::has('product_uom')->with('product_tag', 'product_uom_original.product_pricelist')->has('product_tag')->where('sku', $sku)->first();
 
         $message = ' Data product Coba berhasil ditampilkan';
         return ApiFormatter::success(200, $message, $product);

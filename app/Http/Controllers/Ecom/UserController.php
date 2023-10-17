@@ -18,7 +18,11 @@ class UserController extends Controller
 {
     public function detail(){
         $message = 'User loaded successfully';
-        return ApiFormatter::success(200, $message, auth('api')->user());
+
+        $data = auth('api')->user();
+        $data->nama = $data->nama .' - '. $data->type_pelanggan;
+
+        return ApiFormatter::success(200, $message, $data);
     }
 
     public function update(PelangganRequest $request){
