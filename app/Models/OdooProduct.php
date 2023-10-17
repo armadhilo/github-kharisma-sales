@@ -65,6 +65,10 @@ class OdooProduct extends Model
         return $this->hasMany(OdooProductUom::class, 'product_tmpl_id', 'product_tmpl_id')->orderBy('stock','ASC');
     }
 
+    public function product_uom_original(){
+        return $this->hasMany(OdooProductUomOriginal::class, 'product_tmpl_id', 'product_tmpl_id')->orderBy('stock','ASC');
+    }
+
     public function product_tag(){
         return $this->belongsTo(OdooProductTag::class, 'product_tag_id', 'product_tag_id');
     }

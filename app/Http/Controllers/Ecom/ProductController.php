@@ -15,6 +15,14 @@ use App\Models\User;
 
 class ProductController extends Controller
 {
+
+    public function coba(){
+        $product = OdooProduct::has('product_uom')->with('product_tag', 'product_uom_original.product_pricelist')->has('product_tag')->where('sku', '5020343')->first();
+
+        $message = ' Data product Coba berhasil ditampilkan';
+        return ApiFormatter::success(200, $message, $product);
+    }
+
     public function index(Request $request)
     {
         // $product = OdooProduct::has('product_uom')->getByTipePelanggan()->with('product_tag', 'product_uom.product_pricelist')->limit(1)->get();
@@ -33,13 +41,13 @@ class ProductController extends Controller
 
         $product = $product->get();
 
-        // if(isset($request->search)){
-        //     $search = $request->search;
-        //     $product = $product->filter(function ($item) use ($search) {
-        //         // Use stripos for a case-insensitive search or strpos for a case-sensitive search
-        //         return stripos($item['product_name'], $search) !== false;
-        //     });
-        // }
+        $product = $product->filter(function ($item){
+
+            return count($item['product_uom']);
+
+            // Use stripos for a case-insensitive search or strpos for a case-sensitive search
+            // return stripos($item['product_uom'], $search) !== false;
+        });
 
         if($request->has('filter') && !empty($request->filter)){
             $filter = $request->filter;
