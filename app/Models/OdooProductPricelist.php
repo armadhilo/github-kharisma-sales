@@ -14,7 +14,7 @@ class OdooProductPricelist extends Model
     protected $table = 'odoo_product_pricelist';
     protected $guarded = ['id'];
     protected $appends = [];
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at', 'note'];
 
     // protected static function boot()
     // {

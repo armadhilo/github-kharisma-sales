@@ -13,7 +13,7 @@ class OdooProductUom extends Model
 
     protected $table = 'odoo_product_uom';
     protected $guarded = ['id'];
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at', 'note'];
 
     protected static function boot()
     {

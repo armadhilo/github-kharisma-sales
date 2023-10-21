@@ -11,6 +11,7 @@ use Storage;
 
 use App\Http\Requests\SyncOdoo\ProductPricelistRequest;
 use App\Models\OdooProductPricelist;
+use App\Models\OdooProductUom;
 
 class ProductPricelistController extends Controller
 {
@@ -29,36 +30,72 @@ class ProductPricelistController extends Controller
             return ApiFormatter::error(400, 'Master Uom tidak ditemukan harap daftarkan terlebih dahulu');
         }
 
-        $product_uom = DB::table('odoo_product_uom')->where([
-                'product_uom_id' => $request->product_uom_id,
-                'product_tmpl_id' => $request->product_tmpl_id,
-                'type'=> $request->type,
-            ])
-            ->first();
+        DB::beginTransaction();
 
-        if(empty($product_uom)){
-            DB::table('odoo_product_uom')->insert([
+        try{
+
+            OdooProductUom::updateOrInsert([
                 'product_tmpl_id' => $request->product_tmpl_id,
                 'product_uom_id' => $request->product_uom_id,
-                'label' => $product_uom_check->label,
-                'stock' => $product_uom_check->stock,
+                'label' => $request->label,
                 'type' => $request->type,
+            ],[
+                'product_tmpl_id' => $request->product_tmpl_id,
+                'product_uom_id' => $request->product_uom_id,
+                'label' => $request->label,
+                'stock' => $request->stock,
+                'type' => $request->type,
+                'note' => 'API SYNC PRICELIST [' . Carbon::now()->format('Y-m-d H:i:s') . ']',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
+
+            OdooProductPricelist::updateOrInsert([
+                'product_tmpl_id' => $request->product_tmpl_id,
+                'product_uom_id' => $request->product_uom_id,
+                'label' => $request->label,
+                'type' => $request->type,
+            ],[
+                'product_tmpl_id' => $request->product_tmpl_id,
+                'product_uom_id' => $request->product_uom_id,
+                'price' => $request->price,
+                'min_quantity' => $request->min_quantity,
+                'label' => $request->label,
+                'stock' => $request->stock,
+                'type' => $request->type,
+                'note' => 'API SYNC PRICELIST [' . Carbon::now()->format('Y-m-d H:i:s') . ']',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+
+            DB::commit();
+
+            return ApiFormatter::success(200, 'Sync Product Pricelist Berhasil');
         }
 
-        $request->request->remove('type');
-        OdooProductPricelist::updateOrInsert([
-            'product_tmpl_id' => $request->product_tmpl_id,
-            'product_uom_id' => $request->product_uom_id
-        ], $request->all());
-        return ApiFormatter::success(200, 'Sync Product Pricelist Berhasil');
+        catch(\Exception $e){
+
+            DB::rollback();
+            return ApiFormatter::error(500, $e->getMessage());
+        }
     }
 
-    public function delete($product_tmpl_id, $product_uom_id){
+    public function delete($product_tmpl_id, $product_uom_id, $type){
+
+        $type = $type . ' (IDR)';
+
+        OdooProductUom::where([
+            'product_tmpl_id' => $product_tmpl_id,
+            'product_uom_id' => $product_uom_id,
+            'type' => $type,
+        ])->delete();
+
         OdooProductPricelist::where([
             'product_tmpl_id' => $product_tmpl_id,
-            'product_uom_id' => $product_uom_id
+            'product_uom_id' => $product_uom_id,
+            'type' => $type,
         ])->delete();
+
         return ApiFormatter::success(200, 'Product Pricelist Berhasil Dihapus');
     }
 }

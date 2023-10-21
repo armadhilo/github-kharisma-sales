@@ -31,16 +31,30 @@ class ProductPricelistRequest extends FormRequest
             'product_uom_id' => 'required',
             'price' => 'required',
             'min_quantity' => 'required',
-            'pricelist_desc' => 'nullable',
+            'pricelist_desc' => 'required',
+            'uom_desc' => 'required',
         ];
     }
 
     protected function passedValidation()
     {
         if($this->has('pricelist_desc')){
-            $this->merge(['type' => $this->pricelist_desc]);
+            $this->merge(['type' => $this->pricelist_desc . ' (IDR)']);
             $this->request->remove('pricelist_desc');
         }
+
+        if($this->has('uom_desc')){
+            $this->merge(['label' => $this->uom_desc]);
+
+            $stock = 1;
+            if (str_contains($this->label, '/')) {
+                $explode_stock = explode("/",$this->label);
+                $stock = $explode_stock[1];
+            }
+            $this->merge(['stock' => $stock]);
+            $this->request->remove('uom_desc');
+        }
+
     }
 
     protected function failedValidation(Validator $validator) {

@@ -10,6 +10,8 @@ use DB;
 use Storage;
 
 use App\Http\Requests\SyncOdoo\ProductUomRequest;
+use App\Models\OdooProductPricelist;
+use App\Models\OdooProductUom;
 
 class ProductUomController extends Controller
 {
@@ -18,20 +20,32 @@ class ProductUomController extends Controller
         $request->merge(['created_at' => Carbon::now()]);
         $request->merge(['updated_at' => Carbon::now()]);
 
-        $product_uom = DB::table('odoo_product_uom')->where('product_uom_id', $request->product_uom_id)->first();
-        if(empty($product_uom)){
-            DB::table('odoo_product_uom')->insert([
-                'product_tmpl_id' => '00000',
-                'product_uom_id' => $request->product_uom_id,
+        DB::beginTransaction();
+
+        try{
+
+            OdooProductUom::where(['product_uom_id' => $request->product_uom_id])->update([
                 'label' => $request->label,
                 'stock' => $request->stock,
+                'note' => 'API SYNC UOM [' . Carbon::now()->format('Y-m-d H:i:s') . ']'
             ]);
-        }else{
-            DB::table('odoo_product_uom')->where('product_uom_id', $request->product_uom_id)
-                ->update($request->all());
+
+            OdooProductPricelist::where(['product_uom_id' => $request->product_uom_id])->update([
+                'label' => $request->label,
+                'stock' => $request->stock,
+                'note' => 'API SYNC UOM [' . Carbon::now()->format('Y-m-d H:i:s') . ']'
+            ]);
+
+            DB::commit();
+
+            return ApiFormatter::success(200, 'Sync Product Uom Berhasil');
         }
 
-        return ApiFormatter::success(200, 'Sync Product Uom Berhasil');
+        catch(\Exception $e){
+
+            DB::rollback();
+            return ApiFormatter::error(500, $e->getMessage());
+        }
     }
 
     public function delete($product_uom_id){

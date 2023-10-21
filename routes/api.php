@@ -61,7 +61,7 @@ Route::group(['prefix' => 'sync-odoo'], function(){
 
     Route::group(['prefix' => 'product-pricelist'], function(){
         Route::post('/store-update', 'SyncOdoo\ProductPricelistController@store_update');
-        Route::delete('/{product_tmpl_id}/{product_uom_id}', 'SyncOdoo\ProductPricelistController@delete');
+        Route::delete('/{product_tmpl_id}/{product_uom_id}/{type_pelanggan}', 'SyncOdoo\ProductPricelistController@delete');
     });
 
     Route::group(['prefix' => 'sales-pelanggan'], function(){
