@@ -304,7 +304,8 @@ class OdooController extends Controller
             'sale.order', 'create', [[$salesOrderData]]);
 
             if(isset($sales_order_odoo['faultCode'])){
-                $message = 'Oops! terjadi kesalahan waktu membuat sales order odoo';
+                $message = $sales_order_odoo['faultString'];
+                // $message = 'Oops! terjadi kesalahan waktu membuat sales order odoo';
                 return ApiFormatter::error(400, $message);
             }
 
