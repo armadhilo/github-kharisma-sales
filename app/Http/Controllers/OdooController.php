@@ -62,6 +62,10 @@ class OdooController extends Controller
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
         // 'product.product', 'search', [[['active','=', True]]]);
 
+        // GET PRICELIST
+        return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', [38884]]]], ['fields' => []]);
+
         //GET CUSTOMER
         return $this->models->execute_kw($this->db, $this->uid, $this->password,
         'res.partner', 'search_read', [[['id', '=', [76651]]]], ['fields' => [], 'limit'=> 1]);
@@ -298,7 +302,8 @@ class OdooController extends Controller
             'sale.order', 'create', [[$salesOrderData]]);
 
             if(isset($sales_order_odoo['faultCode'])){
-                $message = 'Oops! terjadi kesalahan waktu membuat sales order odoo';
+                $message = $sales_order_odoo['faultString'];
+                // $message = 'Oops! terjadi kesalahan waktu membuat sales order odoo';
                 return ApiFormatter::error(400, $message);
             }
 
