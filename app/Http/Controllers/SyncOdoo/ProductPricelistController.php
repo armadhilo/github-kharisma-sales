@@ -10,8 +10,9 @@ use DB;
 use Storage;
 
 use App\Http\Requests\SyncOdoo\ProductPricelistRequest;
+use App\Models\OdooProductOriginal;
 use App\Models\OdooProductPricelist;
-use App\Models\OdooProductUom;
+use App\Models\OdooProductUomOriginal;
 
 class ProductPricelistController extends Controller
 {
@@ -25,16 +26,11 @@ class ProductPricelistController extends Controller
             return ApiFormatter::error(400, 'Master Product tidak ditemukan harap daftarkan terlebih dahulu');
         }
 
-        $product_uom_check = DB::table('odoo_product_uom')->where('product_uom_id', $request->product_uom_id)->first();
-        if(empty($product_uom_check)){
-            return ApiFormatter::error(400, 'Master Uom tidak ditemukan harap daftarkan terlebih dahulu');
-        }
-
         DB::beginTransaction();
 
         try{
 
-            OdooProductUom::updateOrInsert([
+            OdooProductUomOriginal::updateOrInsert([
                 'product_tmpl_id' => $request->product_tmpl_id,
                 'product_uom_id' => $request->product_uom_id,
                 'label' => $request->label,
@@ -84,7 +80,7 @@ class ProductPricelistController extends Controller
 
         $type = $type . ' (IDR)';
 
-        OdooProductUom::where([
+        OdooProductUomOriginal::where([
             'product_tmpl_id' => $product_tmpl_id,
             'product_uom_id' => $product_uom_id,
             'type' => $type,

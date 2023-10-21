@@ -11,7 +11,7 @@ use Storage;
 
 use App\Http\Requests\SyncOdoo\ProductUomRequest;
 use App\Models\OdooProductPricelist;
-use App\Models\OdooProductUom;
+use App\Models\OdooProductUomOriginal;
 
 class ProductUomController extends Controller
 {
@@ -24,7 +24,7 @@ class ProductUomController extends Controller
 
         try{
 
-            OdooProductUom::where(['product_uom_id' => $request->product_uom_id])->update([
+            OdooProductUomOriginal::where(['product_uom_id' => $request->product_uom_id])->update([
                 'label' => $request->label,
                 'stock' => $request->stock,
                 'note' => 'API SYNC UOM [' . Carbon::now()->format('Y-m-d H:i:s') . ']'
