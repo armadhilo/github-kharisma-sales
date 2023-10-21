@@ -23,43 +23,22 @@ class ProductController extends Controller
 
     public function checkHargaProduk($sku){
 
-        // $get = OdooProductPricelist::all();
-
-        // OdooProductUom::truncate();
-        // foreach($get as $item){
-        //     OdooProductUom::updateOrInsert([
-        //         'product_tmpl_id' => $item->product_tmpl_id,
-        //         'product_uom_id' => $item->product_uom_id,
-        //         'label' => $item->label,
-        //         'type' => $item -> type,
-        //     ],[
-        //         'product_tmpl_id' => $item->product_tmpl_id,
-        //         'product_uom_id' => $item->product_uom_id,
-        //         'label' => $item->label,
-        //         'stock' => $item->stock,
-        //         'type' => $item -> type,
-        //         'created_at' => Carbon::now(),
-        //         'updated_at' => Carbon::now(),
-        //     ]);
-        // }
-
         try {
 
-             // dd('success');
-            // dd(auth('api')->user()->type_pelanggan);
-            $product = OdooProduct::has('product_uom_original')->with('product_tag', 'product_uom_original.product_pricelist')->has('product_tag')->where('sku', $sku)->first();
-            // $product = OdooProduct::with('product_tag','product_uom')->where('sku', $sku)->first();
+            $explode = explode("|", $sku . '|');
+            $array = [];
+            foreach($explode as $item){
+                if(!empty($item)) $array[] = (int)$item;
+            }
 
-        $message = ' Data product Coba berhasil ditampilkan';
-        return ApiFormatter::success(200, $message, $product);
+            $product = OdooProduct::has('product_uom_original')->with('product_tag', 'product_uom_original.product_pricelist')->has('product_tag')->whereIn('sku', $array)->get();
+
+            $message = ' Data product Coba berhasil ditampilkan';
+            return ApiFormatter::success(200, $message, $product);
 
         }catch(\Exception $e){
-
             dd($e);
-
         }
-
-
     }
 
     public function index(Request $request)

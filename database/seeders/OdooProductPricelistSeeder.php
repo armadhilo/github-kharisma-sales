@@ -6,10 +6,12 @@ use Illuminate\Database\Seeder;
 use App\Models\Country;
 use App\Models\OdooProductOriginal;
 use App\Models\OdooProductPricelist;
+use App\Models\OdooProductUom;
 use App\Models\SalesPelanggan;
 use App\Models\User;
 use DB;
 use Hash;
+use Carbon\Carbon;
 
 class OdooProductPricelistSeeder extends Seeder
 {
@@ -22,16 +24,24 @@ class OdooProductPricelistSeeder extends Seeder
     {
         $csvFile = fopen(base_path("database/data/data_pricelist_for_kevin.csv"), "r");
 
-        $array_id = [];
+        OdooProductUom::truncate();
+        OdooProductPricelist::truncate();
+
         $firstline = true;
         while (($data = fgetcsv($csvFile, 2000, ",")) !== FALSE) {
             if (!$firstline) {
-                $odoo = OdooProductPricelist::updateOrCreate([
+
+                OdooProductUom::insert([
                     "product_tmpl_id" => $data['1'],
                     "product_uom_id" => $data['4'],
                     "label" => $data['5'],
+                    "stock" => $data['6'],
                     "type" => $data['0'],
-                ],[
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+
+                OdooProductPricelist::insert([
                     "product_tmpl_id" => $data['1'],
                     "product_uom_id" => $data['4'],
                     "price" => $data['3'],
@@ -40,17 +50,31 @@ class OdooProductPricelistSeeder extends Seeder
                     "stock" => $data['6'],
                     "type" => $data['0'],
                 ]);
-
-                $array_id[] = $odoo->id;
             }
             $firstline = false;
 
         }
 
         fclose($csvFile);
-
-        //delete when not in id
-        OdooProductPricelist::whereNotIn('id', $array_id)->delete();
-
     }
+
+    // $get = OdooProductPricelist::all();
+
+    // OdooProductUom::truncate();
+    // foreach($get as $item){
+    //     OdooProductUom::updateOrInsert([
+    //         'product_tmpl_id' => $item->product_tmpl_id,
+    //         'product_uom_id' => $item->product_uom_id,
+    //         'label' => $item->label,
+    //         'type' => $item -> type,
+    //     ],[
+    //         'product_tmpl_id' => $item->product_tmpl_id,
+    //         'product_uom_id' => $item->product_uom_id,
+    //         'label' => $item->label,
+    //         'stock' => $item->stock,
+    //         'type' => $item -> type,
+    //         'created_at' => Carbon::now(),
+    //         'updated_at' => Carbon::now(),
+    //     ]);
+    // }
 }
