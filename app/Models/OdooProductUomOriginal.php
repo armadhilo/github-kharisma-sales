@@ -20,6 +20,6 @@ class OdooProductUomOriginal extends Model
     }
 
     public function product_pricelist(){
-        return $this->hasMany(OdooProductPricelist::class, ['product_uom_id', 'product_tmpl_id'], ['product_uom_id', 'product_tmpl_id'])->orderBy('min_quantity', 'ASC')->orderBy('price', 'ASC');
+        return $this->hasMany(OdooProductPricelist::class, ['product_uom_id', 'product_tmpl_id', 'type'], ['product_uom_id', 'product_tmpl_id', 'type'])->orderBy('min_quantity', 'ASC')->orderBy('price', 'ASC');
     }
 }

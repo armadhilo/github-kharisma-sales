@@ -30,6 +30,6 @@ class OdooProductPricelist extends Model
     }
 
     public function product_uom(){
-        return $this->belongsTo(OdooProductUom::class, ['product_uom_id', 'product_tmpl_id'], ['product_uom_id', 'product_tmpl_id']);
+        return $this->belongsTo(OdooProductUom::class, ['product_uom_id', 'product_tmpl_id', 'type'], ['product_uom_id', 'product_tmpl_id', 'type']);
     }
 }

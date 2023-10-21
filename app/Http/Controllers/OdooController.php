@@ -62,6 +62,10 @@ class OdooController extends Controller
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
         // 'product.product', 'search', [[['active','=', True]]]);
 
+        // GET PRICELIST
+        return $this->models->execute_kw($this->db, $this->uid, $this->password,
+        'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', [38884]]]], ['fields' => []]);
+
         //GET CUSTOMER
         return $this->models->execute_kw($this->db, $this->uid, $this->password,
         'res.partner', 'search_read', [[['id', '=', [76651]]]], ['fields' => [], 'limit'=> 1]);
@@ -293,6 +297,8 @@ class OdooController extends Controller
                 'sales_order_id' => $sales_order->id,
                 'notification_type' => 'draft',
             ]);
+
+            dd($salesOrderData);
 
             $sales_order_odoo = $this->models->execute_kw($this->db, $this->uid, $this->password,
             'sale.order', 'create', [[$salesOrderData]]);
@@ -684,7 +690,7 @@ class OdooController extends Controller
 
                 foreach ($data as $key => $value) {
                     SalesPelanggan::updateOrCreate([
-                        'pelanggan_id' => $value['customer_id'] 
+                        'pelanggan_id' => $value['customer_id']
                     ],[
                         "sales_id" => $value['salespartner_id'],
                         "pelanggan_id" => $value['customer_id']

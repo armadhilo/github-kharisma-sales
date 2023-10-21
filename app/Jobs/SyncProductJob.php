@@ -171,7 +171,7 @@ class SyncProductJob implements ShouldQueue
 
                     if(is_array($product_pricelist) && count($product_pricelist)){
 
-                        //delete pricelist yang akan diupdate harganya
+                        // delete pricelist yang akan diupdate harganya
                         DB::table('odoo_product_uom')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
                         DB::table('odoo_product_pricelist')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
 
@@ -188,21 +188,26 @@ class SyncProductJob implements ShouldQueue
                                     }
                                 }
 
+                                #PRODUCT UOM
                                 DB::table('odoo_product_uom')->insert([
                                     'product_tmpl_id' => $item['product_tmpl_id'][0],
                                     'product_uom_id' => $item['uom_id'][0],
-                                    'label' => $item['uom_id'][1],
-                                    'stock' => $stock,
-                                    'type' => $item['pricelist_id'][1],
+                                    "label" => $item['uom_id'][1],
+                                    "stock" => $stock,
+                                    "type" => $item['pricelist_id'][1],
                                     'created_at' => Carbon::now(),
                                     'updated_at' => Carbon::now(),
                                 ]);
 
+                                #PRODUCT PRICELIST
                                 DB::table('odoo_product_pricelist')->insert([
                                     'product_tmpl_id' => $item['product_tmpl_id'][0],
                                     'product_uom_id' => $item['uom_id'][0],
-                                    'price' => $item['fixed_price'],
-                                    'min_quantity' => $item['min_quantity'],
+                                    "price" => $item['fixed_price'],
+                                    "min_quantity" => $item['min_quantity'],
+                                    "label" => $item['uom_id'][1],
+                                    "stock" => $stock,
+                                    "type" => $item['pricelist_id'][1],
                                     'created_at' => Carbon::now(),
                                     'updated_at' => Carbon::now(),
                                 ]);

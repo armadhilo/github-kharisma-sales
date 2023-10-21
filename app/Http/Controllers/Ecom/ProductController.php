@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Ecom;
 
+ini_set('max_execution_time', '0');
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,16 +13,53 @@ use Illuminate\Support\Str;
 
 use App\Helpers\ApiFormatter;
 use App\Models\OdooProduct;
+use App\Models\OdooProductPricelist;
+use App\Models\OdooProductUom;
 use App\Models\User;
+use Carbon\Carbon;
 
 class ProductController extends Controller
 {
 
     public function checkHargaProduk($sku){
-        $product = OdooProduct::has('product_uom')->with('product_tag', 'product_uom_original.product_pricelist')->has('product_tag')->where('sku', $sku)->first();
+
+        // $get = OdooProductPricelist::all();
+
+        // OdooProductUom::truncate();
+        // foreach($get as $item){
+        //     OdooProductUom::updateOrInsert([
+        //         'product_tmpl_id' => $item->product_tmpl_id,
+        //         'product_uom_id' => $item->product_uom_id,
+        //         'label' => $item->label,
+        //         'type' => $item -> type,
+        //     ],[
+        //         'product_tmpl_id' => $item->product_tmpl_id,
+        //         'product_uom_id' => $item->product_uom_id,
+        //         'label' => $item->label,
+        //         'stock' => $item->stock,
+        //         'type' => $item -> type,
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //     ]);
+        // }
+
+        try {
+
+             // dd('success');
+            // dd(auth('api')->user()->type_pelanggan);
+            $product = OdooProduct::has('product_uom_original')->with('product_tag', 'product_uom_original.product_pricelist')->has('product_tag')->where('sku', $sku)->first();
+            // $product = OdooProduct::with('product_tag','product_uom')->where('sku', $sku)->first();
 
         $message = ' Data product Coba berhasil ditampilkan';
         return ApiFormatter::success(200, $message, $product);
+
+        }catch(\Exception $e){
+
+            dd($e);
+
+        }
+
+
     }
 
     public function index(Request $request)
