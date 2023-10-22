@@ -43,6 +43,11 @@ class ProductPricelistRequest extends FormRequest
             $this->request->remove('pricelist_desc');
         }
 
+        if($this->has('pricelist_desc_old')){
+            $this->merge(['type_old' => $this->pricelist_desc_old . ' (IDR)']);
+            $this->request->remove('pricelist_desc_old');
+        }
+
         if($this->has('uom_desc')){
             $this->merge(['label' => $this->uom_desc]);
 

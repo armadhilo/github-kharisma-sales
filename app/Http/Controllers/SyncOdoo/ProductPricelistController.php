@@ -21,20 +21,41 @@ class ProductPricelistController extends Controller
         $request->merge(['created_at' => Carbon::now()]);
         $request->merge(['updated_at' => Carbon::now()]);
 
-        $product = DB::table('odoo_product')->where('product_tmpl_id', $request->product_tmpl_id)->first();
-        if(empty($product)){
-            return ApiFormatter::error(400, 'Master Product tidak ditemukan harap daftarkan terlebih dahulu');
-        }
+        // $product = DB::table('odoo_product')->where('product_tmpl_id', $request->product_tmpl_id)->first();
+        // if(empty($product)){
+        //     return ApiFormatter::error(400, 'Master Product tidak ditemukan harap daftarkan terlebih dahulu');
+        // }
 
         DB::beginTransaction();
 
         try{
 
+            #untuk melakukan check apakah dia melakukan update product_uom, min_quantity dan type
+            $product_uom_id = $request->product_uom_id;
+            if($request->has('product_uom_old')){
+                if($request->product_uom_id != $request->product_uom_old){
+                    $product_uom_id = $request->product_uom_old;
+                }
+            }
+
+            $min_quantity = $request->min_quantity;
+            if($request->has('min_quantity_old')){
+                if($request->min_quantity != $request->min_quantity_old){
+                    $min_quantity = $request->min_quantity_old;
+                }
+            }
+
+            $type = $request->type;
+            if($request->has('type_old')){
+                if($request->type != $request->type_old){
+                    $type = $request->type_old . ' (IDR)';
+                }
+            }
+
             OdooProductUomOriginal::updateOrInsert([
                 'product_tmpl_id' => $request->product_tmpl_id,
-                'product_uom_id' => $request->product_uom_id,
-                'label' => $request->label,
-                'type' => $request->type,
+                'product_uom_id' => $product_uom_id,
+                'type' => $type,
             ],[
                 'product_tmpl_id' => $request->product_tmpl_id,
                 'product_uom_id' => $request->product_uom_id,
@@ -48,9 +69,9 @@ class ProductPricelistController extends Controller
 
             OdooProductPricelist::updateOrInsert([
                 'product_tmpl_id' => $request->product_tmpl_id,
-                'product_uom_id' => $request->product_uom_id,
-                'label' => $request->label,
-                'type' => $request->type,
+                'product_uom_id' => $product_uom_id,
+                'type' => $type,
+                'min_quantity' => $min_quantity,
             ],[
                 'product_tmpl_id' => $request->product_tmpl_id,
                 'product_uom_id' => $request->product_uom_id,
