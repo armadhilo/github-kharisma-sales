@@ -50,6 +50,6 @@ class SalesOrder extends Model
     }
 
     public function sales(){
-        return $this->belongsTo(Sales::class, 'sales_id', 'pelanggan_id');
+        return $this->belongsTo(User::class, 'sales_id', 'pelanggan_id');
     }
 }

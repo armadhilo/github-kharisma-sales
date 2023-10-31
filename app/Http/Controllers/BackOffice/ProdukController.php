@@ -27,24 +27,24 @@ class ProdukController extends Controller
 
         return DataTables::of($product)
                 ->addIndexColumn()
-                ->addColumn('custom_price', function($item) {
-                    $custom_price = '';
+                // ->addColumn('custom_price', function($item) {
+                //     $custom_price = '';
 
-                    if(count($item->product_uom)){
-                        foreach($item->product_uom as $uom){
-                            $custom_price .= '<b>' . $uom->type .' - '. $uom->label . '</b><br>';
+                //     if(count($item->product_uom)){
+                //         foreach($item->product_uom as $uom){
+                //             $custom_price .= '<b>' . $uom->type .' - '. $uom->label . '</b><br>';
 
-                            if(count($uom->product_pricelist)){
-                                foreach($uom->product_pricelist as $pricelist){
-                                    $custom_price .= 'quantity > ' . $pricelist->min_quantity . ' price ' . number_format($pricelist->price,0) . '<br>';
-                                }
-                            }
-                        }
-                    }
+                //             if(count($uom->product_pricelist)){
+                //                 foreach($uom->product_pricelist as $pricelist){
+                //                     $custom_price .= 'quantity > ' . $pricelist->min_quantity . ' price ' . number_format($pricelist->price,0) . '<br>';
+                //                 }
+                //             }
+                //         }
+                //     }
 
-                    return $custom_price;
-                })
-                ->rawColumns(['custom_price'])
+                //     return $custom_price;
+                // })
+                // ->rawColumns(['custom_price'])
                 ->make(true);
     }
 }

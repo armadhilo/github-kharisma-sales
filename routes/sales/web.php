@@ -41,6 +41,8 @@ Route::middleware(['cors','cek_login'])->group(function () {
             Route::get('/','BackOffice\ProdukController@index');
             Route::get('/datatables','BackOffice\ProdukController@datatables');
             Route::post('/sync-produk','BackOffice\ProdukController@sync_produk');
+
+            Route::view('/cek-harga-produk', 'admin.produk.cek-harga-produk');
         });
 
         Route::prefix('user')->group(function () {

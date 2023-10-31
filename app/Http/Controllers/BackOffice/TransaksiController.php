@@ -31,7 +31,7 @@ class TransaksiController extends Controller
     }
 
     public function datatables(Request $request){
-        $data = SalesOrder::with('user')->has('user')->latest()->get();
+        $data = SalesOrder::with('user','sales')->has('user')->latest()->get();
 
         if($request->status == 'konfirmasi_admin'){
             $data = $data->where('status', 'draft');

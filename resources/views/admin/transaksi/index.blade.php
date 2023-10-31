@@ -70,6 +70,7 @@
                                         <th scope="col" class="text-center">No Invoice</th>
                                         <th scope="col" class="text-center">Tanggal Transaksi</th>
                                         <th scope="col" class="text-center">Customer</th>
+                                        <th scope="col" class="text-center">Sales</th>
                                         <th scope="col" class="text-center">Pengiriman</th>
                                         <th scope="col" class="text-center">Biaya Pengiriman</th>
                                         <th scope="col" class="text-center">Total Harga</th>
@@ -99,6 +100,7 @@
                                         <th scope="col" class="text-center">No Invoice</th>
                                         <th scope="col" class="text-center">Tanggal Transaksi</th>
                                         <th scope="col" class="text-center">Customer</th>
+                                        <th scope="col" class="text-center">Sales</th>
                                         <th scope="col" class="text-center">Pengiriman</th>
                                         <th scope="col" class="text-center">Biaya Pengiriman</th>
                                         <th scope="col" class="text-center">Total Harga</th>
@@ -128,6 +130,7 @@
                                         <th scope="col" class="text-center">No Invoice</th>
                                         <th scope="col" class="text-center">Tanggal Transaksi</th>
                                         <th scope="col" class="text-center">Customer</th>
+                                        <th scope="col" class="text-center">Sales</th>
                                         <th scope="col" class="text-center">Pengiriman</th>
                                         <th scope="col" class="text-center">Biaya Pengiriman</th>
                                         <th scope="col" class="text-center">Total Harga</th>
@@ -157,6 +160,7 @@
                                         <th scope="col" class="text-center">No Invoice</th>
                                         <th scope="col" class="text-center">Tanggal Transaksi</th>
                                         <th scope="col" class="text-center">Customer</th>
+                                        <th scope="col" class="text-center">Sales</th>
                                         <th scope="col" class="text-center">Pengiriman</th>
                                         <th scope="col" class="text-center">Biaya Pengiriman</th>
                                         <th scope="col" class="text-center">Total Harga</th>
@@ -186,6 +190,7 @@
                                         <th scope="col" class="text-center">No Invoice</th>
                                         <th scope="col" class="text-center">Tanggal Transaksi</th>
                                         <th scope="col" class="text-center">Customer</th>
+                                        <th scope="col" class="text-center">Sales</th>
                                         <th scope="col" class="text-center">Pengiriman</th>
                                         <th scope="col" class="text-center">Biaya Pengiriman</th>
                                         <th scope="col" class="text-center">Total Harga</th>
@@ -223,6 +228,7 @@
             { data: 'no_invoice' },
             { data: 'created_at_desc' },
             { data: 'user.nama' },
+            { data: 'sales.nama' },
             { data: 'jasa_pengiriman' },
             { data: 'ongkos_kirim',  render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' ) },
             { data: 'total_harga',  render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' ) },
@@ -232,20 +238,20 @@
         rowCallback : function(row, data){
             $('td:eq(1)', row).html(`<a href="/admin/transaksi/detail/${data.uuid}" target="_blank">${data.no_invoice}</a>`);
 
-            $('td:eq(7)', row).html(`<span class="badge badge-${data.color}">${data.status_desc}</span>`);
+            $('td:eq(8)', row).html(`<span class="badge badge-${data.color}">${data.status_desc}</span>`);
 
             var url_invoice   = "/admin/transaksi/detail/" + data.uuid;
 
             if(data.status_desc == 'Konfirmasi Admin'){
-                $('td:eq(8)', row).html(`
+                $('td:eq(9)', row).html(`
                     <a href="${url_invoice}" target="_blank"><button class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button></a>
                 `);
             }else if(data.status_desc == 'Diproses'){
-                $('td:eq(8)', row).html(`
+                $('td:eq(9)', row).html(`
                     <button class="btn btn-warning btn-sm m-2" onclick="cetak_resi_pengiriman(${data.id})"><i class="fas fa-file-pdf mr-1"></i></i>Cetak Resi</button>
                 `);
             }else{
-                $('td:eq(8)', row).html(`
+                $('td:eq(9)', row).html(`
                     <div style="border:2px dashed black;padding: 5px;text-align: center;">
                         No Action
                     </div>
@@ -273,6 +279,7 @@
             { data: 'no_invoice' },
             { data: 'created_at_desc' },
             { data: 'user.nama' },
+            { data: 'sales.nama' },
             { data: 'jasa_pengiriman' },
             { data: 'ongkos_kirim',  render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' ) },
             { data: 'total_harga',  render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' ) },
@@ -282,16 +289,16 @@
         rowCallback : function(row, data){
             $('td:eq(1)', row).html(`<a href="/admin/transaksi/detail/${data.uuid}" target="_blank">${data.no_invoice}</a>`);
 
-            $('td:eq(7)', row).html(`<span class="badge badge-${data.color}">${data.status_desc}</span>`);
+            $('td:eq(8)', row).html(`<span class="badge badge-${data.color}">${data.status_desc}</span>`);
 
             var url_invoice   = "/admin/transaksi/detail/" + data.uuid;
 
             if(data.status_desc == 'Konfirmasi Admin'){
-                $('td:eq(8)', row).html(`
+                $('td:eq(9)', row).html(`
                     <a href="${url_invoice}" target="_blank"><button class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button></a>
                 `);
             }else{
-                $('td:eq(8)', row).html(`
+                $('td:eq(9)', row).html(`
                     <div style="border:2px dashed black;padding: 5px;text-align: center;">
                         No Action
                     </div>
@@ -299,7 +306,7 @@
             }
         }
     });
-    
+
     var tb_diproses = $('#tb_diproses').DataTable({
         processing: true,
         serverSide: true,
@@ -318,6 +325,7 @@
             { data: 'no_invoice' },
             { data: 'created_at_desc' },
             { data: 'user.nama' },
+            { data: 'sales.nama' },
             { data: 'jasa_pengiriman' },
             { data: 'ongkos_kirim',  render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' ) },
             { data: 'total_harga',  render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' ) },
@@ -327,16 +335,16 @@
         rowCallback : function(row, data){
             $('td:eq(1)', row).html(`<a href="/admin/transaksi/detail/${data.uuid}" target="_blank">${data.no_invoice}</a>`);
 
-            $('td:eq(7)', row).html(`<span class="badge badge-${data.color}">${data.status_desc}</span>`);
+            $('td:eq(8)', row).html(`<span class="badge badge-${data.color}">${data.status_desc}</span>`);
 
             var url_invoice   = "/admin/transaksi/detail/" + data.uuid;
 
             if(data.status_desc == 'Diproses'){
-                $('td:eq(8)', row).html(`
+                $('td:eq(9)', row).html(`
                     <button class="btn btn-warning btn-sm m-2" onclick="cetak_resi_pengiriman(${data.id})"><i class="fas fa-file-pdf mr-1"></i></i>Cetak Resi</button>
                 `);
             }else{
-                $('td:eq(8)', row).html(`
+                $('td:eq(9)', row).html(`
                     <div style="border:2px dashed black;padding: 5px;text-align: center;">
                         No Action
                     </div>
@@ -363,6 +371,7 @@
             { data: 'no_invoice' },
             { data: 'created_at_desc' },
             { data: 'user.nama' },
+            { data: 'sales.nama' },
             { data: 'jasa_pengiriman' },
             { data: 'ongkos_kirim',  render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' ) },
             { data: 'total_harga',  render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' ) },
@@ -372,9 +381,9 @@
         rowCallback : function(row, data){
             $('td:eq(1)', row).html(`<a href="/admin/transaksi/detail/${data.uuid}" target="_blank">${data.no_invoice}</a>`);
 
-            $('td:eq(7)', row).html(`<span class="badge badge-${data.color}">${data.status_desc}</span>`);
+            $('td:eq(8)', row).html(`<span class="badge badge-${data.color}">${data.status_desc}</span>`);
 
-            $('td:eq(8)', row).html(`
+            $('td:eq(9)', row).html(`
                 <div style="border:2px dashed black;padding: 5px;text-align: center;">
                     No Action
                 </div>
@@ -400,6 +409,7 @@
             { data: 'no_invoice' },
             { data: 'created_at_desc' },
             { data: 'user.nama' },
+            { data: 'sales.nama' },
             { data: 'jasa_pengiriman' },
             { data: 'ongkos_kirim',  render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' ) },
             { data: 'total_harga',  render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' ) },
@@ -409,16 +419,16 @@
         rowCallback : function(row, data){
             $('td:eq(1)', row).html(`<a href="/admin/transaksi/detail/${data.uuid}" target="_blank">${data.no_invoice}</a>`);
 
-            $('td:eq(7)', row).html(`<span class="badge badge-${data.color}">${data.status_desc}</span>`);
+            $('td:eq(8)', row).html(`<span class="badge badge-${data.color}">${data.status_desc}</span>`);
 
-            $('td:eq(8)', row).html(`
+            $('td:eq(9)', row).html(`
                 <div style="border:2px dashed black;padding: 5px;text-align: center;">
                     No Action
                 </div>
             `);
         }
     });
-        
+
     function cetak_resi_pengiriman(id){
         $("#modal_loading").modal('show');
         $.ajax({

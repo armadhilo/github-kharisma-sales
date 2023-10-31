@@ -60,6 +60,7 @@
                <h4>Data Produk</h4>
                <div class="card-header-action">
                   <button hidden type="button" class="btn btn-success" onclick="show_modal_sync()"><i class="fa fa-sync mr-1"></i> Sync Produk</button>
+                  <a href="/admin/produk/cek-harga-produk" target="_blank"><button type="button" class="btn btn-primary">Cek Harga Produk</button></a>
                   <button type="button" class="btn btn-success mr-2" onclick="sync_product()"><i class="fa fa-sync mr-1"></i>Sync Product</button>
                </div>
             </div>
@@ -75,7 +76,7 @@
                           <th scope="col" class="text-center">SKU</th>
                           <th scope="col" class="text-center">Stock</th>
                           <th scope="col" class="text-center">Berat</th>
-                          <th scope="col" class="text-center">Harga</th>
+                          {{-- <th scope="col" class="text-center">Harga</th> --}}
                        </tr>
                     </thead>
                  </table>
@@ -162,7 +163,7 @@
                 { data: 'sku' },
                 { data: 'stock' },
                 { data: 'weight' },
-                { data: 'custom_price' },
+                // { data: 'custom_price' },
             ],
             rowCallback : function(row, data){
 
@@ -178,7 +179,9 @@
                     `);
                 } else {
                     $('td:eq(1)', row).html(`
-                        <img class="mr-3 rounded" style="width: 80px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png" alt="product">
+                        <div style="border:2px dashed black;padding: 25px;text-align: center;">
+                            No Image
+                        </div>
                     `);
                 }
             }
