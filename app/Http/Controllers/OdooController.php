@@ -298,8 +298,6 @@ class OdooController extends Controller
                 'notification_type' => 'draft',
             ]);
 
-            dd($salesOrderData);
-
             $sales_order_odoo = $this->models->execute_kw($this->db, $this->uid, $this->password,
             'sale.order', 'create', [[$salesOrderData]]);
 

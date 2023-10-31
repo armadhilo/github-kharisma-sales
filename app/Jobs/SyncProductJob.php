@@ -164,57 +164,58 @@ class SyncProductJob implements ShouldQueue
                     }
                 }
 
-                if(count($array_product_tmpl_product)){
-                    // get product pricelist for b2c
-                    $product_pricelist = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                    'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => []]);
+                #MASTER_UOM dan MASTER_PRICELIST
+                // if(count($array_product_tmpl_product)){
+                //     // get product pricelist for b2c
+                //     $product_pricelist = $this->models->execute_kw($this->db, $this->uid, $this->password,
+                //     'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => []]);
 
-                    if(is_array($product_pricelist) && count($product_pricelist)){
+                //     if(is_array($product_pricelist) && count($product_pricelist)){
 
-                        // delete pricelist yang akan diupdate harganya
-                        DB::table('odoo_product_uom')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
-                        DB::table('odoo_product_pricelist')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
+                //         // delete pricelist yang akan diupdate harganya
+                //         DB::table('odoo_product_uom')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
+                //         DB::table('odoo_product_pricelist')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
 
-                        foreach($product_pricelist as $item){
+                //         foreach($product_pricelist as $item){
 
-                            if(is_array($item['product_tmpl_id'])){
+                //             if(is_array($item['product_tmpl_id'])){
 
-                                //field stock pada odoo_product_uom
-                                $stock = 1;
-                                if(is_string($item['uom_id'][1])){
-                                    if (str_contains($item['uom_id'][1], '/')) {
-                                        $explode_stock = explode("/",$item['uom_id'][1]);
-                                        $stock = $explode_stock[1];
-                                    }
-                                }
+                //                 //field stock pada odoo_product_uom
+                //                 $stock = 1;
+                //                 if(is_string($item['uom_id'][1])){
+                //                     if (str_contains($item['uom_id'][1], '/')) {
+                //                         $explode_stock = explode("/",$item['uom_id'][1]);
+                //                         $stock = $explode_stock[1];
+                //                     }
+                //                 }
 
-                                #PRODUCT UOM
-                                DB::table('odoo_product_uom')->insert([
-                                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                                    'product_uom_id' => $item['uom_id'][0],
-                                    "label" => $item['uom_id'][1],
-                                    "stock" => $stock,
-                                    "type" => $item['pricelist_id'][1],
-                                    'created_at' => Carbon::now(),
-                                    'updated_at' => Carbon::now(),
-                                ]);
+                //                 #PRODUCT UOM
+                //                 DB::table('odoo_product_uom')->insert([
+                //                     'product_tmpl_id' => $item['product_tmpl_id'][0],
+                //                     'product_uom_id' => $item['uom_id'][0],
+                //                     "label" => $item['uom_id'][1],
+                //                     "stock" => $stock,
+                //                     "type" => $item['pricelist_id'][1],
+                //                     'created_at' => Carbon::now(),
+                //                     'updated_at' => Carbon::now(),
+                //                 ]);
 
-                                #PRODUCT PRICELIST
-                                DB::table('odoo_product_pricelist')->insert([
-                                    'product_tmpl_id' => $item['product_tmpl_id'][0],
-                                    'product_uom_id' => $item['uom_id'][0],
-                                    "price" => $item['fixed_price'],
-                                    "min_quantity" => $item['min_quantity'],
-                                    "label" => $item['uom_id'][1],
-                                    "stock" => $stock,
-                                    "type" => $item['pricelist_id'][1],
-                                    'created_at' => Carbon::now(),
-                                    'updated_at' => Carbon::now(),
-                                ]);
-                            }
-                        }
-                    }
-                }
+                //                 #PRODUCT PRICELIST
+                //                 DB::table('odoo_product_pricelist')->insert([
+                //                     'product_tmpl_id' => $item['product_tmpl_id'][0],
+                //                     'product_uom_id' => $item['uom_id'][0],
+                //                     "price" => $item['fixed_price'],
+                //                     "min_quantity" => $item['min_quantity'],
+                //                     "label" => $item['uom_id'][1],
+                //                     "stock" => $stock,
+                //                     "type" => $item['pricelist_id'][1],
+                //                     'created_at' => Carbon::now(),
+                //                     'updated_at' => Carbon::now(),
+                //                 ]);
+                //             }
+                //         }
+                //     }
+                // }
             }
         }
 

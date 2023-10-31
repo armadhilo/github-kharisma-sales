@@ -16,14 +16,19 @@ class OdooProductPricelist extends Model
     protected $appends = [];
     protected $hidden = ['created_at', 'updated_at', 'note'];
 
-    // protected static function boot()
-    // {
-    //     parent::boot();
+    protected static function boot()
+    {
+        parent::boot();
 
-    //     static::addGlobalScope('grouping_type_handling', function (Builder $builder) {
-    //         $builder->groupBy('min_quantity')->groupBy('type')->groupBy('product_tmpl_id');
-    //     });
-    // }
+        $type_pelanggan = 'RETAIL (IDR)';
+        if(isset(auth('api')->user()->type_pelanggan)) $type_pelanggan = auth('api')->user()->type_pelanggan;
+        elseif(isset(auth()->user()->type_pelanggan)) $type_pelanggan = auth()->user()->type_pelanggan;
+
+        //kalo login mengikuti tipe pelanggan
+        static::addGlobalScope('type_pelanggan', function (Builder $builder) use ($type_pelanggan) {
+            $builder->where('type', $type_pelanggan);
+        });
+    }
 
     public function product(){
         return $this->belongsTo(OdooProduct::class, 'product_tmpl_id', 'product_tmpl_id')->withTrashed();

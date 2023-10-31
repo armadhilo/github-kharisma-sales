@@ -69,14 +69,14 @@ class AlamatPengirimanController extends Controller
             $telepon_custom = substr($request->no_telepon, 0,2);
         }
 
+        #DIMINTA PAK FREDY DISABLE 2023-10-30
         //update data di odoo
-        $request_odoo = new \Illuminate\Http\Request();
-        $request_odoo->merge(['pelanggan_id' => auth('api')->user()->pelanggan_id]);
-        $request_odoo->merge(['street' => $request->alamat]);
-        $request_odoo->merge(['phone' => $telepon_custom]);
-        $request_odoo->merge(['zip' => $request->kode_pos]);
-
-        OdooApi::updateCustomer($request_odoo);
+        // $request_odoo = new \Illuminate\Http\Request();
+        // $request_odoo->merge(['pelanggan_id' => auth('api')->user()->pelanggan_id]);
+        // $request_odoo->merge(['street' => $request->alamat]);
+        // $request_odoo->merge(['phone' => $telepon_custom]);
+        // $request_odoo->merge(['zip' => $request->kode_pos]);
+        // OdooApi::updateCustomer($request_odoo);
 
         $alamat_pengiriman = AlamatPengiriman::updateOrCreate(['id' => $request->id],$request->all() );
 
