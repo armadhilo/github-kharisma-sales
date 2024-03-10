@@ -7,6 +7,7 @@ use App\Models\Kunjungan;
 use Illuminate\Http\Request;
 use App\Http\Requests\EditKunjunganSalesRequest;
 use DataTables;
+use \Carbon\Carbon;
 
 class KunjunganSalesController extends Controller
 {
@@ -36,7 +37,7 @@ class KunjunganSalesController extends Controller
     }
 
     public function datatables_edit(){
-        $data = Kunjungan::with('sales', 'pelanggan')->orderBy('date', 'asc')->get();
+        $data = Kunjungan::with('sales', 'pelanggan')->orderBy('date', 'desc')->get();
         return DataTables::of($data)
                     ->addIndexColumn()
                     ->make(true);
@@ -56,7 +57,17 @@ class KunjunganSalesController extends Controller
     }
 
     public function update(Request $request){
+
+        $concat_datetime_start = $request->date ." ". $request->time_start;
+        $concat_datetime_end = $request->date ." ". $request->time_end;
+        $kunjungan_start = Carbon::parse("$concat_datetime_start");
+
+        //mengambil selisih menit jika true maka terlambat
+        $diff = $kunjungan_start->diffInMinutes(Carbon::parse("$concat_datetime_end"), false);
+
+        $request->merge(['total_time' => $diff]);
         Kunjungan::where('id', $request->id)->update($request->all() );
+        
         return [
             'status' => 200, // SUCCESS
             'message' => 'Data berhasil disimpan',
