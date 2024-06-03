@@ -52,5 +52,8 @@ class SalesLogController extends Controller
                 // }
             }
         }
+        
+        $message = 'Sales log tidak terbuat karena attendance today';
+        return ApiFormatter::success(200, $message);
     }
 }

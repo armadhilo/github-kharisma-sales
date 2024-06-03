@@ -114,15 +114,15 @@ class SyncProductJob implements ShouldQueue
                             $filename = $item['default_code'] .'-'. 'big.' . $mimeType;
 
                             //DELETE
-                            Storage::disk('s3')->delete('product/images/' . $filename);
+                            Storage::disk('s3')->delete('product_new/images/' . $filename);
 
                             //array insert product
                             $array_insert_product['gd_image_name'] = $filename;
                             $array_insert_product['gd_image_mimetype'] = $mimeType;
 
                             //check apabila gambar sudah ada tidak perlu menambahkan image baru
-                            Storage::disk('s3')->put('product/images/' . $filename, base64_decode($item['image']));
-                            $url_image = 'https://'. env('AWS_BUCKET') .'.s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images/' . $filename;
+                            Storage::disk('s3')->put('product_new/images/' . $filename, base64_decode($item['image']));
+                            $url_image = 'https://'. 'api-kharisma-sales' .'.s3.'. 'ap-southeast-1' .'.amazonaws.com/product_new/images/' . $filename;
 
                             $array_insert_product['gd_image_path'] = $url_image;
 
@@ -145,15 +145,15 @@ class SyncProductJob implements ShouldQueue
                             $filename_small = $item['default_code'] .'-'. 'medium.' . $mimeType_small;
 
                             //DELETE
-                            Storage::disk('s3')->delete('product/images-small/' . $filename_small);
+                            Storage::disk('s3')->delete('product_new/images-small/' . $filename_small);
 
                             //array insert product
                             $array_insert_product['gd_image_small_name'] = $filename_small;
                             $array_insert_product['gd_image_small_mimetype'] = $mimeType_small;
 
                             //check apabila gambar sudah ada tidak perlu menambahkan image baru
-                            Storage::disk('s3')->put('product/images-small/' . $filename_small, base64_decode($item['image_medium']));
-                            $url_image_small = 'https://'. env('AWS_BUCKET') .'.s3.'. env('AWS_DEFAULT_REGION') .'.amazonaws.com/product/images-small/' . $filename_small;
+                            Storage::disk('s3')->put('product_new/images-small/' . $filename_small, base64_decode($item['image_medium']));
+                            $url_image_small = 'https://'. 'api-kharisma-sales' .'.s3.'. 'ap-southeast-1' .'.amazonaws.com/product_new/images-small/' . $filename_small;
 
                             $array_insert_product['gd_image_small_path'] = $url_image_small;
                         }
@@ -165,57 +165,57 @@ class SyncProductJob implements ShouldQueue
                 }
 
                 #MASTER_UOM dan MASTER_PRICELIST
-                // if(count($array_product_tmpl_product)){
-                //     // get product pricelist for b2c
-                //     $product_pricelist = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                //     'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => []]);
+                if(count($array_product_tmpl_product)){
+                    // get product pricelist for b2c
+                    $product_pricelist = $this->models->execute_kw($this->db, $this->uid, $this->password,
+                    'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => []]);
 
-                //     if(is_array($product_pricelist) && count($product_pricelist)){
+                    if(is_array($product_pricelist) && count($product_pricelist)){
 
-                //         // delete pricelist yang akan diupdate harganya
-                //         DB::table('odoo_product_uom')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
-                //         DB::table('odoo_product_pricelist')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
+                        // delete pricelist yang akan diupdate harganya
+                        DB::table('odoo_product_uom')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
+                        DB::table('odoo_product_pricelist')->whereIn('product_tmpl_id', $array_product_tmpl_product)->delete();
 
-                //         foreach($product_pricelist as $item){
+                        foreach($product_pricelist as $item){
 
-                //             if(is_array($item['product_tmpl_id'])){
+                             if(is_array($item['product_tmpl_id']) && is_array($item['uom_id'])){
 
-                //                 //field stock pada odoo_product_uom
-                //                 $stock = 1;
-                //                 if(is_string($item['uom_id'][1])){
-                //                     if (str_contains($item['uom_id'][1], '/')) {
-                //                         $explode_stock = explode("/",$item['uom_id'][1]);
-                //                         $stock = $explode_stock[1];
-                //                     }
-                //                 }
+                                //field stock pada odoo_product_uom
+                                $stock = 1;
+                                if(is_string($item['uom_id'][1])){
+                                    if (str_contains($item['uom_id'][1], '/')) {
+                                        $explode_stock = explode("/",$item['uom_id'][1]);
+                                        $stock = $explode_stock[1];
+                                    }
+                                }
 
-                //                 #PRODUCT UOM
-                //                 DB::table('odoo_product_uom')->insert([
-                //                     'product_tmpl_id' => $item['product_tmpl_id'][0],
-                //                     'product_uom_id' => $item['uom_id'][0],
-                //                     "label" => $item['uom_id'][1],
-                //                     "stock" => $stock,
-                //                     "type" => $item['pricelist_id'][1],
-                //                     'created_at' => Carbon::now(),
-                //                     'updated_at' => Carbon::now(),
-                //                 ]);
+                                #PRODUCT UOM
+                                DB::table('odoo_product_uom')->insert([
+                                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                                    'product_uom_id' => $item['uom_id'][0],
+                                    "label" => $item['uom_id'][1],
+                                    "stock" => $stock,
+                                    "type" => $item['pricelist_id'][1],
+                                    'created_at' => Carbon::now(),
+                                    'updated_at' => Carbon::now(),
+                                ]);
 
-                //                 #PRODUCT PRICELIST
-                //                 DB::table('odoo_product_pricelist')->insert([
-                //                     'product_tmpl_id' => $item['product_tmpl_id'][0],
-                //                     'product_uom_id' => $item['uom_id'][0],
-                //                     "price" => $item['fixed_price'],
-                //                     "min_quantity" => $item['min_quantity'],
-                //                     "label" => $item['uom_id'][1],
-                //                     "stock" => $stock,
-                //                     "type" => $item['pricelist_id'][1],
-                //                     'created_at' => Carbon::now(),
-                //                     'updated_at' => Carbon::now(),
-                //                 ]);
-                //             }
-                //         }
-                //     }
-                // }
+                                #PRODUCT PRICELIST
+                                DB::table('odoo_product_pricelist')->insert([
+                                    'product_tmpl_id' => $item['product_tmpl_id'][0],
+                                    'product_uom_id' => $item['uom_id'][0],
+                                    "price" => $item['fixed_price'],
+                                    "min_quantity" => $item['min_quantity'],
+                                    "label" => $item['uom_id'][1],
+                                    "stock" => $stock,
+                                    "type" => $item['pricelist_id'][1],
+                                    'created_at' => Carbon::now(),
+                                    'updated_at' => Carbon::now(),
+                                ]);
+                            }
+                        }
+                    }
+                }
             }
         }
 

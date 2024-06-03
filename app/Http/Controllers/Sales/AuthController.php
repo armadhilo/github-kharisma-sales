@@ -26,10 +26,10 @@ class AuthController extends Controller
         if (Auth::check()) {
 
             // if type pelanggan
-            if(Auth::user()->type == 'pelanggan'){
-                $message = 'Hanya role Sales yang diperbolehkan login ke aplikasi';
-                return ApiFormatter::error(400, $message);
-            }
+            // if(Auth::user()->type == 'pelanggan'){
+            //     $message = 'Hanya role Sales yang diperbolehkan login ke aplikasi';
+            //     return ApiFormatter::error(400, $message);
+            // }
 
             $user = Auth::user();
             $token = $user->createToken(Auth::user()->email)->accessToken;
