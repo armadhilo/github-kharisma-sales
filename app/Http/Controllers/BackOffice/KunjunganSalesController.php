@@ -35,13 +35,44 @@ class KunjunganSalesController extends Controller
                     ->addIndexColumn()
                     ->make(true);
     }
-
+    
     public function datatables_edit(){
-        $data = Kunjungan::with('sales', 'pelanggan')->orderBy('date', 'desc')->get();
-        return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->make(true);
+        try
+        {
+            $query = Kunjungan::query()
+                ->leftJoin('users as sales', 'sales.pelanggan_id', '=', 'kunjungan.sales_id')
+                ->leftJoin('users as pelanggan', 'pelanggan.pelanggan_id', '=', 'kunjungan.pelanggan_id')
+                ->select([
+                    'kunjungan.*',
+                    'sales.nama as sales_nama',
+                    'pelanggan.nama as pelanggan_nama',
+                ])
+                ->orderBy('kunjungan.date', 'desc');
+
+            return datatables()->of($query)
+                ->addIndexColumn()
+                ->make(true);
+        }
+        catch (\Throwable $e)
+        {
+            \Log::error('Datatables Kunjungan Error', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
+
+    // public function datatables_edit(){
+    //     $data = Kunjungan::with('sales', 'pelanggan')->orderBy('date', 'desc')->get();
+    //     return DataTables::of($data)
+    //                 ->addIndexColumn()
+    //                 ->make(true);
+    // }
 
     public function datatables_detail(Request $request){
         $data = Kunjungan::with('sales', 'pelanggan')->where('sales_id', $request->id);

@@ -89,33 +89,46 @@
 
 @section('js')
 <script>
+    
     var tb = $('#tb').DataTable({
         processing: true,
         serverSide: false,
-        "bDestroy": true,
+        bDestroy: true,
         ajax: {
             url: '/admin/edit-kunjungan-sales/datatables',
             type: 'GET',
+            error: function (xhr, error, thrown) {
+                console.error('AJAX Error:', xhr.status, xhr.responseText);
+                alert('Terjadi error saat mengambil data. Cek console.');
+            }
         },
         columnDefs: [{
             className: 'text-center',
             targets: [0, 1, 2, 3, 4, 5, 6, 7]
         }],
         columns: [
-            { data: 'DT_RowIndex',searchable: false,orderable: false },
+            { data: 'DT_RowIndex', searchable: false, orderable: true },
             { data: 'date' },
-            { data: 'sales.nama' },
-            { data: 'pelanggan.nama' },
+            { data: 'sales_nama', defaultContent: '-' },
+            { data: 'pelanggan_nama', defaultContent: '-' },
             { data: 'time_start' },
             { data: 'time_end' },
             { data: 'total_time' },
             { data: 'total_time' },
         ],
         rowCallback: function (row, data) {
-            var url_edit   = "/admin/edit-kunjungan-sales/detail/" + data.id;
-            $('td:eq(7)', row).html(`
-                <button class="btn btn-info btn-sm mr-1" onclick="edit_kunjungan('${url_edit}', '${data.sales.nama}', '${data.pelanggan.nama}')"><i class="fa fa-edit"></i></button>
-            `);
+            try {
+                var url_edit = "/admin/edit-kunjungan-sales/detail/" + data.id;
+    
+                $('td:eq(7)', row).html(`
+                    <button class="btn btn-info btn-sm mr-1"
+                        onclick="edit_kunjungan('${url_edit}', '${data.sales_nama}', '${data.pelanggan_nama}')">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                `);
+            } catch (e) {
+                console.error('Row error on ID:', data?.id, e, data);
+            }
         }
     });
 

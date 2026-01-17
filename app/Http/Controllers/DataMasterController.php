@@ -110,7 +110,8 @@ class DataMasterCOntroller extends Controller
         }
 
         $response = json_decode($response, true);
-        $response = collect($response['rajaongkir']['results']);
+        // $response = collect($response['rajaongkir']['results']);
+        $response = [];
 
         return ApiFormatter::success(200, 'Province loaded successfully', $response);
     }
@@ -140,7 +141,8 @@ class DataMasterCOntroller extends Controller
         }
 
         $response = json_decode($response, true);
-        $response = collect($response['rajaongkir']['results']);
+        // $response = collect($response['rajaongkir']['results']);
+        $response = [];
 
         return ApiFormatter::success(200, 'City loaded successfully', $response);
     }
@@ -170,7 +172,8 @@ class DataMasterCOntroller extends Controller
         }
 
         $response = json_decode($response, true);
-        $response = collect($response['rajaongkir']['results']);
+        // $response = collect($response['rajaongkir']['results']);
+        $response = [];
 
         return ApiFormatter::success(200, 'City loaded successfully', $response);
     }
