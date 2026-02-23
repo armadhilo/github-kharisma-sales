@@ -21,9 +21,7 @@ class AuthController extends Controller
             'password'  => $request->password,
         ];
 
-        Auth::attempt($data);
-
-        if (Auth::check()) {
+        if (Auth::attempt($data)) {
 
             // if type pelanggan
             // if(Auth::user()->type == 'pelanggan'){
@@ -34,7 +32,7 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken(Auth::user()->email)->accessToken;
 
-            $message = 'Successfully login.';
+            $message = 'Successfully login';
             $data = [
                 'user' => $user,
                 'token' => $token,
