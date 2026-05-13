@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-ini_set('max_execution_time', '0');
-require_once(base_path() . '/public/ripcord-master/ripcord.php');
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,6 +13,7 @@ use Carbon\Carbon;
 use App\Models\User;
 
 use App\Helpers\ApiFormatter;
+use App\Helpers\OdooApi;
 use App\Http\Requests\SalesOrderRequest;
 use App\Jobs\SyncPelangganJob;
 use App\Jobs\SyncProductJob;
@@ -25,7 +24,6 @@ use App\Models\Notification;
 use App\Models\OdooProduct;
 use App\Models\SalesPelanggan;
 use App\Models\OdooProductOriginal;
-use ripcord;
 use Storage;
 use Validator;
 use App\Imports\CsvDataImport;
@@ -34,26 +32,22 @@ use Excel;
 class OdooController extends Controller
 {
 
-    protected $db;
-    protected $username;
-    protected $password;
-    protected $uid;
-    protected $models;
-
     public function __construct()
     {
-        $url = config('services.odoo.odoo_url');
-        $this->db = config('services.odoo.odoo_db');
-        $this->username = config('services.odoo.odoo_username');
-        $this->password = config('services.odoo.odoo_password');
-
-        $common = ripcord::client("$url/xmlrpc/2/common");
-        $this->uid = $common->authenticate($this->db, $this->username, $this->password, []);
-
-        $this->models = ripcord::client("$url/xmlrpc/2/object");
+        // Koneksi Odoo dihandle oleh OdooApi::executeKw() secara lazy
+        // dengan UID di-cache dan retry otomatis.
     }
 
     public function try_code(){
+
+        $result = OdooApi::executeKw(
+            'res.partner',
+            'search_read',
+            [[['active', '=', True]]],
+            ['limit' => 1]
+        );
+
+        return $result;
 
         // $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
         // 'res.partner', 'search_read', [[['active','=', True]]], ['fields' => [], 'limit'=> 1]);
@@ -63,12 +57,12 @@ class OdooController extends Controller
         // 'product.product', 'search', [[['active','=', True]]]);
 
         // GET PRICELIST
-        return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', [38884]]]], ['fields' => []]);
+        return OdooApi::executeKw('product.pricelist.item', 'search_read',
+            [[['product_tmpl_id', '=', [38884]]]], ['fields' => []]);
 
         //GET CUSTOMER
-        return $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'res.partner', 'search_read', [[['id', '=', [76651]]]], ['fields' => [], 'limit'=> 1]);
+        return OdooApi::executeKw('res.partner', 'search_read',
+            [[['id', '=', [76651]]]], ['fields' => [], 'limit' => 1]);
 
         // //GET PRODUCT
         // return $this->models->execute_kw($this->db, $this->uid, $this->password,
@@ -298,8 +292,7 @@ class OdooController extends Controller
                 'notification_type' => 'draft',
             ]);
 
-            $sales_order_odoo = $this->models->execute_kw($this->db, $this->uid, $this->password,
-            'sale.order', 'create', [[$salesOrderData]]);
+            $sales_order_odoo = OdooApi::executeKw('sale.order', 'create', [[$salesOrderData]]);
 
             if(isset($sales_order_odoo['faultCode'])){
                 $message = $sales_order_odoo['faultString'];
@@ -366,15 +359,14 @@ class OdooController extends Controller
         // $chunk = array_chunk($product_id, 10);
 
         //WITH ODOO GET ID
-        $product_id = $this->models->execute_kw($this->db, $this->uid, $this->password,'product.product', 'search', [[['active','=', True]]]);
+        $product_id = OdooApi::executeKw('product.product', 'search', [[['active', '=', true]]]);
         $odoo_product = OdooProductOriginal::has('product_uom')->select('product_id')->pluck('product_id');
 
         $difference = array_diff($product_id, $odoo_product);
         $chunk = array_chunk($difference, 20);
 
         foreach($chunk as $item){
-            dispatch(new SyncProductJob($item, $this->uid));
-            // dispatch(new SyncProductJob($item))->delay(now()->addSeconds(30));
+            dispatch(new SyncProductJob($item));
         }
 
         return [
@@ -417,8 +409,9 @@ class OdooController extends Controller
 
                 $array_product_tmpl_product = [];
 
-                $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                    'product.product', 'search_read', [[['id', '=', $item]]], ['fields' => ['id','product_tmpl_id','uom_id','tag_ids','default_code','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
+                $product = OdooApi::executeKw('product.product', 'search_read',
+                    [[['id', '=', $item]]],
+                    ['fields' => ['id','product_tmpl_id','uom_id','tag_ids','default_code','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
 
                 if(isset($product['faultCode']) && $product['faultCode'] == 1){
                     Log::error($product['faultString']);
@@ -516,8 +509,8 @@ class OdooController extends Controller
 
                     if(count($array_product_tmpl_product)){
                         // get product pricelist for b2c
-                        $product_pricelist = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                        'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => []]);
+                        $product_pricelist = OdooApi::executeKw('product.pricelist.item', 'search_read',
+                        [[['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => []]);
 
                         if(is_array($product_pricelist) && count($product_pricelist)){
 
@@ -582,13 +575,12 @@ class OdooController extends Controller
         DB::table('jobs')->truncate();
         DB::table('failed_jobs')->truncate();
 
-        $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'res.partner', 'search', [[['active','=', True]]]);
+        $pelanggan = OdooApi::executeKw('res.partner', 'search', [[['active', '=', true]]]);
 
         $chunk = array_chunk($pelanggan, 20);
 
         foreach($chunk as $item){
-            dispatch(new SyncPelangganJob($item, $this->uid));
+            dispatch(new SyncPelangganJob($item));
         }
 
         return [
@@ -615,8 +607,9 @@ class OdooController extends Controller
            if(!empty($item)) $array[] = (int)$item;
         }
 
-        $pelanggan = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                'res.partner', 'search_read', [[['id', '=', $array], ['active','=', True]]], ['fields' => ['property_product_pricelist','id','email','name','mobile','display_name','npwp','npwp_name','id_nik','street','street2','city','zip']]);
+        $pelanggan = OdooApi::executeKw('res.partner', 'search_read',
+                [[['id', '=', $array], ['active', '=', true]]],
+                ['fields' => ['property_product_pricelist','id','email','name','mobile','display_name','npwp','npwp_name','id_nik','street','street2','city','zip']]);
 
         if(!count($pelanggan)){
             return [
@@ -711,7 +704,7 @@ class OdooController extends Controller
 
                     $chunk = array_chunk($missingData, 20);
                     foreach($chunk as $item){
-                        dispatch(new SyncPelangganJob($item, $this->uid));
+                        dispatch(new SyncPelangganJob($item));
                     }
                 }
 
@@ -756,8 +749,8 @@ class OdooController extends Controller
             return (string) $item;
         });
         $stringArray = $stringCollection->all();
-        $odoo_api = $this->models->execute_kw($this->db, $this->uid, $this->password,
-        'sale.order', 'search_read', [[['id','=', $stringArray]]], ['fields' => ['state']]);
+        $odoo_api = OdooApi::executeKw('sale.order', 'search_read',
+        [[['id', '=', $stringArray]]], ['fields' => ['state']]);
 
         foreach($odoo_api as $item){
             SalesOrder::where('odoo_order_id', $item['id'])->update(['status' => $item['state']]);

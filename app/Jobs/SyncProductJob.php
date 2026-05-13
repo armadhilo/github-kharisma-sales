@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-require_once(base_path() . '/public/ripcord-master/ripcord.php');
 
 use App\Models\OdooProductPricelist;
 use App\Models\OdooProductOriginal;
@@ -12,8 +11,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\OdooApi;
 use \Carbon\Carbon;
-use ripcord;
 use Str;
 use DB;
 use Log;
@@ -28,31 +27,16 @@ class SyncProductJob implements ShouldQueue
      * @return void
      */
 
-    protected $db;
-    protected $username;
-    protected $password;
-    protected $uid;
-    protected $models;
-
     protected $data;
+    protected $uid; // kept for backward compat, not used internally anymore
 
     public $timeout = 120;
     public $tries = 3;
 
-    public function __construct($data, $uid)
+    public function __construct($data, $uid = null)
     {
-        $url = config('services.odoo.odoo_url');
-        $this->db = config('services.odoo.odoo_db');
-        $this->username = config('services.odoo.odoo_username');
-        $this->password = config('services.odoo.odoo_password');
-
-        // $common = ripcord::client("$url/xmlrpc/2/common");
-        // $this->uid = $common->authenticate($this->db, $this->username, $this->password, []);
-
-        $this->models = ripcord::client("$url/xmlrpc/2/object");
-
         $this->data = $data;
-        $this->uid = $uid;
+        $this->uid  = $uid; // tidak dipakai, Odoo calls via OdooApi
     }
 
     /**
@@ -67,8 +51,9 @@ class SyncProductJob implements ShouldQueue
 
             $array_product_tmpl_product = [];
 
-            $product = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                'product.product', 'search_read', [[['id', '=', $this->data]]], ['fields' => ['id','product_tmpl_id','uom_id','tag_ids','default_code','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
+            $product = OdooApi::executeKw('product.product', 'search_read',
+                [[['id', '=', $this->data]]],
+                ['fields' => ['id','product_tmpl_id','uom_id','tag_ids','default_code','name', 'image', 'image_medium', 'image_small', 'uom_id', 'weight', 'qty_available']]);
 
             if(isset($product['faultCode']) && $product['faultCode'] == 1){
                 Log::error($product['faultString']);
@@ -167,8 +152,8 @@ class SyncProductJob implements ShouldQueue
                 #MASTER_UOM dan MASTER_PRICELIST
                 if(count($array_product_tmpl_product)){
                     // get product pricelist for b2c
-                    $product_pricelist = $this->models->execute_kw($this->db, $this->uid, $this->password,
-                    'product.pricelist.item', 'search_read', [[['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => []]);
+                    $product_pricelist = OdooApi::executeKw('product.pricelist.item', 'search_read',
+                    [[['product_tmpl_id', '=', $array_product_tmpl_product]]], ['fields' => []]);
 
                     if(is_array($product_pricelist) && count($product_pricelist)){
 

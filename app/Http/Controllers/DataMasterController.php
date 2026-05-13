@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-include(base_path() . '/public/ripcord-master/ripcord.php');
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -19,7 +18,7 @@ use App\Models\Kunjungan;
 use App\Models\Config;
 
 use App\Helpers\ApiFormatter;
-use ripcord;
+use App\Helpers\OdooApi;
 
 class DataMasterCOntroller extends Controller
 {
@@ -27,33 +26,30 @@ class DataMasterCOntroller extends Controller
     #============== TRY CODE ====================#
 
     public function try_code(){
-        $url = config('services.odoo.odoo_url');
-        $db = config('services.odoo.odoo_db');
-        $username = config('services.odoo.odoo_username');
-        $password = config('services.odoo.odoo_password');
 
-        $common = ripcord::client("$url/xmlrpc/2/common");
-        $uid = $common->authenticate($db, $username, $password, []);
+        // Menggunakan OdooApi::executeKw() agar UID di-cache dan
+        // ada retry otomatis jika token Odoo kadaluarsa.
 
-        $models = ripcord::client("$url/xmlrpc/2/object");
-        // $models->execute_kw($db, $uid, $password,
-        //     'res.partner', 'check_access_rights',
-        //     array('read'), array('raise_exception' => false));
+        // $result = OdooApi::executeKw('res.partner', 'check_access_rights',
+        //     ['read'], ['raise_exception' => false]);
 
-        # search -> akan return ID
-        // $models->execute_kw($db, $uid, $password,
-        // 'product.product', 'search', [[['write_uid', '=', 1]]]);
+        // # search -> akan return ID
+        // $result = OdooApi::executeKw('product.product', 'search',
+        //     [[['write_uid', '=', 1]]]);
 
-        #read -> akan return DETAIL
-        // return $models->execute_kw($db, $uid, $password,
-        // 'product.product', 'read', [[36228]]);
+        // # read -> akan return DETAIL
+        // $result = OdooApi::executeKw('product.product', 'read', [[36228]]);
 
-        // #read -> akan return DETAIL
-        // return $models->execute_kw($db, $uid, $password,
-        // 'product.product', 'search_read', [[['write_uid', '=', 1]]], ['fields' => ['default_code','active','product_tmpl_id'], 'limit'=> 5]);
+        // # search_read -> return DETAIL dengan filter field & limit
+        // $result = OdooApi::executeKw('product.product', 'search_read',
+        //     [[['write_uid', '=', 1]]],
+        //     ['fields' => ['default_code', 'active', 'product_tmpl_id'], 'limit' => 5]);
 
-        return $models->execute_kw($db, $uid, $password,
-        'product.product', 'search_read', [[['pricelist_id', '=', '7']]], ['limit'=> 1]);
+        $result = OdooApi::executeKw('product.product', 'search_read',
+            [[['pricelist_id', '=', '7']]],
+            ['limit' => 1]);
+
+        return $result;
     }
 
     #============== PROV KOTA ===================#
