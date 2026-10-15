@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -20,7 +19,7 @@ use App\Models\Config;
 use App\Helpers\ApiFormatter;
 use App\Helpers\OdooApi;
 
-class DataMasterCOntroller extends Controller
+class DataMasterController extends Controller
 {
 
     #============== TRY CODE ====================#

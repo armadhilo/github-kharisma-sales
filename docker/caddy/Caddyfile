@@ -1,0 +1,9 @@
+
+http://kharismastationerykupang.com, http://www.kharismastationerykupang.com {
+    redir https://{host}{uri} permanent
+}
+
+kharismastationerykupang.com, www.kharismastationerykupang.com {
+    encode gzip
+    reverse_proxy web:80
+}

@@ -9,6 +9,8 @@ services:
     image: kharisma-sales-app:latest
     container_name: kharisma-sales-app
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       APP_NAME: ${APP_NAME:-Laravel}
       APP_ENV: ${APP_ENV:-production}
@@ -29,7 +31,13 @@ services:
       QUEUE_CONNECTION: ${QUEUE_CONNECTION:-sync}
       SESSION_DRIVER: ${SESSION_DRIVER:-file}
       SESSION_LIFETIME: ${SESSION_LIFETIME:-120}
+      ODOO_URL: ${ODOO_URL}
+      ODOO_DB: ${ODOO_DB}
+      ODOO_USERNAME: ${ODOO_USERNAME}
+      ODOO_PASSWORD: ${ODOO_PASSWORD}
     volumes:
+      - ./:/var/www/html
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
       - storage_uploads:/var/www/html/storage/app/public
       - storage_logs:/var/www/html/storage/logs
       - storage_framework:/var/www/html/storage/framework
@@ -60,8 +68,9 @@ services:
     container_name: kharisma-sales-web
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-80}:80"
+      - "127.0.0.1:8080:80"
     volumes:
+      - ./public:/var/www/html/public:ro
       - storage_uploads:/var/www/html/storage/app/public:ro
     networks:
       - kharisma-internal
@@ -87,6 +96,8 @@ services:
     image: mysql:8.0
     container_name: kharisma-sales-mysql
     restart: unless-stopped
+    ports:
+       - "127.0.0.1:3306:3306"
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-kharisma_sales}
       MYSQL_USER: ${DB_USERNAME:-sales_user}
@@ -119,6 +130,8 @@ services:
     restart: unless-stopped
     profiles: ["worker"]
     command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=90"]
+    env_file:
+      - .env
     environment:
       APP_NAME: ${APP_NAME:-Laravel}
       APP_ENV: ${APP_ENV:-production}
@@ -132,7 +145,13 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       CACHE_DRIVER: ${CACHE_DRIVER:-file}
       QUEUE_CONNECTION: ${QUEUE_CONNECTION:-database}
+      ODOO_URL: ${ODOO_URL}
+      ODOO_DB: ${ODOO_DB}
+      ODOO_USERNAME: ${ODOO_USERNAME}
+      ODOO_PASSWORD: ${ODOO_PASSWORD}
     volumes:
+      - ./:/var/www/html
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
       - storage_uploads:/var/www/html/storage/app/public
       - storage_logs:/var/www/html/storage/logs
       - storage_framework:/var/www/html/storage/framework
@@ -156,6 +175,8 @@ services:
     restart: unless-stopped
     profiles: ["scheduler"]
     command: ["sh", "-c", "while true; do php artisan schedule:run --verbose --no-interaction & sleep 60; done"]
+    env_file:
+      - .env
     environment:
       APP_NAME: ${APP_NAME:-Laravel}
       APP_ENV: ${APP_ENV:-production}
@@ -168,6 +189,8 @@ services:
       DB_USERNAME: ${DB_USERNAME:-sales_user}
       DB_PASSWORD: ${DB_PASSWORD}
     volumes:
+      - ./:/var/www/html
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
       - storage_uploads:/var/www/html/storage/app/public
       - storage_logs:/var/www/html/storage/logs
       - storage_framework:/var/www/html/storage/framework
@@ -181,10 +204,31 @@ services:
         limits:
           memory: 128M
 
+  caddy:
+    image: caddy:2
+    container_name: kharisma-sales-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - kharisma-internal
+    depends_on:
+      - web
+
 # ==============================================================================
 # Persistent Storage Volumes
 # ==============================================================================
 volumes:
+  caddy_data:
+    name: kharisma_sales_caddy_data
+  caddy_config:
+    name: kharisma_sales_caddy_config
   mysql_data:
     name: kharisma_sales_mysql_data
   storage_uploads:

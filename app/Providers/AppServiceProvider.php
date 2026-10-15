@@ -27,5 +27,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
         Passport::tokensExpireIn(Carbon::now()->addDays(30));
+	if ($this->app->environment('production')) {
+ 	   \Illuminate\Support\Facades\URL::forceScheme('https');
+	}
     }
 }

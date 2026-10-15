@@ -23,7 +23,7 @@ class ProdukController extends Controller
     }
 
     public function datatables(){
-        $product = OdooProductOriginal::with('product_tag', 'product_uom.product_pricelist')->get();
+        $product = OdooProductOriginal::with('product_tag', 'product_uom.product_pricelist');
 
         return DataTables::of($product)
                 ->addIndexColumn()

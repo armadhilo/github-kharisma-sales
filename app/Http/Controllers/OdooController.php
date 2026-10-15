@@ -39,7 +39,6 @@ class OdooController extends Controller
     }
 
     public function try_code(){
-
         $result = OdooApi::executeKw(
             'res.partner',
             'search_read',
